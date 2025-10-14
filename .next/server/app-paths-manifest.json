@@ -1,5 +1,8 @@
 {
-  "/page": "app/page.js",
   "/get-started/page": "app/get-started/page.js",
-  "/contact/page": "app/contact/page.js"
+  "/page": "app/page.js",
+  "/articles/page": "app/articles/page.js",
+  "/phone-service/page": "app/phone-service/page.js",
+  "/chatbot/page": "app/chatbot/page.js",
+  "/about/page": "app/about/page.js"
 }
