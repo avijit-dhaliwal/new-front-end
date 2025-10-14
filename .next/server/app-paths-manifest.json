@@ -1,8 +1,21 @@
 {
-  "/get-started/page": "app/get-started/page.js",
-  "/page": "app/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/ai-suites/page": "app/ai-suites/page.js",
+  "/articles/ai-powered-cloud-computing/page": "app/articles/ai-powered-cloud-computing/page.js",
+  "/about/page": "app/about/page.js",
+  "/articles/digital-transformation-roadmap/page": "app/articles/digital-transformation-roadmap/page.js",
+  "/articles/ai-ml-business-applications/page": "app/articles/ai-ml-business-applications/page.js",
+  "/articles/devops-implementation-guide/page": "app/articles/devops-implementation-guide/page.js",
+  "/articles/data-backup-disaster-recovery/page": "app/articles/data-backup-disaster-recovery/page.js",
   "/articles/page": "app/articles/page.js",
+  "/checkout/page": "app/checkout/page.js",
+  "/articles/it-infrastructure-modernization/page": "app/articles/it-infrastructure-modernization/page.js",
+  "/contact/page": "app/contact/page.js",
   "/phone-service/page": "app/phone-service/page.js",
+  "/get-started/page": "app/get-started/page.js",
+  "/articles/remote-work-technology-solutions/page": "app/articles/remote-work-technology-solutions/page.js",
   "/chatbot/page": "app/chatbot/page.js",
-  "/about/page": "app/about/page.js"
+  "/page": "app/page.js",
+  "/schedule-meeting/page": "app/schedule-meeting/page.js",
+  "/articles/ai-enhanced-cybersecurity/page": "app/articles/ai-enhanced-cybersecurity/page.js"
 }

@@ -93,8 +93,7 @@ export default function FloatingFeaturesCarousel() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 * index }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              transition={{ duration: 0.1 }}
+              whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.1 } }}
               className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-150 border border-gray-100 overflow-hidden group hover-orange-glow"
             >
               <div className="relative z-10">

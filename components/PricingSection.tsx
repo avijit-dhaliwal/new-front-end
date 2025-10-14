@@ -5,7 +5,19 @@ import { useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { Check, Star, Zap, Crown, ArrowRight } from 'lucide-react'
 
-const plans = [
+interface Plan {
+  name: string;
+  description: string;
+  price: number | string;
+  period: string;
+  icon: React.ReactNode;
+  color: string;
+  bgColor: string;
+  popular: boolean;
+  features: string[];
+}
+
+const plans: Plan[] = [
   {
     name: "AI Chatbot",
     description: "Perfect for customer support and lead generation",
@@ -173,7 +185,7 @@ export default function PricingSection() {
                 ) : (
                   <>
                     <span className="text-4xl font-bold text-gray-800 font-display">
-                      ${billingPeriod === 'yearly' ? Math.round(plan.price * 12 * 0.8) : plan.price}
+                      ${billingPeriod === 'yearly' && typeof plan.price === 'number' ? Math.round(plan.price * 12 * 0.8) : plan.price}
                     </span>
                     <span className="text-gray-600 ml-2">
                       /{billingPeriod === 'yearly' ? 'year' : plan.period}
