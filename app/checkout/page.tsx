@@ -143,10 +143,11 @@ export default function CheckoutPage() {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
         >
-          <Link href="/get-started" className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-200">
+          <Link href="/get-started" className="inline-flex items-center text-gray-600 hover:text-accent-500">
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Plans
           </Link>
@@ -158,7 +159,8 @@ export default function CheckoutPage() {
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+              style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
               className="space-y-8"
             >
               <div>
@@ -184,9 +186,9 @@ export default function CheckoutPage() {
                           onChange={(e) => setSelectedPlan(e.target.value)}
                           className="sr-only"
                         />
-                        <div className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                          selectedPlan === plan.id 
-                            ? 'border-accent-500 bg-accent-50' 
+                        <div className={`p-4 rounded-lg border-2 cursor-pointer ${
+                          selectedPlan === plan.id
+                            ? 'border-accent-500 bg-accent-50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}>
                           <div className="flex items-center justify-between">
@@ -411,11 +413,12 @@ export default function CheckoutPage() {
                 <motion.button
                   type="submit"
                   disabled={isProcessing}
-                  whileHover={{ scale: isProcessing ? 1 : 1.02 }}
+                  whileHover={{ scale: isProcessing ? 1 : 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } }}
                   whileTap={{ scale: isProcessing ? 1 : 0.98 }}
-                  className={`w-full py-4 px-6 rounded-xl font-semibold text-white transition-all duration-150 flex items-center justify-center ${
-                    isProcessing 
-                      ? 'bg-gray-400 cursor-not-allowed' 
+                  style={{ transform: "translateZ(0)", willChange: "transform" }}
+                  className={`w-full py-4 px-6 rounded-xl font-semibold text-white flex items-center justify-center ${
+                    isProcessing
+                      ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-gradient-to-r from-accent-500 to-accent-600 hover:shadow-lg'
                   }`}
                 >
@@ -438,7 +441,8 @@ export default function CheckoutPage() {
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
+              style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
               className="space-y-6"
             >
               <div className="sticky top-24">

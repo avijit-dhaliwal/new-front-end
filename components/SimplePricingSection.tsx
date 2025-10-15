@@ -17,7 +17,9 @@ export default function SimplePricingSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="text-center mb-16"
         >
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-6 font-display">
@@ -32,14 +34,20 @@ export default function SimplePricingSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {/* AI Chatbot Plan */}
           <motion.div
-            whileHover={{ y: -8, scale: 1.02 }}
-            transition={{ duration: 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-150 flex flex-col"
+            whileHover={{
+              y: -8,
+              scale: 1.02,
+              transition: { type: "spring", stiffness: 400, damping: 17 }
+            }}
+            style={{ transform: "translateZ(0)", willChange: "transform" }}
+            className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl flex flex-col"
           >
             <div className="text-center mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -82,9 +90,13 @@ export default function SimplePricingSection() {
 
           {/* AI Phone Service Plan */}
           <motion.div
-            whileHover={{ y: -8, scale: 1.02 }}
-            transition={{ duration: 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-150 flex flex-col"
+            whileHover={{
+              y: -8,
+              scale: 1.02,
+              transition: { type: "spring", stiffness: 400, damping: 17 }
+            }}
+            style={{ transform: "translateZ(0)", willChange: "transform" }}
+            className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl flex flex-col"
           >
             <div className="text-center mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -127,8 +139,12 @@ export default function SimplePricingSection() {
 
           {/* Bundle Pack Plan */}
           <motion.div
-            whileHover={{ y: -8, scale: 1.02 }}
-            transition={{ duration: 0.1 }}
+            whileHover={{
+              y: -8,
+              scale: 1.02,
+              transition: { type: "spring", stiffness: 400, damping: 17 }
+            }}
+            style={{ transform: "translateZ(0)", willChange: "transform" }}
             className="bg-white rounded-2xl p-6 shadow-lg border-2 border-accent-500 orange-glow relative flex flex-col"
           >
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -177,9 +193,13 @@ export default function SimplePricingSection() {
 
           {/* Custom AI Suite Plan */}
           <motion.div
-            whileHover={{ y: -8, scale: 1.02 }}
-            transition={{ duration: 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-150 flex flex-col"
+            whileHover={{
+              y: -8,
+              scale: 1.02,
+              transition: { type: "spring", stiffness: 400, damping: 17 }
+            }}
+            style={{ transform: "translateZ(0)", willChange: "transform" }}
+            className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl flex flex-col"
           >
             <div className="text-center mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">

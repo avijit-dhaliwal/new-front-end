@@ -216,7 +216,9 @@ export default function AISuitesPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-7xl mx-auto px-6 sm:px-8"
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -225,9 +227,15 @@ export default function AISuitesPage() {
                 key={suite.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.1 } }}
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-150 border border-gray-100 overflow-hidden group orange-glow"
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+                whileHover={{
+                  y: -8,
+                  scale: 1.02,
+                  transition: { type: "spring", stiffness: 400, damping: 17 }
+                }}
+                style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl border border-gray-100 overflow-hidden group orange-glow"
               >
                 {/* Subtle background on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${suite.bgColor} opacity-0 group-hover:opacity-10 transition-opacity duration-150`} />
@@ -320,19 +328,31 @@ export default function AISuitesPage() {
                   <div className="space-y-2">
                     <Link href="/get-started">
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        transition={{ duration: 0.1 }}
-                        className={`w-full bg-gradient-to-r ${suite.color} text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-150 group-hover:shadow-2xl`}
+                        whileHover={{
+                          scale: 1.05,
+                          transition: { type: "spring", stiffness: 400, damping: 17 }
+                        }}
+                        whileTap={{
+                          scale: 0.95,
+                          transition: { type: "spring", stiffness: 400, damping: 17 }
+                        }}
+                        className={`w-full bg-gradient-to-r ${suite.color} text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl group-hover:shadow-2xl`}
+                        style={{ transform: "translateZ(0)", willChange: "transform" }}
                       >
                         Get Started
                       </motion.button>
                     </Link>
                     <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      transition={{ duration: 0.1 }}
-                      className="w-full bg-gray-100 text-gray-700 font-semibold py-2 px-6 rounded-xl hover:bg-gray-200 transition-all duration-150 text-sm"
+                      whileHover={{
+                        scale: 1.02,
+                        transition: { type: "spring", stiffness: 400, damping: 17 }
+                      }}
+                      whileTap={{
+                        scale: 0.98,
+                        transition: { type: "spring", stiffness: 400, damping: 17 }
+                      }}
+                      className="w-full bg-gray-100 text-gray-700 font-semibold py-2 px-6 rounded-xl hover:bg-gray-200 text-sm"
+                      style={{ transform: "translateZ(0)", willChange: "transform" }}
                     >
                       Contact for Custom Quote
                     </motion.button>
@@ -347,7 +367,9 @@ export default function AISuitesPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="bg-gray-50 py-16"
         >
           <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center">
@@ -393,10 +415,16 @@ export default function AISuitesPage() {
               
               <div className="flex justify-center">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.1 }}
-                  className="bg-accent-500 text-white font-semibold py-3 px-8 rounded-xl hover:bg-accent-600 transition-all duration-150"
+                  whileHover={{
+                    scale: 1.05,
+                    transition: { type: "spring", stiffness: 400, damping: 17 }
+                  }}
+                  whileTap={{
+                    scale: 0.95,
+                    transition: { type: "spring", stiffness: 400, damping: 17 }
+                  }}
+                  className="bg-accent-500 text-white font-semibold py-3 px-8 rounded-xl hover:bg-accent-600"
+                  style={{ transform: "translateZ(0)", willChange: "transform" }}
                 >
                   Contact Us for Custom Suite
                 </motion.button>
@@ -409,7 +437,9 @@ export default function AISuitesPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-4xl mx-auto px-6 sm:px-8 py-16 text-center"
         >
           <h2 className="text-3xl font-bold text-gray-800 mb-4 font-display">
@@ -421,10 +451,16 @@ export default function AISuitesPage() {
           <div className="flex justify-center">
             <Link href="/get-started">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.1 }}
+                whileHover={{
+                  scale: 1.05,
+                  transition: { type: "spring", stiffness: 400, damping: 17 }
+                }}
+                whileTap={{
+                  scale: 0.95,
+                  transition: { type: "spring", stiffness: 400, damping: 17 }
+                }}
                 className="btn-primary"
+                style={{ transform: "translateZ(0)", willChange: "transform" }}
               >
                 Get Started
               </motion.button>

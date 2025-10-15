@@ -77,7 +77,16 @@ export default function AboutPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{
+            duration: 0.8,
+            delay: 0.2,
+            ease: [0.43, 0.13, 0.23, 0.96]
+          }}
+          style={{
+            transform: "translateZ(0)",
+            willChange: "transform, opacity"
+          }}
           className="bg-gray-50 py-16"
         >
           <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -124,7 +133,16 @@ export default function AboutPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{
+            duration: 0.8,
+            delay: 0.4,
+            ease: [0.43, 0.13, 0.23, 0.96]
+          }}
+          style={{
+            transform: "translateZ(0)",
+            willChange: "transform, opacity"
+          }}
           className="py-16"
         >
           <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -143,8 +161,25 @@ export default function AboutPage() {
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
-                  className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-150"
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{
+                    duration: 0.6,
+                    delay: 0.1 * index,
+                    ease: [0.43, 0.13, 0.23, 0.96]
+                  }}
+                  whileHover={{
+                    y: -5,
+                    transition: {
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 17
+                    }
+                  }}
+                  style={{
+                    transform: "translateZ(0)",
+                    willChange: "transform, opacity"
+                  }}
+                  className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl"
                 >
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -167,7 +202,16 @@ export default function AboutPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{
+            duration: 0.8,
+            delay: 1.0,
+            ease: [0.43, 0.13, 0.23, 0.96]
+          }}
+          style={{
+            transform: "translateZ(0)",
+            willChange: "transform, opacity"
+          }}
           className="bg-accent-500 py-16"
         >
           <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center">
@@ -180,18 +224,38 @@ export default function AboutPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/get-started">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{
+                    scale: 1.05,
+                    transition: {
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 17
+                    }
+                  }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-white text-accent-500 font-semibold py-3 px-8 rounded-xl hover:bg-gray-100 transition-all duration-150"
+                  style={{
+                    transform: "translateZ(0)"
+                  }}
+                  className="bg-white text-accent-500 font-semibold py-3 px-8 rounded-xl hover:bg-gray-100"
                 >
                   Get Started
                 </motion.button>
               </Link>
               <Link href="/contact">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{
+                    scale: 1.05,
+                    transition: {
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 17
+                    }
+                  }}
                   whileTap={{ scale: 0.95 }}
-                  className="border-2 border-white text-white font-semibold py-3 px-8 rounded-xl hover:bg-white hover:text-accent-500 transition-all duration-150"
+                  style={{
+                    transform: "translateZ(0)"
+                  }}
+                  className="border-2 border-white text-white font-semibold py-3 px-8 rounded-xl hover:bg-white hover:text-accent-500"
                 >
                   Contact Us
                 </motion.button>

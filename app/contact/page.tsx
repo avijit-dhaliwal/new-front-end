@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
-import { ArrowLeft, Mail, Phone, Clock, Send, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Mail, Phone, Clock, Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import NavBar from '@/components/NavBar'
 import AnimatedBackground from '@/components/AnimatedBackground'
@@ -56,12 +56,53 @@ export default function ContactPage() {
     message: ''
   })
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Simulate form submission
-    setIsSubmitted(true)
-    setTimeout(() => setIsSubmitted(false), 3000)
+    setIsSubmitting(true)
+    setSubmitError('')
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit form')
+      }
+
+      // Success - reset form and show success message
+      setIsSubmitted(true)
+      setFormData({
+        name: '',
+        email: '',
+        company: '',
+        subject: '',
+        message: ''
+      })
+
+      // Hide success message after 5 seconds
+      setTimeout(() => {
+        setIsSubmitted(false)
+      }, 5000)
+    } catch (error) {
+      console.error('Error submitting form:', error)
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : 'Something went wrong. Please try again or contact us directly.'
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -81,10 +122,11 @@ export default function ContactPage() {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
         >
-          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-200">
+          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-accent-500">
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Home
           </Link>
@@ -94,7 +136,8 @@ export default function ContactPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="text-center max-w-4xl mx-auto px-6 sm:px-8 mb-16"
         >
           <h1 className="text-5xl sm:text-6xl font-bold text-gray-800 mb-6 font-display">
@@ -111,7 +154,9 @@ export default function ContactPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-7xl mx-auto px-6 sm:px-8 mb-16"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -120,8 +165,11 @@ export default function ContactPage() {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-150 text-center"
+                viewport={{ once: true, amount: 0.3 }}
+                whileHover={{ y: -8, scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } }}
+                transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+                style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+                className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl text-center"
               >
                 <div className="w-16 h-16 bg-accent-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
                   {info.icon}
@@ -130,7 +178,7 @@ export default function ContactPage() {
                 <p className="text-gray-600 mb-4">{info.description}</p>
                 <a 
                   href={info.action}
-                  className="text-accent-500 font-semibold hover:text-accent-600 transition-colors duration-200"
+                  className="text-accent-500 font-semibold hover:text-accent-600"
                 >
                   {info.contact}
                 </a>
@@ -143,7 +191,9 @@ export default function ContactPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-7xl mx-auto px-6 sm:px-8 mb-16"
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -153,10 +203,28 @@ export default function ContactPage() {
                 Send us a Message
               </h2>
               
+              {submitError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ease: [0.43, 0.13, 0.23, 0.96] }}
+                  style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+                  className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3"
+                >
+                  <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-red-800">Error submitting form</p>
+                    <p className="text-sm text-red-600 mt-1">{submitError}</p>
+                  </div>
+                </motion.div>
+              )}
+
               {isSubmitted ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  transition={{ ease: [0.43, 0.13, 0.23, 0.96] }}
+                  style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
                   className="text-center py-8"
                 >
                   <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
@@ -177,7 +245,8 @@ export default function ContactPage() {
                         required
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200"
+                        disabled={isSubmitting}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent  disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="Your full name"
                       />
                     </div>
@@ -192,7 +261,8 @@ export default function ContactPage() {
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200"
+                        disabled={isSubmitting}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent  disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="your@email.com"
                       />
                     </div>
@@ -208,7 +278,8 @@ export default function ContactPage() {
                       name="company"
                       value={formData.company}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200"
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent  disabled:opacity-50 disabled:cursor-not-allowed"
                       placeholder="Your company name"
                     />
                   </div>
@@ -223,7 +294,8 @@ export default function ContactPage() {
                       required
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200"
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent  disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <option value="">Select a subject</option>
                       <option value="general">General Inquiry</option>
@@ -245,19 +317,31 @@ export default function ContactPage() {
                       rows={5}
                       value={formData.message}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 resize-none"
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent  resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                       placeholder="Tell us how we can help you..."
                     />
                   </div>
 
                   <motion.button
                     type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-gradient-to-r from-accent-500 to-accent-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-150 flex items-center justify-center"
+                    disabled={isSubmitting}
+                    whileHover={!isSubmitting ? { scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } } : {}}
+                    whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+                    style={{ transform: "translateZ(0)", willChange: "transform" }}
+                    className="w-full bg-gradient-to-r from-accent-500 to-accent-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Send className="w-5 h-5 mr-2" />
-                    Send Message
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5 mr-2" />
+                        Send Message
+                      </>
+                    )}
                   </motion.button>
                 </form>
               )}
@@ -312,7 +396,9 @@ export default function ContactPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="bg-gray-50 py-16"
         >
           <div className="max-w-4xl mx-auto px-6 sm:px-8">
@@ -331,7 +417,9 @@ export default function ContactPage() {
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+                  style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
                   className="bg-white rounded-xl p-6 shadow-lg"
                 >
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">{faq.question}</h3>

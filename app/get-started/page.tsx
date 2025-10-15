@@ -155,12 +155,13 @@ export default function GetStartedPage() {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
         >
           <Link
             href="/"
-            className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-200"
+            className="inline-flex items-center text-gray-600 hover:text-accent-500"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Home
@@ -171,7 +172,8 @@ export default function GetStartedPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="text-center max-w-4xl mx-auto px-6 sm:px-8 mb-16"
         >
           <h1 className="text-5xl sm:text-6xl font-bold text-gray-800 mb-6 font-display">
@@ -188,7 +190,9 @@ export default function GetStartedPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="bg-gray-50 py-16"
         >
           <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -208,8 +212,11 @@ export default function GetStartedPage() {
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
-                  className="bg-white rounded-xl p-6 shadow-lg text-center hover:shadow-xl transition-all duration-150"
+                  viewport={{ once: true, amount: 0.3 }}
+                  whileHover={{ y: -8, scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } }}
+                  transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+                  style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+                  className="bg-white rounded-xl p-6 shadow-lg text-center hover:shadow-xl"
                 >
                   <div className="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                     {benefit.icon}
@@ -228,7 +235,9 @@ export default function GetStartedPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="py-16"
         >
           <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -248,7 +257,9 @@ export default function GetStartedPage() {
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+                  style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
                   className="text-center"
                 >
                   <div className="relative">
@@ -273,7 +284,9 @@ export default function GetStartedPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="bg-gray-50 py-16"
         >
           <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -293,16 +306,19 @@ export default function GetStartedPage() {
                   key={plan.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
                   whileHover={{
                     y: -8,
                     scale: 1.02,
-                    transition: { duration: 0.1 },
+                    transition: { type: "spring", stiffness: 400, damping: 17 },
                   }}
                   transition={{
                     duration: 0.6,
                     delay: 0.1 * index,
+                    ease: [0.43, 0.13, 0.23, 0.96],
                   }}
-                  className={`relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-150 border-2 flex flex-col ${
+                  style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+                  className={`relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl border-2 flex flex-col ${
                     plan.popular
                       ? "border-accent-500 orange-glow"
                       : "border-gray-100 hover:border-accent-300"
@@ -361,9 +377,10 @@ export default function GetStartedPage() {
                   {/* CTA Button */}
                   <Link href="/contact">
                     <motion.button
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.05, transition: { type: "spring", stiffness: 400, damping: 17 } }}
                       whileTap={{ scale: 0.95 }}
-                      className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-150 flex items-center justify-center ${
+                      style={{ transform: "translateZ(0)", willChange: "transform" }}
+                      className={`w-full py-3 px-6 rounded-xl font-semibold flex items-center justify-center ${
                         plan.popular
                           ? "bg-gradient-to-r from-accent-500 to-accent-600 text-white hover:shadow-lg"
                           : plan.price === "Custom"

@@ -126,10 +126,11 @@ export default function ArticlesPage() {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
         >
-          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-200">
+          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-accent-500">
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Home
           </Link>
@@ -139,7 +140,8 @@ export default function ArticlesPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="text-center max-w-4xl mx-auto px-6 sm:px-8 mb-16"
         >
           <h1 className="text-5xl sm:text-6xl font-bold text-gray-800 mb-6 font-display">
@@ -156,7 +158,9 @@ export default function ArticlesPage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: [0.43, 0.13, 0.23, 0.96] }}
+            style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
             className="max-w-7xl mx-auto px-6 sm:px-8 mb-16"
           >
             <div className="bg-gradient-to-r from-accent-500 to-accent-600 rounded-2xl p-8 text-white">
@@ -180,7 +184,7 @@ export default function ArticlesPage() {
                 <Clock className="w-4 h-4 mr-2" />
                 <span>{featuredArticle.readTime}</span>
               </div>
-              <Link href={`/articles/${featuredArticle.slug}`} className="bg-white text-accent-500 font-semibold py-3 px-6 rounded-xl hover:bg-gray-100 transition-all duration-150 flex items-center">
+              <Link href={`/articles/${featuredArticle.slug}`} className="bg-white text-accent-500 font-semibold py-3 px-6 rounded-xl hover:bg-gray-100 flex items-center">
                 Read More
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
@@ -192,7 +196,9 @@ export default function ArticlesPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-7xl mx-auto px-6 sm:px-8 mb-16"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -201,8 +207,11 @@ export default function ArticlesPage() {
                 key={article.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-150 overflow-hidden group cursor-pointer"
+                viewport={{ once: true, amount: 0.3 }}
+                whileHover={{ y: -8, scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } }}
+                transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+                style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+                className="bg-white rounded-2xl shadow-lg hover:shadow-xl overflow-hidden group cursor-pointer"
               >
                 {/* Article Image */}
                 <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
@@ -216,7 +225,7 @@ export default function ArticlesPage() {
 
                 {/* Article Content */}
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-accent-500 transition-colors duration-200 line-clamp-2">
+                  <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-accent-500 line-clamp-2">
                     {article.title}
                   </h3>
                   <p className="text-gray-600 mb-4 line-clamp-3">
@@ -234,9 +243,9 @@ export default function ArticlesPage() {
                   </div>
 
                   {/* Read More Button */}
-                  <Link href={`/articles/${article.slug}`} className="text-accent-500 font-semibold hover:text-accent-600 transition-colors duration-200 flex items-center group">
+                  <Link href={`/articles/${article.slug}`} className="text-accent-500 font-semibold hover:text-accent-600 flex items-center group">
                     Read More
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1" />
                   </Link>
                 </div>
               </motion.article>
@@ -248,7 +257,9 @@ export default function ArticlesPage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="bg-gray-50 py-16"
         >
           <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center">
@@ -264,7 +275,7 @@ export default function ArticlesPage() {
                 placeholder="Enter your email"
                 className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
               />
-              <button className="bg-accent-500 text-white font-semibold py-3 px-6 rounded-xl hover:bg-accent-600 transition-all duration-150">
+              <button className="bg-accent-500 text-white font-semibold py-3 px-6 rounded-xl hover:bg-accent-600">
                 Subscribe
               </button>
             </div>

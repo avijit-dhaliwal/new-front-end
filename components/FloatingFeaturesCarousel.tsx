@@ -84,7 +84,15 @@ export default function FloatingFeaturesCarousel() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{
+            duration: 0.8,
+            delay: 0.4,
+            ease: "easeOut"
+          }}
+          style={{
+            transform: "translateZ(0)"
+          }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {features.map((feature, index) => (
@@ -92,9 +100,25 @@ export default function FloatingFeaturesCarousel() {
               key={index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 * index }}
-              whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.1 } }}
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-150 border border-gray-100 overflow-hidden group hover-orange-glow"
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.1 * index,
+                ease: [0.43, 0.13, 0.23, 0.96]
+              }}
+              whileHover={{
+                y: -8,
+                transition: {
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 10
+                }
+              }}
+              style={{
+                transform: "translateZ(0)",
+                willChange: "transform, opacity"
+              }}
+              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl border border-gray-100 overflow-hidden group hover-orange-glow"
             >
               <div className="relative z-10">
                 {/* Icon */}

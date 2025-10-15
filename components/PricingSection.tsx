@@ -104,7 +104,9 @@ export default function PricingSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="text-center mb-16"
         >
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-6 font-display">
@@ -142,7 +144,9 @@ export default function PricingSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {plans.map((plan, index) => (
@@ -150,11 +154,17 @@ export default function PricingSection() {
               key={plan.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 * index }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className={`relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-150 border-2 ${
-                plan.popular 
-                  ? 'border-accent-500 orange-glow' 
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+              whileHover={{
+                y: -8,
+                scale: 1.02,
+                transition: { type: "spring", stiffness: 400, damping: 17 }
+              }}
+              style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+              className={`relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl border-2 ${
+                plan.popular
+                  ? 'border-accent-500 orange-glow'
                   : 'border-gray-100 hover:border-accent-300'
               }`}
             >

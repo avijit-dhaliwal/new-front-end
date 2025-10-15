@@ -91,10 +91,11 @@ export default function PhoneServicePage() {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
         >
-          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-100">
+          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-accent-500">
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Home
           </Link>
@@ -116,7 +117,8 @@ export default function PhoneServicePage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+            style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
             className="relative z-10"
           >
             <div className="flex items-center justify-center mb-6">
@@ -163,7 +165,9 @@ export default function PhoneServicePage() {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+                style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
                 className="text-center"
               >
                 <div className="text-4xl font-bold text-green-500 mb-2">{stat.number}{stat.suffix}</div>
@@ -176,9 +180,10 @@ export default function PhoneServicePage() {
           <div className="text-center mb-16">
             <Link href="/get-started">
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, transition: { type: "spring", stiffness: 400, damping: 17 } }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-150"
+                style={{ transform: "translateZ(0)", willChange: "transform" }}
+                className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl"
               >
                 Get Started Today
               </motion.button>
@@ -189,7 +194,9 @@ export default function PhoneServicePage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="max-w-7xl mx-auto px-6 sm:px-8 mb-16"
         >
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Powerful Features</h2>
@@ -199,9 +206,11 @@ export default function PhoneServicePage() {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-150"
+                viewport={{ once: true, amount: 0.3 }}
+                whileHover={{ y: -8, scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } }}
+                transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+                style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl"
               >
                 <div className="flex items-center mb-4">
                   {feature.icon}
@@ -217,7 +226,9 @@ export default function PhoneServicePage() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="bg-gray-50 py-16"
         >
           <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -228,9 +239,11 @@ export default function PhoneServicePage() {
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
-                  className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-150"
+                  viewport={{ once: true, amount: 0.3 }}
+                  whileHover={{ y: -8, scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } }}
+                  transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+                  style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+                  className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl"
                 >
                   <div className="text-3xl font-bold text-green-500 mb-2">{benefit.stat}</div>
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">{benefit.title}</h3>

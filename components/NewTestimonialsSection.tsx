@@ -90,7 +90,9 @@ export default function NewTestimonialsSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="text-center mb-16"
         >
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-6 font-display">
@@ -105,7 +107,9 @@ export default function NewTestimonialsSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="flex flex-wrap justify-center items-center gap-8 mb-16 opacity-60"
         >
           {companies.map((company, index) => (
@@ -113,9 +117,15 @@ export default function NewTestimonialsSection() {
               key={company}
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 * index }}
-              whileHover={{ scale: 1.1, opacity: 1 }}
-              className="text-gray-400 font-semibold text-lg hover:text-accent-500 transition-colors duration-300"
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
+              whileHover={{
+                scale: 1.1,
+                opacity: 1,
+                transition: { type: "spring", stiffness: 400, damping: 17 }
+              }}
+              style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+              className="text-gray-400 font-semibold text-lg hover:text-accent-500"
             >
               {company}
             </motion.div>
@@ -126,7 +136,9 @@ export default function NewTestimonialsSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.43, 0.13, 0.23, 0.96] }}
+          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
           className="relative"
         >
           <div className="bg-gray-50 rounded-2xl p-12 shadow-lg">
