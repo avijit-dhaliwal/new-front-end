@@ -1,7 +1,1 @@
-{
-  "/get-started/page": "app/get-started/page.js",
-  "/articles/page": "app/articles/page.js",
-  "/about/page": "app/about/page.js",
-  "/chatbot/page": "app/chatbot/page.js",
-  "/phone-service/page": "app/phone-service/page.js"
-}
+{}
