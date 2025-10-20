@@ -65,19 +65,47 @@ export default function ContactPage() {
     setSubmitError('')
 
     try {
-      const response = await fetch('/api/contact', {
+      // Get Google Sheets URL from environment variable
+      const GOOGLE_SHEETS_URL = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_URL || '';
+
+      if (!GOOGLE_SHEETS_URL) {
+        setSubmitError('Contact form is not configured. Please try again later.')
+        setIsSubmitting(false)
+        return
+      }
+
+      // Parse the name to get first and last name
+      const nameParts = formData.name.trim().split(' ')
+      const firstName = nameParts[0] || ''
+      const lastName = nameParts.slice(1).join(' ') || ''
+
+      // Prepare submission data for Google Sheets
+      const submissionData = {
+        timestamp: new Date().toISOString(),
+        type: formData.subject || 'contact',
+        serviceType: formData.subject || 'general',
+        firstName: firstName,
+        lastName: lastName,
+        email: formData.email,
+        phone: formData.phone || 'Not provided',
+        company: formData.company || 'Not provided',
+        message: formData.message,
+        integrations: 'None selected',
+        preferredContact: 'email',
+        newsletter: false
+      }
+
+      // Send data to Google Sheets
+      await fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
+        mode: 'no-cors'
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit form')
-      }
+      // With no-cors mode, we assume success if no exception was thrown
 
       // Success - reset form and show success message
       setIsSubmitted(true)
