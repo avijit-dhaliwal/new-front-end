@@ -87,7 +87,7 @@ export default function ContactPage() {
         firstName: firstName,
         lastName: lastName,
         email: formData.email,
-        phone: formData.phone || 'Not provided',
+        phone: 'Not provided',
         company: formData.company || 'Not provided',
         message: formData.message,
         integrations: 'None selected',
