@@ -1,1 +1,4 @@
-{}
+{
+  "/chadis/page": "app/chadis/page.js",
+  "/page": "app/page.js"
+}
