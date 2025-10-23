@@ -1,47 +1,59 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import { useInView } from 'framer-motion'
-import { useRef } from 'react'
-import { ArrowLeft, Users, Target, Award, Globe, Zap, Shield, Heart } from 'lucide-react'
-import Link from 'next/link'
-import NavBar from '@/components/NavBar'
-import AnimatedBackground from '@/components/AnimatedBackground'
-import Footer from '@/components/Footer'
+import { motion } from "framer-motion";
+import { useInView } from "framer-motion";
+import { useRef } from "react";
+import {
+  ArrowLeft,
+  Users,
+  Target,
+  Award,
+  Globe,
+  Zap,
+  Shield,
+  Heart,
+} from "lucide-react";
+import Link from "next/link";
+import NavBar from "@/components/NavBar";
+import AnimatedBackground from "@/components/AnimatedBackground";
+import Footer from "@/components/Footer";
 
 const values = [
   {
     icon: <Zap className="w-8 h-8 text-accent-500" />,
     title: "Innovation",
-    description: "We push the boundaries of what's possible with AI, constantly exploring new technologies and methodologies."
+    description:
+      "We push the boundaries of what's possible with AI, constantly exploring new technologies and methodologies.",
   },
   {
     icon: <Shield className="w-8 h-8 text-accent-500" />,
     title: "Trust",
-    description: "Security and reliability are at the core of everything we build. Your data and success are our top priorities."
+    description:
+      "Security and reliability are at the core of everything we build. Your data and success are our top priorities.",
   },
   {
     icon: <Users className="w-8 h-8 text-accent-500" />,
     title: "Collaboration",
-    description: "We believe in the power of working together, both within our team and with our clients to achieve extraordinary results."
+    description:
+      "We believe in the power of working together, both within our team and with our clients to achieve extraordinary results.",
   },
   {
     icon: <Heart className="w-8 h-8 text-accent-500" />,
     title: "Empathy",
-    description: "We understand the challenges businesses face and design solutions that truly make a difference in people's lives."
-  }
-]
-
+    description:
+      "We understand the challenges businesses face and design solutions that truly make a difference in people's lives.",
+  },
+];
 
 export default function AboutPage() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-50px" })
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   return (
     <main className="min-h-screen bg-white">
       <AnimatedBackground />
       <NavBar />
-      
+
       <div className="pt-20">
         {/* Back Button */}
         <motion.div
@@ -50,7 +62,10 @@ export default function AboutPage() {
           transition={{ duration: 0.6 }}
           className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
         >
-          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-200">
+          <Link
+            href="/"
+            className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-200"
+          >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Home
           </Link>
@@ -67,9 +82,10 @@ export default function AboutPage() {
             About Koby AI
           </h1>
           <p className="text-xl text-gray-600 leading-relaxed">
-            We're on a mission to democratize artificial intelligence and make it accessible 
-            to businesses of all sizes. Founded by AI researchers and engineers, we believe 
-            that every company should have access to cutting-edge AI technology.
+            We're on a mission to democratize artificial intelligence and make
+            it accessible to businesses of all sizes. Founded by AI researchers
+            and engineers, we believe that every company should have access to
+            cutting-edge AI technology.
           </p>
         </motion.div>
 
@@ -81,11 +97,11 @@ export default function AboutPage() {
           transition={{
             duration: 0.8,
             delay: 0.2,
-            ease: [0.43, 0.13, 0.23, 0.96]
+            ease: [0.43, 0.13, 0.23, 0.96],
           }}
           style={{
             transform: "translateZ(0)",
-            willChange: "transform, opacity"
+            willChange: "transform, opacity",
           }}
           className="bg-gray-50 py-16"
         >
@@ -96,32 +112,30 @@ export default function AboutPage() {
                   Our Mission
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-6">
-                  To empower businesses with intelligent AI solutions that drive growth, 
-                  efficiency, and innovation. We believe that artificial intelligence should 
-                  be a force for good, helping companies achieve their goals while creating 
-                  better experiences for their customers.
+                  To empower businesses with intelligent AI solutions that drive
+                  growth, efficiency, and innovation. We believe that artificial
+                  intelligence should be a force for good, helping companies
+                  achieve their goals while creating better experiences for
+                  their customers.
                 </p>
                 <p className="text-gray-600 leading-relaxed">
-                  Our platform combines the latest advances in machine learning with 
-                  user-friendly interfaces, making it easy for any business to harness 
-                  the power of AI without needing a team of data scientists.
+                  Our platform combines the latest advances in machine learning
+                  with user-friendly interfaces, making it easy for any business
+                  to harness the power of AI without needing a team of data
+                  scientists.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="bg-white rounded-xl p-6 shadow-lg text-center">
-                  <div className="text-3xl font-bold text-accent-500 mb-2">50K+</div>
-                  <div className="text-gray-600">Active Users</div>
-                </div>
-                <div className="bg-white rounded-xl p-6 shadow-lg text-center">
-                  <div className="text-3xl font-bold text-accent-500 mb-2">150+</div>
-                  <div className="text-gray-600">Countries</div>
-                </div>
-                <div className="bg-white rounded-xl p-6 shadow-lg text-center">
-                  <div className="text-3xl font-bold text-accent-500 mb-2">99.9%</div>
+                  <div className="text-3xl font-bold text-accent-500 mb-2">
+                    99.9%
+                  </div>
                   <div className="text-gray-600">Uptime</div>
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-lg text-center">
-                  <div className="text-3xl font-bold text-accent-500 mb-2">5/5</div>
+                  <div className="text-3xl font-bold text-accent-500 mb-2">
+                    5/5
+                  </div>
                   <div className="text-gray-600">Rating</div>
                 </div>
               </div>
@@ -137,11 +151,11 @@ export default function AboutPage() {
           transition={{
             duration: 0.8,
             delay: 0.4,
-            ease: [0.43, 0.13, 0.23, 0.96]
+            ease: [0.43, 0.13, 0.23, 0.96],
           }}
           style={{
             transform: "translateZ(0)",
-            willChange: "transform, opacity"
+            willChange: "transform, opacity",
           }}
           className="py-16"
         >
@@ -151,7 +165,8 @@ export default function AboutPage() {
                 Our Values
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                These core principles guide everything we do and shape how we build products and serve our customers.
+                These core principles guide everything we do and shape how we
+                build products and serve our customers.
               </p>
             </div>
 
@@ -165,19 +180,19 @@ export default function AboutPage() {
                   transition={{
                     duration: 0.6,
                     delay: 0.1 * index,
-                    ease: [0.43, 0.13, 0.23, 0.96]
+                    ease: [0.43, 0.13, 0.23, 0.96],
                   }}
                   whileHover={{
                     y: -5,
                     transition: {
                       type: "spring",
                       stiffness: 400,
-                      damping: 17
-                    }
+                      damping: 17,
+                    },
                   }}
                   style={{
                     transform: "translateZ(0)",
-                    willChange: "transform, opacity"
+                    willChange: "transform, opacity",
                   }}
                   className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl"
                 >
@@ -186,7 +201,9 @@ export default function AboutPage() {
                       {value.icon}
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-800 mb-2">{value.title}</h3>
+                      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                        {value.title}
+                      </h3>
                       <p className="text-gray-600">{value.description}</p>
                     </div>
                   </div>
@@ -196,8 +213,6 @@ export default function AboutPage() {
           </div>
         </motion.div>
 
-
-
         {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -206,11 +221,11 @@ export default function AboutPage() {
           transition={{
             duration: 0.8,
             delay: 1.0,
-            ease: [0.43, 0.13, 0.23, 0.96]
+            ease: [0.43, 0.13, 0.23, 0.96],
           }}
           style={{
             transform: "translateZ(0)",
-            willChange: "transform, opacity"
+            willChange: "transform, opacity",
           }}
           className="bg-accent-500 py-16"
         >
@@ -229,12 +244,12 @@ export default function AboutPage() {
                     transition: {
                       type: "spring",
                       stiffness: 400,
-                      damping: 17
-                    }
+                      damping: 17,
+                    },
                   }}
                   whileTap={{ scale: 0.95 }}
                   style={{
-                    transform: "translateZ(0)"
+                    transform: "translateZ(0)",
                   }}
                   className="bg-white text-accent-500 font-semibold py-3 px-8 rounded-xl hover:bg-gray-100"
                 >
@@ -248,12 +263,12 @@ export default function AboutPage() {
                     transition: {
                       type: "spring",
                       stiffness: 400,
-                      damping: 17
-                    }
+                      damping: 17,
+                    },
                   }}
                   whileTap={{ scale: 0.95 }}
                   style={{
-                    transform: "translateZ(0)"
+                    transform: "translateZ(0)",
                   }}
                   className="border-2 border-white text-white font-semibold py-3 px-8 rounded-xl hover:bg-white hover:text-accent-500"
                 >
@@ -267,5 +282,5 @@ export default function AboutPage() {
 
       <Footer />
     </main>
-  )
+  );
 }

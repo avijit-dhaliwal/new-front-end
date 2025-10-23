@@ -19,7 +19,10 @@ export default function SimplePricingSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+          style={{
+            transform: "translateZ(0)",
+            willChange: "transform, opacity",
+          }}
           className="text-center mb-16"
         >
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-6 font-display">
@@ -35,8 +38,15 @@ export default function SimplePricingSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+          transition={{
+            duration: 0.8,
+            delay: 0.2,
+            ease: [0.43, 0.13, 0.23, 0.96],
+          }}
+          style={{
+            transform: "translateZ(0)",
+            willChange: "transform, opacity",
+          }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {/* AI Chatbot Plan */}
@@ -44,7 +54,7 @@ export default function SimplePricingSection() {
             whileHover={{
               y: -8,
               scale: 1.02,
-              transition: { type: "spring", stiffness: 400, damping: 17 }
+              transition: { type: "spring", stiffness: 400, damping: 17 },
             }}
             style={{ transform: "translateZ(0)", willChange: "transform" }}
             className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl flex flex-col"
@@ -57,7 +67,8 @@ export default function SimplePricingSection() {
                 AI Chatbot
               </h3>
               <div className="text-3xl font-bold text-gray-800 mb-2">
-                $50<span className="text-lg text-gray-600">/month</span>
+                Starting at $50
+                <span className="text-lg text-gray-600">/month</span>
               </div>
               <p className="text-gray-600 text-sm">
                 Customer support & lead generation
@@ -93,7 +104,7 @@ export default function SimplePricingSection() {
             whileHover={{
               y: -8,
               scale: 1.02,
-              transition: { type: "spring", stiffness: 400, damping: 17 }
+              transition: { type: "spring", stiffness: 400, damping: 17 },
             }}
             style={{ transform: "translateZ(0)", willChange: "transform" }}
             className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl flex flex-col"
@@ -106,7 +117,8 @@ export default function SimplePricingSection() {
                 AI Phone Service
               </h3>
               <div className="text-3xl font-bold text-gray-800 mb-2">
-                $400<span className="text-lg text-gray-600">/month</span>
+                Starting at $400
+                <span className="text-lg text-gray-600">/month</span>
               </div>
               <p className="text-gray-600 text-sm">
                 Professional AI virtual receptionist
@@ -142,7 +154,7 @@ export default function SimplePricingSection() {
             whileHover={{
               y: -8,
               scale: 1.02,
-              transition: { type: "spring", stiffness: 400, damping: 17 }
+              transition: { type: "spring", stiffness: 400, damping: 17 },
             }}
             style={{ transform: "translateZ(0)", willChange: "transform" }}
             className="bg-white rounded-2xl p-6 shadow-lg border-2 border-accent-500 orange-glow relative flex flex-col"
@@ -160,7 +172,8 @@ export default function SimplePricingSection() {
                 Bundle Pack
               </h3>
               <div className="text-3xl font-bold text-gray-800 mb-2">
-                $425<span className="text-lg text-gray-600">/month</span>
+                Starting at $425
+                <span className="text-lg text-gray-600">/month</span>
               </div>
               <p className="text-gray-600 text-sm">
                 AI Chatbot + Phone Service
@@ -196,7 +209,7 @@ export default function SimplePricingSection() {
             whileHover={{
               y: -8,
               scale: 1.02,
-              transition: { type: "spring", stiffness: 400, damping: 17 }
+              transition: { type: "spring", stiffness: 400, damping: 17 },
             }}
             style={{ transform: "translateZ(0)", willChange: "transform" }}
             className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl flex flex-col"
