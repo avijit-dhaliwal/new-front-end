@@ -50,9 +50,45 @@ Payment due within 30 days.`
     setError('')
   }
 
+  const extractInvoiceDataRegex = (text: string) => {
+    const supplierMatch = text.match(/(?:From:|Company:)\s*(.+?)(?:\n|$)/i) ||
+                         text.match(/([A-Z][A-Za-z\s&]+(?:Supply|Materials|Co\.|Inc\.|LLC))/i)
+    const supplier = supplierMatch ? supplierMatch[1].trim() : 'Not found'
+
+    const invoiceNumMatch = text.match(/(?:Invoice\s*#|Invoice\s*Number:?)\s*([A-Z0-9-]+)/i)
+    const invoiceNumber = invoiceNumMatch ? invoiceNumMatch[1].trim() : 'Not found'
+
+    const projectMatch = text.match(/(?:Project:|Bill To:)\s*(.+?)(?:\n|$)/i) ||
+                        text.match(/(\d+\s+[A-Za-z\s]+(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd)(?:\s+[A-Za-z\s]+)?)/i)
+    const project = projectMatch ? projectMatch[1].trim() : 'Not found'
+
+    const totalMatch = text.match(/(?:TOTAL|Total Cost|Grand Total|Amount Due):\s*\$?([0-9,]+\.?\d*)/i)
+    const subtotalMatch = text.match(/(?:Subtotal|Sub-total):\s*\$?([0-9,]+\.?\d*)/i)
+
+    let materialCost = 0
+    if (totalMatch) {
+      materialCost = parseFloat(totalMatch[1].replace(/,/g, ''))
+    } else if (subtotalMatch) {
+      materialCost = parseFloat(subtotalMatch[1].replace(/,/g, ''))
+    }
+
+    return {
+      supplier,
+      invoiceNumber,
+      project,
+      materialCost
+    }
+  }
+
   const handleExtract = async () => {
     if (!invoiceText.trim()) {
       setError('Please paste an invoice or load the sample')
+      return
+    }
+
+    const MAX_LENGTH = 100000
+    if (invoiceText.length > MAX_LENGTH) {
+      setError(`Input too large. Please limit to ${MAX_LENGTH.toLocaleString()} characters.`)
       return
     }
 
@@ -60,21 +96,54 @@ Payment due within 30 days.`
     setError('')
 
     try {
-      const response = await fetch('/api/extract-invoice', {
+      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyDEMNvjgZmfx3I1c-UmbJv7rM_xJm7QZKY', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ invoiceText })
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `Extract the following information from this invoice and return ONLY a valid JSON object with no additional text or markdown:
+
+Invoice text:
+${invoiceText.substring(0, 30000)}
+
+Return JSON with these exact fields:
+{
+  "supplier": "company name",
+  "invoiceNumber": "invoice number",
+  "project": "project name or address",
+  "materialCost": total cost as number
+}
+
+If any field cannot be found, use "Not found" for strings or 0 for materialCost.`
+            }]
+          }]
+        })
       })
 
-      const data = await response.json()
-
-      if (data.error) {
-        setError(data.error)
-      } else {
-        setExtractedData(data)
+      if (!response.ok) {
+        throw new Error('AI extraction failed')
       }
+
+      const result = await response.json()
+      const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text || ''
+
+      const jsonMatch = textResponse.match(/\{[\s\S]*?\}/)
+      if (!jsonMatch) {
+        throw new Error('Could not parse AI response')
+      }
+
+      const extractedData = JSON.parse(jsonMatch[0])
+
+      if (extractedData.materialCost && typeof extractedData.materialCost === 'string') {
+        extractedData.materialCost = parseFloat(extractedData.materialCost.replace(/[^0-9.]/g, ''))
+      }
+
+      setExtractedData(extractedData)
     } catch (err) {
-      setError('Failed to extract data. Please try again.')
+      console.warn('AI extraction failed, falling back to regex:', err)
+      const data = extractInvoiceDataRegex(invoiceText)
+      setExtractedData(data)
     } finally {
       setIsProcessing(false)
     }
