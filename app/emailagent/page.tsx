@@ -96,7 +96,7 @@ Payment due within 30 days.`
     setError('')
 
     try {
-      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyDEMNvjgZmfx3I1c-UmbJv7rM_xJm7QZKY', {
+      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyDEMNvjgZmfx3I1c-UmbJv7rM_xJm7QZKY', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
