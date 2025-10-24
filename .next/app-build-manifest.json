@@ -1,110 +1,252 @@
 {
   "pages": {
+    "/_not-found/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/app/_not-found/page-edef0fcd75f21114.js"
+    ],
+    "/api/extract-invoice/route": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/app/api/extract-invoice/route-4b6ed0af51a83302.js"
+    ],
     "/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/layout.css",
-      "static/chunks/app/layout.js"
-    ],
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
-    ],
-    "/ai-suites/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/ai-suites/page.js"
-    ],
-    "/about/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/about/page.js"
-    ],
-    "/chatbot/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/chatbot/page.js"
-    ],
-    "/articles/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/page.js"
-    ],
-    "/phone-service/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/phone-service/page.js"
-    ],
-    "/contact/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/contact/page.js"
-    ],
-    "/articles/ai-ml-business-applications/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-ml-business-applications/page.js"
-    ],
-    "/articles/digital-transformation-roadmap/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/digital-transformation-roadmap/page.js"
-    ],
-    "/articles/devops-implementation-guide/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/devops-implementation-guide/page.js"
-    ],
-    "/articles/remote-work-technology-solutions/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/remote-work-technology-solutions/page.js"
-    ],
-    "/articles/how-ai-is-changing-legal-practice/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/how-ai-is-changing-legal-practice/page.js"
-    ],
-    "/articles/data-backup-disaster-recovery/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/data-backup-disaster-recovery/page.js"
-    ],
-    "/articles/ai-is-transforming-healthcare/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-is-transforming-healthcare/page.js"
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/css/9ad68bea3d4be988.css",
+      "static/chunks/app/layout-9b08b9b587114e6d.js"
     ],
     "/articles/ai-is-changing-property-management/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-is-changing-property-management/page.js"
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/ai-is-changing-property-management/page-6672da8193ecc888.js"
     ],
-    "/articles/contractors-are-winning-more-jobs/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/contractors-are-winning-more-jobs/page.js"
+    "/about/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/about/page-8dd33a0deb87a33b.js"
     ],
-    "/articles/how-ai-is-changing-restaurants/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/how-ai-is-changing-restaurants/page.js"
+    "/articles/ai-enhanced-cybersecurity/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/ai-enhanced-cybersecurity/page-78d2690c96ee32a2.js"
+    ],
+    "/ai-suites/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/ai-suites/page-354d58f420e3dc5b.js"
+    ],
+    "/articles/ai-powered-cloud-computing/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/ai-powered-cloud-computing/page-db76d21c43141368.js"
+    ],
+    "/articles/ai-ml-business-applications/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/ai-ml-business-applications/page-494dc32d55b11512.js"
+    ],
+    "/articles/ai-is-transforming-healthcare/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/ai-is-transforming-healthcare/page-73958209e9ec9b65.js"
     ],
     "/articles/ai-is-transforming-retail/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-is-transforming-retail/page.js"
-    ],
-    "/articles/how-ai-is-transforming-travel/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/how-ai-is-transforming-travel/page.js"
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/ai-is-transforming-retail/page-1c98d256943c8dfb.js"
     ],
     "/articles/ai-transforming-automotive/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-transforming-automotive/page.js"
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/ai-transforming-automotive/page-1482de129c468e1b.js"
+    ],
+    "/articles/data-backup-disaster-recovery/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/data-backup-disaster-recovery/page-016688b8312bc667.js"
+    ],
+    "/articles/contractors-are-winning-more-jobs/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/contractors-are-winning-more-jobs/page-ec9f2cb85a624b15.js"
+    ],
+    "/articles/devops-implementation-guide/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/devops-implementation-guide/page-33e91053e73d7ad2.js"
+    ],
+    "/articles/how-ai-is-changing-legal-practice/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/how-ai-is-changing-legal-practice/page-155e629deffc11aa.js"
+    ],
+    "/articles/how-ai-is-changing-restaurants/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/how-ai-is-changing-restaurants/page-fc7de8231188ca1e.js"
+    ],
+    "/articles/how-ai-is-transforming-travel/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/how-ai-is-transforming-travel/page-8f9aa9d2345f1b95.js"
+    ],
+    "/articles/remote-work-technology-solutions/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/remote-work-technology-solutions/page-48d8cd3c44027467.js"
+    ],
+    "/articles/digital-transformation-roadmap/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/digital-transformation-roadmap/page-f1d5ee6d7c759aa6.js"
+    ],
+    "/articles/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/page-1a8d4d0c26d3b75c.js"
+    ],
+    "/chadis/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/32-e53d89d5681dc845.js",
+      "static/chunks/app/chadis/page-bd0e1edd94e31ab8.js"
+    ],
+    "/articles/it-infrastructure-modernization/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/articles/it-infrastructure-modernization/page-2698b46639a4340b.js"
+    ],
+    "/checkout/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/checkout/page-122ba75ef0be4d71.js"
+    ],
+    "/chatbot/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/chatbot/page-6a18d1dbda7f7d4f.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/104-e77aaa8533851e2e.js",
+      "static/chunks/app/page-709a10f57a745e2a.js"
+    ],
+    "/contact/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/contact/page-5faa6b8da67b351f.js"
+    ],
+    "/schedule-meeting/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/schedule-meeting/page-7fae53e34effa65b.js"
+    ],
+    "/phone-service/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/phone-service/page-664974a3f4ac533b.js"
+    ],
+    "/emailagent/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/emailagent/page-34cd9abfa1a3260e.js"
+    ],
+    "/get-started/page": [
+      "static/chunks/webpack-a7f1c73fab4e0e55.js",
+      "static/chunks/4bd1b696-1027b49fe66a5a61.js",
+      "static/chunks/684-d223519da1da0606.js",
+      "static/chunks/main-app-999233e6bd31c97f.js",
+      "static/chunks/532-31f6c0696ad4a300.js",
+      "static/chunks/app/get-started/page-f9a45548ae11ccaa.js"
     ]
   }
 }
