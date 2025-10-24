@@ -8,6 +8,13 @@ import Link from 'next/link'
 import NavBar from '@/components/NavBar'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import Footer from '@/components/Footer'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 const contactInfo = [
   {
@@ -65,49 +72,27 @@ export default function ContactPage() {
     setSubmitError('')
 
     try {
-      // Get Google Sheets URL from environment variable
-      const GOOGLE_SHEETS_URL = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_URL || '';
-
-      if (!GOOGLE_SHEETS_URL) {
-        setSubmitError('Contact form is not configured. Please try again later.')
-        setIsSubmitting(false)
-        return
-      }
-
-      // Parse the name to get first and last name
-      const nameParts = formData.name.trim().split(' ')
-      const firstName = nameParts[0] || ''
-      const lastName = nameParts.slice(1).join(' ') || ''
-
-      // Prepare submission data for Google Sheets
       const submissionData = {
-        timestamp: new Date().toISOString(),
-        type: formData.subject || 'contact',
-        serviceType: formData.subject || 'general',
-        firstName: firstName,
-        lastName: lastName,
+        name: formData.name,
         email: formData.email,
-        phone: 'Not provided',
         company: formData.company || 'Not provided',
+        subject: formData.subject,
         message: formData.message,
-        integrations: 'None selected',
-        preferredContact: 'email',
-        newsletter: false
+        timestamp: new Date().toISOString()
       }
 
-      // Send data to Google Sheets
-      await fetch(GOOGLE_SHEETS_URL, {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(submissionData),
-        mode: 'no-cors'
       })
 
-      // With no-cors mode, we assume success if no exception was thrown
+      if (!response.ok) {
+        throw new Error('Failed to submit form')
+      }
 
-      // Success - reset form and show success message
       setIsSubmitted(true)
       setFormData({
         name: '',
@@ -117,7 +102,6 @@ export default function ContactPage() {
         message: ''
       })
 
-      // Hide success message after 5 seconds
       setTimeout(() => {
         setIsSubmitted(false)
       }, 5000)
@@ -133,7 +117,7 @@ export default function ContactPage() {
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -316,22 +300,23 @@ export default function ContactPage() {
                     <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
                       Subject *
                     </label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      required
+                    <Select
                       value={formData.subject}
-                      onChange={handleChange}
+                      onValueChange={(value) => setFormData({ ...formData, subject: value })}
                       disabled={isSubmitting}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent  disabled:opacity-50 disabled:cursor-not-allowed"
+                      required
                     >
-                      <option value="">Select a subject</option>
-                      <option value="general">General Inquiry</option>
-                      <option value="sales">Sales Question</option>
-                      <option value="support">Technical Support</option>
-                      <option value="partnership">Partnership</option>
-                      <option value="custom">Custom Solution</option>
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a subject" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="general">General Inquiry</SelectItem>
+                        <SelectItem value="sales">Sales Question</SelectItem>
+                        <SelectItem value="support">Technical Support</SelectItem>
+                        <SelectItem value="partnership">Partnership</SelectItem>
+                        <SelectItem value="custom">Custom Solution</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
