@@ -19,7 +19,7 @@ const articles = [
     readTime: "8 min read",
     publishDate: "Sep 2025",
     author: "Koby AI Team",
-    image: "/api/placeholder/400/250",
+    image: "/images/test.jpg",
     featured: true,
     slug: "ai-powered-cloud-computing",
   },
@@ -113,6 +113,116 @@ const articles = [
     image: "/api/placeholder/400/250",
     featured: false,
     slug: "it-infrastructure-modernization",
+  },
+  {
+    id: 9,
+    title: "The New Brief Partner: How AI is Changing Legal Practice",
+    excerpt:
+      "AI is rapidly transforming legal practice by automating research, document review, and administrative tasks allowing law firms to operate more efficiently and focus more of their time on achieving better outcomes for clients.",
+    category: "Legal",
+    readTime: "10 min read",
+    publishDate: "Oct 2025",
+    author: "N/A",
+    image: "/api/placeholder/400/250",
+    featured: false,
+    slug: "how-ai-is-changing-legal-practice",
+  },
+  {
+    id: 10,
+    title: "Smarter Care, Stronger Outcomes: How AI Is Transforming Healthcare",
+    excerpt:
+      "AI is already transforming healthcare by improving diagnostic accuracy, reducing administrative burden, and enabling clinicians to focus more time on patients for better outcomes.",
+    category: "Healthcare",
+    readTime: "10 min read",
+    publishDate: "Oct 2025",
+    author: "N/A",
+    image: "/api/placeholder/400/250",
+    featured: false,
+    slug: "ai-is-transforming-healthcare",
+  },
+  {
+    id: 11,
+    title:
+      "Smarter Properties, Happier Tenants: How AI Is Changing Property Management",
+    excerpt:
+      "AI is transforming property management by automating tenant communication, predicting maintenance needs, and improving operational efficiency to deliver better experiences and stronger financial results.",
+    category: "Property Management",
+    readTime: "10 min read",
+    publishDate: "Oct 2025",
+    author: "N/A",
+    image: "/api/placeholder/400/250",
+    featured: false,
+    slug: "ai-is-changing-property-management",
+  },
+  {
+    id: 12,
+    title:
+      "AI for Home Services: How Contractors Are Winning More Jobs and Serving Customers Better",
+    excerpt:
+      "AI is helping home service contractors win more jobs, respond faster, and operate more efficiently by automating customer communication, scheduling, and paperwork.",
+    category: "Contractors",
+    readTime: "10 min read",
+    publishDate: "Oct 2025",
+    author: "N/A",
+    image: "/api/placeholder/400/250",
+    featured: false,
+    slug: "contractors-are-winning-more-jobs",
+  },
+  {
+    id: 13,
+    title:
+      "Smarter Dining, Seamless Service: How AI Is Changing Restaurants and Food Service",
+    excerpt:
+      "AI is transforming restaurants and food service by automating guest communication, optimizing operations, and boosting revenue delivering smoother service and better dining experiences.",
+    category: "Restaurants",
+    readTime: "10 min read",
+    publishDate: "Oct 2025",
+    author: "N/A",
+    image: "/api/placeholder/400/250",
+    featured: false,
+    slug: "how-ai-is-changing-restaurants",
+  },
+  {
+    id: 14,
+    title:
+      "Smarter Shopping, Stronger Businesses: How AI Is Transforming Retail and E Commerce",
+    excerpt:
+      "AI is helping retail and e-commerce businesses deliver faster service, personalized shopping, and more efficient operations driving stronger customer experiences and growth.",
+    category: "Retail/Ecommerce",
+    readTime: "10 min read",
+    publishDate: "Oct 2025",
+    author: "N/A",
+    image: "/api/placeholder/400/250",
+    featured: false,
+    slug: "ai-is-transforming-retail",
+  },
+  {
+    id: 15,
+    title:
+      "Seamless Journeys, Smarter Service: How AI Is Transforming Travel and Hospitality",
+    excerpt:
+      "AI is transforming travel and hospitality by delivering faster guest support, smarter booking automation, and personalized experiences helping businesses run efficiently while elevating service.",
+    category: "Travel/Hospitality",
+    readTime: "10 min read",
+    publishDate: "Oct 2025",
+    author: "N/A",
+    image: "/api/placeholder/400/250",
+    featured: false,
+    slug: "how-ai-is-transforming-travel",
+  },
+  {
+    id: 16,
+    title:
+      "Driving Smarter Service: How AI Is Transforming Automotive Sales and Repair",
+    excerpt:
+      "AI is helping automotive dealerships and service centers deliver faster, more reliable customer experiences by automating calls, scheduling, follow-ups, and back-office work—capturing more revenue with less effort.",
+    category: "Auto",
+    readTime: "10 min read",
+    publishDate: "Oct 2025",
+    author: "N/A",
+    image: "/api/placeholder/400/250",
+    featured: false,
+    slug: "ai-transforming-automotive",
   },
 ];
 
