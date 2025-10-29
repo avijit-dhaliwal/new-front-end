@@ -245,44 +245,49 @@ export default function AIPropertyManagementArticle() {
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             Where Koby AI Fits In
           </h2>
-          <p className="text-gray-600 mb-8">
-            Off-the-shelf tools provide value, but the greatest impact comes
-            from custom AI solutions tailored to your operations. Koby AI builds
-            automations that integrate seamlessly with your systems, from tenant
-            assistants to lease automation and predictive maintenance.
-          </p>
-          <p className="text-gray-600 mb-8">
-            Every property portfolio is unique, so AI should be too. Koby AI
-            reduces manual workloads, captures revenue opportunities, and
-            enhances tenant experiences across leasing, maintenance, finance,
-            and communications.
-          </p>
-
+          <div className="bg-gray-50 rounded-2xl p-6 mb-2 border border-gray-200">
+            <p className="text-gray-600 mb-8">
+              Off-the-shelf tools provide value, but the greatest impact comes
+              from custom AI solutions tailored to your operations. Koby AI
+              builds automations that integrate seamlessly with your systems,
+              from tenant assistants to lease automation and predictive
+              maintenance.
+            </p>
+            <p className="text-gray-600 mb-8">
+              Every property portfolio is unique, so AI should be too. Koby AI
+              reduces manual workloads, captures revenue opportunities, and
+              enhances tenant experiences across leasing, maintenance, finance,
+              and communications.
+            </p>
+          </div>
           {/* Looking Ahead */}
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             The Future of Property Management
           </h2>
-          <div className="space-y-4">
-            <p className="text-gray-600">
-              AI will become a cornerstone of property management. Tenants will
-              expect instant communication, maintenance will be predictive, and
-              managers will rely on AI for operational decisions.
-            </p>
-            <p className="text-gray-600">
-              Firms that embrace AI today will enjoy long-term advantages:
-              higher tenant retention, stronger financial performance, and
-              reduced operational stress.
-            </p>
-            <p className="text-gray-600">
-              AI is not replacing the human touch in property management; it
-              amplifies it. Managers become more responsive, efficient, and
-              capable of creating communities where tenants feel valued.
-            </p>
-            <p className="text-gray-600">
-              In a competitive real estate market, AI gives firms the edge that
-              separates good property management from exceptional property
-              management.
-            </p>
+          <div className="bg-gray-50 rounded-2xl p-6 mb-2 border border-gray-200">
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                AI will become a cornerstone of property management. Tenants
+                will expect instant communication, maintenance will be
+                predictive, and managers will rely on AI for operational
+                decisions.
+              </p>
+              <p className="text-gray-600">
+                Firms that embrace AI today will enjoy long-term advantages:
+                higher tenant retention, stronger financial performance, and
+                reduced operational stress.
+              </p>
+              <p className="text-gray-600">
+                AI is not replacing the human touch in property management; it
+                amplifies it. Managers become more responsive, efficient, and
+                capable of creating communities where tenants feel valued.
+              </p>
+              <p className="text-gray-600">
+                In a competitive real estate market, AI gives firms the edge
+                that separates good property management from exceptional
+                property management.
+              </p>
+            </div>
           </div>
         </div>
       </div>

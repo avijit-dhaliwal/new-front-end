@@ -8,6 +8,7 @@ import {
   CreditCard,
   Clipboard,
   Zap,
+  CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
 import NavBar from "@/components/NavBar";
@@ -54,7 +55,7 @@ export default function AIAutomotiveArticle() {
               Automotive & AI
             </span>
             <span>•</span>
-            <span>10 min read</span>
+            <span>7 min read</span>
             <span>•</span>
             <span>Published Oct 2025</span>
           </div>
@@ -213,36 +214,47 @@ export default function AIAutomotiveArticle() {
             Koby AI delivers practical, customized solutions for automotive
             businesses, including:
           </p>
-          <ul className="list-disc list-inside text-gray-600 mb-8 space-y-2">
-            <li>
-              24/7 AI receptionists answering calls, chats, and booking
-              appointments.
-            </li>
-            <li>
-              Automated scheduling systems with confirmations and reminders.
-            </li>
-            <li>Personalized follow up campaigns for sales and service.</li>
-            <li>
-              Back office automations processing invoices, reports, and warranty
-              claims.
-            </li>
-          </ul>
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <ul className="list-disc list-inside text-gray-600 mb-8 space-y-2">
+              <li className="flex items-center">
+                <CheckCircle className="w-6 h-6 text-green-500 mr-3" />
+                24/7 AI receptionists answering calls, chats, and booking
+                appointments.
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="w-6 h-6 text-green-500 mr-3" />
+                Automated scheduling systems with confirmations and reminders.
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="w-6 h-6 text-green-500 mr-3" />
+                Personalized follow up campaigns for sales and service.
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="w-6 h-6 text-green-500 mr-3" />
+                Back office automations processing invoices, reports, and
+                warranty claims.
+              </li>
+            </ul>
+          </div>
 
           {/* Road Ahead */}
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             The Road Ahead
           </h2>
           <div className="space-y-4">
-            <p className="text-gray-600">
-              AI is no longer optional in automotive sales and service.
-              Businesses adopting AI save staff time, build stronger customer
-              relationships, and capture revenue that would otherwise slip away.
-            </p>
-            <p className="text-gray-600">
-              The future of the industry is smarter operations powered by AI and
-              delivered with a human touch. Every call answered, every
-              appointment confirmed, and every interaction seamless.
-            </p>
+            <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+              <p className="text-gray-600">
+                AI is no longer optional in automotive sales and service.
+                Businesses adopting AI save staff time, build stronger customer
+                relationships, and capture revenue that would otherwise slip
+                away.
+              </p>
+              <p className="text-gray-600">
+                The future of the industry is smarter operations powered by AI
+                and delivered with a human touch. Every call answered, every
+                appointment confirmed, and every interaction seamless.
+              </p>
+            </div>
           </div>
         </div>
       </div>

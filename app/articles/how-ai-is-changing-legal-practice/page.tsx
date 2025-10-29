@@ -48,7 +48,7 @@ export default function LegalAIArticle() {
             <span>•</span>
             <span>10 min read</span>
             <span>•</span>
-            <span>Published n/a</span>
+            <span>Published Oct 2025</span>
           </div>
         </motion.div>
 

@@ -78,20 +78,22 @@ export default function AIHealthcareArticle() {
           <h2 className="text-3xl font-bold text-gray-800 mb-4">
             From Buzzword to Bedside
           </h2>
-          <p className="text-gray-600 mb-4">
-            Not long ago, AI in medicine sounded like science fiction. Now it is
-            quietly woven into daily workflows. Hospitals are using AI to
-            analyze imaging scans in seconds, alert teams to patients at risk of
-            sepsis, and even transcribe clinical notes during appointments.
-            Reports show that AI tools are achieving accuracy comparable to
-            medical experts in diagnostics, while also reducing burnout by
-            taking over routine administrative work.
-          </p>
-          <p className="text-gray-600 mb-8">
-            The technology is not replacing doctors, but supporting them. AI
-            augments human intelligence, freeing clinicians from clerical
-            burdens so they can spend more time in direct patient care.
-          </p>
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <p className="text-gray-600 mb-4">
+              Not long ago, AI in medicine sounded like science fiction. Now it
+              is quietly woven into daily workflows. Hospitals are using AI to
+              analyze imaging scans in seconds, alert teams to patients at risk
+              of sepsis, and even transcribe clinical notes during appointments.
+              Reports show that AI tools are achieving accuracy comparable to
+              medical experts in diagnostics, while also reducing burnout by
+              taking over routine administrative work.
+            </p>
+            <p className="text-gray-600 mb-8">
+              The technology is not replacing doctors, but supporting them. AI
+              augments human intelligence, freeing clinicians from clerical
+              burdens so they can spend more time in direct patient care.
+            </p>
+          </div>
 
           {/* Real Benefits in Practice */}
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
@@ -203,69 +205,78 @@ export default function AIHealthcareArticle() {
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             Beyond the Hospital Walls
           </h2>
-          <p className="text-gray-600 mb-8">
-            AI is transforming administrative operations in dentistry,
-            veterinary medicine, and outpatient clinics. Scheduling assistants,
-            AI-powered phone systems, and billing platforms reduce errors,
-            ensure appointments aren’t missed, and optimize revenue capture.
-            Clinicians also gain instant access to updated medical knowledge for
-            faster, evidence-based treatment.
-          </p>
-
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <p className="text-gray-600 mb-8">
+              AI is transforming administrative operations in dentistry,
+              veterinary medicine, and outpatient clinics. Scheduling
+              assistants, AI-powered phone systems, and billing platforms reduce
+              errors, ensure appointments aren’t missed, and optimize revenue
+              capture. Clinicians also gain instant access to updated medical
+              knowledge for faster, evidence-based treatment.
+            </p>
+          </div>
           {/* Dentistry and Veterinary */}
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             Dentistry and Veterinary Medicine
           </h2>
-          <p className="text-gray-600 mb-8">
-            Dentists use AI to review X-rays for cavities, infections, or bone
-            loss. Veterinary clinics detect dozens of dental pathologies in cats
-            and dogs. AI-generated visual reports improve communication with
-            owners and informed consent. AI-powered practice management tools
-            automate calls and bookings, freeing staff to focus on patients and
-            animals.
-          </p>
-
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <p className="text-gray-600 mb-8">
+              Dentists use AI to review X-rays for cavities, infections, or bone
+              loss. Veterinary clinics detect dozens of dental pathologies in
+              cats and dogs. AI-generated visual reports improve communication
+              with owners and informed consent. AI-powered practice management
+              tools automate calls and bookings, freeing staff to focus on
+              patients and animals.
+            </p>
+          </div>
           {/* Koby AI */}
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             Where Koby AI Fits In
           </h2>
-          <p className="text-gray-600 mb-8">
-            Koby AI builds custom automations that integrate seamlessly with
-            healthcare workflows. From scheduling assistants to claims review
-            and clinical documentation, these tools enhance efficiency without
-            imposing rigid systems. By embedding AI thoughtfully, organizations
-            can improve operational performance and patient care simultaneously.
-          </p>
-
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <p className="text-gray-600 mb-8">
+              Koby AI builds custom automations that integrate seamlessly with
+              healthcare workflows. From scheduling assistants to claims review
+              and clinical documentation, these tools enhance efficiency without
+              imposing rigid systems. By embedding AI thoughtfully,
+              organizations can improve operational performance and patient care
+              simultaneously.
+            </p>
+          </div>
           {/* Looking Ahead */}
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             Looking Ahead
           </h2>
-          <div className="space-y-4">
-            <p className="text-gray-600">
-              Artificial intelligence is not a cure-all, but it is proving to be
-              a powerful tool. From hospitals to dental offices to veterinary
-              clinics, AI delivers measurable value: faster diagnoses, lower
-              costs, increased revenue, and improved patient experiences.
-            </p>
-            <p className="text-gray-600">
-              The future of healthcare will not be defined by humans or machines
-              alone, but by collaboration. Doctors, dentists, and veterinarians
-              who integrate AI tools gain more time, better data, and stronger
-              patient relationships.
-            </p>
-            <p className="text-gray-600">
-              Off-the-shelf tools provide some value, but every healthcare
-              organization has unique workflows, data systems, and patient
-              populations. Custom solutions from Koby AI ensure that automations
-              strengthen existing practices rather than forcing rigid processes.
-            </p>
-            <p className="text-gray-600">
-              By embedding AI into daily operations in ways that make sense for
-              the team, organizations can improve efficiency, expand capacity,
-              and deliver better care without disrupting workflows. Those who
-              embrace AI today will set the new standard of care tomorrow.
-            </p>
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                Artificial intelligence is not a cure-all, but it is proving to
+                be a powerful tool. From hospitals to dental offices to
+                veterinary clinics, AI delivers measurable value: faster
+                diagnoses, lower costs, increased revenue, and improved patient
+                experiences.
+              </p>
+              <p className="text-gray-600">
+                The future of healthcare will not be defined by humans or
+                machines alone, but by collaboration. Doctors, dentists, and
+                veterinarians who integrate AI tools gain more time, better
+                data, and stronger patient relationships.
+              </p>
+              <p className="text-gray-600">
+                Off-the-shelf tools provide some value, but every healthcare
+                organization has unique workflows, data systems, and patient
+                populations. Custom solutions from Koby AI ensure that
+                automations strengthen existing practices rather than forcing
+                rigid processes.
+              </p>
+              <p className="text-gray-600">
+                By embedding AI into daily operations in ways that make sense
+                for the team, organizations can improve efficiency, expand
+                capacity, and deliver better care without disrupting workflows.
+                Those who embrace AI today will set the new standard of care
+                tomorrow.
+              </p>
+            </div>
           </div>
         </div>
       </div>

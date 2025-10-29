@@ -11,15 +11,55 @@
       "static/chunks/main-app.js",
       "static/chunks/app/page.js"
     ],
-    "/emailagent/page": [
+    "/articles/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/emailagent/page.js"
+      "static/chunks/app/articles/page.js"
     ],
-    "/_not-found/page": [
+    "/articles/how-ai-is-changing-legal-practice/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+      "static/chunks/app/articles/how-ai-is-changing-legal-practice/page.js"
+    ],
+    "/articles/ai-is-transforming-healthcare/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/ai-is-transforming-healthcare/page.js"
+    ],
+    "/articles/ai-is-changing-property-management/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/ai-is-changing-property-management/page.js"
+    ],
+    "/articles/contractors-are-winning-more-jobs/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/contractors-are-winning-more-jobs/page.js"
+    ],
+    "/articles/how-ai-is-changing-restaurants/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/how-ai-is-changing-restaurants/page.js"
+    ],
+    "/articles/ai-is-transforming-retail/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/ai-is-transforming-retail/page.js"
+    ],
+    "/articles/ai-ml-business-applications/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/ai-ml-business-applications/page.js"
+    ],
+    "/articles/how-ai-is-transforming-travel/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/how-ai-is-transforming-travel/page.js"
+    ],
+    "/articles/ai-transforming-automotive/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/ai-transforming-automotive/page.js"
     ]
   }
 }

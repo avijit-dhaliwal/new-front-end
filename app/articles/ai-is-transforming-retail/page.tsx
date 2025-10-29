@@ -9,6 +9,7 @@ import {
   Zap,
   Clipboard,
   CreditCard,
+  CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
 import NavBar from "@/components/NavBar";
@@ -55,7 +56,7 @@ export default function AIRetailArticle() {
               Retail & AI
             </span>
             <span>•</span>
-            <span>10 min read</span>
+            <span>8 min read</span>
             <span>•</span>
             <span>Published Oct 2025</span>
           </div>
@@ -214,45 +215,55 @@ export default function AIRetailArticle() {
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             Where Koby AI Fits In
           </h2>
-          <p className="text-gray-600 mb-6">
-            Koby AI designs custom automations that fit each business workflow.
-            This can include:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 mb-8 space-y-2">
-            <li>
-              24/7 AI receptionists handling calls, chats, or website messages
-              instantly.
-            </li>
-            <li>
-              Intelligent booking assistants that manage reservations and
-              appointments automatically.
-            </li>
-            <li>
-              Automated marketing campaigns tailored to customer behavior.
-            </li>
-            <li>
-              Back office automations for invoices, reporting, and returns with
-              minimal oversight.
-            </li>
-          </ul>
-
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <p className="text-gray-600 mb-6">
+              Koby AI designs custom automations that fit each business
+              workflow. This can include:
+            </p>
+            <ul className="list-disc list-inside text-gray-600 mb-8 space-y-2">
+              <li className="flex items-center">
+                <CheckCircle className="w-8 h-8 text-green-500 mr-3" />
+                24/7 AI receptionists handling calls, chats, or website messages
+                instantly.
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="w-8 h-8 text-green-500 mr-3" />
+                Intelligent booking assistants that manage reservations and
+                appointments automatically.
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="w-8 h-8 text-green-500 mr-3" />
+                Automated marketing campaigns tailored to customer behavior.
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="w-8 h-8 text-green-500 mr-3" />
+                Back office automations for invoices, reporting, and returns
+                with minimal oversight.
+              </li>
+            </ul>
+          </div>
           {/* Future of Retail */}
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             The Future of Retail and E-Commerce
           </h2>
-          <div className="space-y-4">
-            <p className="text-gray-600">
-              AI amplifies the human touch, letting staff focus on creativity,
-              strategy, and personal service while automating repetitive tasks.
-            </p>
-            <p className="text-gray-600">
-              Companies adopting AI today respond faster, market more
-              effectively, and operate efficiently, gaining a competitive edge.
-            </p>
-            <p className="text-gray-600">
-              With the right partner, AI becomes not just a tool for efficiency
-              but a driver of growth and stronger customer relationships.
-            </p>
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                AI amplifies the human touch, letting staff focus on creativity,
+                strategy, and personal service while automating repetitive
+                tasks.
+              </p>
+              <p className="text-gray-600">
+                Companies adopting AI today respond faster, market more
+                effectively, and operate efficiently, gaining a competitive
+                edge.
+              </p>
+              <p className="text-gray-600">
+                With the right partner, AI becomes not just a tool for
+                efficiency but a driver of growth and stronger customer
+                relationships.
+              </p>
+            </div>
           </div>
         </div>
       </div>

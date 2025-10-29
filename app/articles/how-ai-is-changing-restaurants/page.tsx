@@ -57,7 +57,7 @@ export default function AIRestaurantsArticle() {
               Restaurants & AI
             </span>
             <span>•</span>
-            <span>10 min read</span>
+            <span>8 min read</span>
             <span>•</span>
             <span>Published Oct 2025</span>
           </div>
@@ -216,37 +216,42 @@ export default function AIRestaurantsArticle() {
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             Where Koby AI Fits In
           </h2>
-          <p className="text-gray-600 mb-8">
-            Many restaurants and catering companies need AI solutions tailored
-            to their workflows. Koby AI provides custom phone reception,
-            chatbots, and back-end automations for scheduling, inventory, and
-            reporting. This reduces manual work while enhancing service quality.
-          </p>
-          <p className="text-gray-600 mb-8">
-            Koby tailors AI tools to fine dining venues, fast casual chains, and
-            catering companies, ensuring technology feels like part of the team,
-            not a burden.
-          </p>
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <p className="text-gray-600 mb-8">
+              Many restaurants and catering companies need AI solutions tailored
+              to their workflows. Koby AI provides custom phone reception,
+              chatbots, and back-end automations for scheduling, inventory, and
+              reporting. This reduces manual work while enhancing service
+              quality.
+            </p>
+            <p className="text-gray-600 mb-8">
+              Koby tailors AI tools to fine dining venues, fast casual chains,
+              and catering companies, ensuring technology feels like part of the
+              team, not a burden.
+            </p>
+          </div>
 
           {/* Future of Dining */}
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             The Future of Dining Is Smarter
           </h2>
-          <div className="space-y-4">
-            <p className="text-gray-600">
-              Restaurants adopting AI today gain a competitive edge, meeting
-              guest expectations for instant answers, seamless service, and
-              personalized experiences.
-            </p>
-            <p className="text-gray-600">
-              AI frees staff from repetitive tasks and provides data-driven
-              insights, allowing them to focus on creating memorable dining
-              experiences.
-            </p>
-            <p className="text-gray-600">
-              Hospitality leaders embracing AI now will set the standard for
-              restaurants and catering in the future.
-            </p>
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                Restaurants adopting AI today gain a competitive edge, meeting
+                guest expectations for instant answers, seamless service, and
+                personalized experiences.
+              </p>
+              <p className="text-gray-600">
+                AI frees staff from repetitive tasks and provides data-driven
+                insights, allowing them to focus on creating memorable dining
+                experiences.
+              </p>
+              <p className="text-gray-600">
+                Hospitality leaders embracing AI now will set the standard for
+                restaurants and catering in the future.
+              </p>
+            </div>
           </div>
         </div>
       </div>

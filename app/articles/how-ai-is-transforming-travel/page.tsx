@@ -8,6 +8,7 @@ import {
   CreditCard,
   Clipboard,
   Zap,
+  CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
 import NavBar from "@/components/NavBar";
@@ -54,7 +55,7 @@ export default function AITravelArticle() {
               Travel & AI
             </span>
             <span>•</span>
-            <span>10 min read</span>
+            <span>9 min read</span>
             <span>•</span>
             <span>Published Oct 2025</span>
           </div>
@@ -213,48 +214,56 @@ export default function AITravelArticle() {
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             Where Koby AI Fits In
           </h2>
-          <p className="text-gray-600 mb-6">
-            Koby AI builds custom solutions for travel and hospitality brands of
-            all sizes, including:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 mb-8 space-y-2">
-            <li>
-              24/7 AI receptionists managing calls, chats, and booking
-              inquiries.
-            </li>
-            <li>
-              Automated reservation management with confirmations,
-              cancellations, or modifications.
-            </li>
-            <li>
-              Personalized marketing campaigns re-engaging past guests or
-              upselling add-ons.
-            </li>
-            <li>
-              Back office automations for invoicing, reporting, and refunds.
-            </li>
-          </ul>
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <p className="text-gray-600 mb-6">
+              Koby AI builds custom solutions for travel and hospitality brands
+              of all sizes, including:
+            </p>
+            <ul className="list-disc list-inside text-gray-600 mb-8 space-y-2">
+              <li className="flex items-center">
+                <CheckCircle className="w-6 h-6 text-green-500 mr-3" />
+                24/7 AI receptionists managing calls, chats, and booking
+                inquiries.
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="w-6 h-6 text-green-500 mr-3" />
+                Automated reservation management with confirmations,
+                cancellations, or modifications.
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="w-6 h-6 text-green-500 mr-3" />
+                Personalized marketing campaigns re-engaging past guests or
+                upselling add-ons.
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="w-6 h-6 text-green-500 mr-3" />
+                Back office automations for invoicing, reporting, and refunds.
+              </li>
+            </ul>
+          </div>
 
           {/* Future of Travel */}
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             The Future of Travel and Hospitality
           </h2>
-          <div className="space-y-4">
-            <p className="text-gray-600">
-              AI frees staff from repetitive tasks, letting them focus on
-              welcoming guests, solving problems, and delivering memorable
-              experiences.
-            </p>
-            <p className="text-gray-600">
-              Travel and hospitality businesses that adopt AI today operate more
-              efficiently, engage guests personally, and turn inquiries into
-              bookings faster.
-            </p>
-            <p className="text-gray-600">
-              With Koby AI, organizations can implement practical, secure, and
-              workflow-aligned AI, creating seamless journeys powered by
-              technology and delivered with a human touch.
-            </p>
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                AI frees staff from repetitive tasks, letting them focus on
+                welcoming guests, solving problems, and delivering memorable
+                experiences.
+              </p>
+              <p className="text-gray-600">
+                Travel and hospitality businesses that adopt AI today operate
+                more efficiently, engage guests personally, and turn inquiries
+                into bookings faster.
+              </p>
+              <p className="text-gray-600">
+                With Koby AI, organizations can implement practical, secure, and
+                workflow-aligned AI, creating seamless journeys powered by
+                technology and delivered with a human touch.
+              </p>
+            </div>
           </div>
         </div>
       </div>

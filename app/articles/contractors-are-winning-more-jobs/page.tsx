@@ -56,7 +56,7 @@ export default function AIHomeServicesArticle() {
               Home Services & AI
             </span>
             <span>•</span>
-            <span>10 min read</span>
+            <span>9 min read</span>
             <span>•</span>
             <span>Published Oct 2025</span>
           </div>
@@ -243,40 +243,43 @@ export default function AIHomeServicesArticle() {
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             Where Koby AI Fits In
           </h2>
-          <p className="text-gray-600 mb-8">
-            Generic tools provide automation, but every contractor’s workflow is
-            different. Koby AI builds custom automations for your business, from
-            AI assistants gathering trade-specific details to scheduling tools
-            integrated with calendars and dispatch systems.
-          </p>
-          <p className="text-gray-600 mb-8">
-            AI solutions reduce missed calls, paperwork, and coordination
-            problems without disrupting daily operations. Small businesses free
-            up owners from admin tasks, while larger firms scale efficiently
-            without added overhead.
-          </p>
-
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <p className="text-gray-600 mb-8">
+              Generic tools provide automation, but every contractor’s workflow
+              is different. Koby AI builds custom automations for your business,
+              from AI assistants gathering trade-specific details to scheduling
+              tools integrated with calendars and dispatch systems.
+            </p>
+            <p className="text-gray-600 mb-8">
+              AI solutions reduce missed calls, paperwork, and coordination
+              problems without disrupting daily operations. Small businesses
+              free up owners from admin tasks, while larger firms scale
+              efficiently without added overhead.
+            </p>
+          </div>
           {/* Future of Trades */}
           <h2 className="text-3xl font-bold text-gray-800 mb-8">
             The Future of Trades Runs on AI
           </h2>
-          <div className="space-y-4">
-            <p className="text-gray-600">
-              Skilled tradespeople remain irreplaceable, but AI ensures they can
-              focus on their craft instead of distractions. Contractors using AI
-              book jobs faster, optimize routes, predict needs, and maintain
-              steady cash flow.
-            </p>
-            <p className="text-gray-600">
-              AI enhances the human element in home services, helping
-              tradespeople do more of what they do best while meeting modern
-              customer expectations.
-            </p>
-            <p className="text-gray-600">
-              Contractors embracing AI today are positioning themselves to lead
-              their markets tomorrow, staying ahead of competitors and
-              delivering superior service.
-            </p>
+          <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                Skilled tradespeople remain irreplaceable, but AI ensures they
+                can focus on their craft instead of distractions. Contractors
+                using AI book jobs faster, optimize routes, predict needs, and
+                maintain steady cash flow.
+              </p>
+              <p className="text-gray-600">
+                AI enhances the human element in home services, helping
+                tradespeople do more of what they do best while meeting modern
+                customer expectations.
+              </p>
+              <p className="text-gray-600">
+                Contractors embracing AI today are positioning themselves to
+                lead their markets tomorrow, staying ahead of competitors and
+                delivering superior service.
+              </p>
+            </div>
           </div>
         </div>
       </div>
