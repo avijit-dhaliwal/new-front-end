@@ -1,18 +1,29 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import { ArrowLeft, Brain, TrendingUp, BarChart3, Target, Zap, Users, Shield, CheckCircle } from 'lucide-react'
-import Link from 'next/link'
-import NavBar from '@/components/NavBar'
-import AnimatedBackground from '@/components/AnimatedBackground'
-import Footer from '@/components/Footer'
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Brain,
+  TrendingUp,
+  BarChart3,
+  Target,
+  Zap,
+  Users,
+  Shield,
+  CheckCircle,
+} from "lucide-react";
+import Link from "next/link";
+import NavBar from "@/components/NavBar";
+import AnimatedBackground from "@/components/AnimatedBackground";
+import Footer from "@/components/Footer";
+import article_image_3 from "../images/article_3.jpg";
 
 export default function AIMLArticle() {
   return (
     <main className="min-h-screen bg-white">
       <AnimatedBackground />
       <NavBar />
-      
+
       <div className="pt-20">
         {/* Back Button */}
         <motion.div
@@ -21,7 +32,10 @@ export default function AIMLArticle() {
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto px-6 sm:px-8 py-8"
         >
-          <Link href="/articles" className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-100">
+          <Link
+            href="/articles"
+            className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-100"
+          >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Articles
           </Link>
@@ -62,16 +76,25 @@ export default function AIMLArticle() {
             {/* Introduction */}
             <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
               <p className="text-xl text-gray-700 leading-relaxed mb-4">
-                Artificial Intelligence and Machine Learning are transforming businesses across all industries. These technologies enable organizations to automate processes, gain insights from data, and create innovative products and services.
+                Artificial Intelligence and Machine Learning are transforming
+                businesses across all industries. These technologies enable
+                organizations to automate processes, gain insights from data,
+                and create innovative products and services.
               </p>
               <p className="text-lg text-gray-600">
-                Discover practical applications of artificial intelligence and machine learning that can transform your business operations and drive innovation.
+                Discover practical applications of artificial intelligence and
+                machine learning that can transform your business operations and
+                drive innovation.
               </p>
             </div>
 
+            <img src={article_image_3.src} alt="image_3" className="mb-5" />
+
             {/* Understanding AI and Machine Learning */}
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Understanding AI and Machine Learning</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">
+                Understanding AI and Machine Learning
+              </h2>
               <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
@@ -80,7 +103,10 @@ export default function AIMLArticle() {
                       Artificial Intelligence (AI)
                     </h3>
                     <p className="text-gray-600 mb-4">
-                      AI refers to computer systems that can perform tasks typically requiring human intelligence, such as visual perception, speech recognition, decision-making, and language translation.
+                      AI refers to computer systems that can perform tasks
+                      typically requiring human intelligence, such as visual
+                      perception, speech recognition, decision-making, and
+                      language translation.
                     </p>
                     <ul className="space-y-2 text-gray-600">
                       <li className="flex items-center">
@@ -103,7 +129,9 @@ export default function AIMLArticle() {
                       Machine Learning (ML)
                     </h3>
                     <p className="text-gray-600 mb-4">
-                      ML is a subset of AI that enables systems to automatically learn and improve from experience without being explicitly programmed.
+                      ML is a subset of AI that enables systems to automatically
+                      learn and improve from experience without being explicitly
+                      programmed.
                     </p>
                     <ul className="space-y-2 text-gray-600">
                       <li className="flex items-center">
@@ -126,45 +154,63 @@ export default function AIMLArticle() {
 
             {/* Key Business Applications */}
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-8">Key Business Applications</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-8">
+                Key Business Applications
+              </h2>
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                   <div className="flex items-center mb-4">
                     <Users className="w-8 h-8 text-blue-500 mr-3" />
-                    <h3 className="text-xl font-semibold text-gray-800">Customer Service Automation</h3>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Customer Service Automation
+                    </h3>
                   </div>
                   <p className="text-gray-600 mb-4">
-                    AI-powered chatbots and virtual assistants can handle customer inquiries 24/7, providing instant responses and freeing up human agents for complex issues.
+                    AI-powered chatbots and virtual assistants can handle
+                    customer inquiries 24/7, providing instant responses and
+                    freeing up human agents for complex issues.
                   </p>
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                   <div className="flex items-center mb-4">
                     <BarChart3 className="w-8 h-8 text-green-500 mr-3" />
-                    <h3 className="text-xl font-semibold text-gray-800">Predictive Analytics</h3>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Predictive Analytics
+                    </h3>
                   </div>
                   <p className="text-gray-600 mb-4">
-                    Machine learning models analyze historical data to predict future trends, helping businesses make informed decisions about inventory, pricing, and market strategies.
+                    Machine learning models analyze historical data to predict
+                    future trends, helping businesses make informed decisions
+                    about inventory, pricing, and market strategies.
                   </p>
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                   <div className="flex items-center mb-4">
                     <Zap className="w-8 h-8 text-yellow-500 mr-3" />
-                    <h3 className="text-xl font-semibold text-gray-800">Process Automation</h3>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Process Automation
+                    </h3>
                   </div>
                   <p className="text-gray-600 mb-4">
-                    Robotic Process Automation (RPA) combined with AI can automate repetitive tasks, reducing errors and improving efficiency across operations.
+                    Robotic Process Automation (RPA) combined with AI can
+                    automate repetitive tasks, reducing errors and improving
+                    efficiency across operations.
                   </p>
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                   <div className="flex items-center mb-4">
                     <Target className="w-8 h-8 text-purple-500 mr-3" />
-                    <h3 className="text-xl font-semibold text-gray-800">Personalization</h3>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Personalization
+                    </h3>
                   </div>
                   <p className="text-gray-600 mb-4">
-                    AI algorithms analyze customer behavior to deliver personalized experiences, recommendations, and marketing messages that increase engagement and sales.
+                    AI algorithms analyze customer behavior to deliver
+                    personalized experiences, recommendations, and marketing
+                    messages that increase engagement and sales.
                   </p>
                 </div>
               </div>
@@ -172,10 +218,14 @@ export default function AIMLArticle() {
 
             {/* Industry-Specific Applications */}
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-8">Industry-Specific Applications</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-8">
+                Industry-Specific Applications
+              </h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Healthcare</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    Healthcare
+                  </h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -197,7 +247,9 @@ export default function AIMLArticle() {
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Finance</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    Finance
+                  </h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -219,7 +271,9 @@ export default function AIMLArticle() {
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Retail & E-commerce</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    Retail & E-commerce
+                  </h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -241,7 +295,9 @@ export default function AIMLArticle() {
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Manufacturing</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    Manufacturing
+                  </h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -263,7 +319,9 @@ export default function AIMLArticle() {
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Marketing</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    Marketing
+                  </h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -285,7 +343,9 @@ export default function AIMLArticle() {
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Human Resources</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    Human Resources
+                  </h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -310,56 +370,106 @@ export default function AIMLArticle() {
 
             {/* Implementation Strategy */}
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-8">Implementation Strategy</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-8">
+                Implementation Strategy
+              </h2>
               <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
                 <div className="space-y-6">
                   <div className="flex items-start">
-                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">1</div>
+                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">
+                      1
+                    </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Identify Use Cases</h3>
-                      <p className="text-gray-600">Start with specific business problems that AI can solve effectively.</p>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                        Identify Use Cases
+                      </h3>
+                      <p className="text-gray-600">
+                        Start with specific business problems that AI can solve
+                        effectively.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">2</div>
+                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">
+                      2
+                    </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Assess Data Readiness</h3>
-                      <p className="text-gray-600">Ensure you have quality data to train and deploy AI models.</p>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                        Assess Data Readiness
+                      </h3>
+                      <p className="text-gray-600">
+                        Ensure you have quality data to train and deploy AI
+                        models.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">3</div>
+                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">
+                      3
+                    </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Start Small</h3>
-                      <p className="text-gray-600">Begin with pilot projects to demonstrate value and build expertise.</p>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                        Start Small
+                      </h3>
+                      <p className="text-gray-600">
+                        Begin with pilot projects to demonstrate value and build
+                        expertise.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">4</div>
+                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">
+                      4
+                    </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Build or Buy</h3>
-                      <p className="text-gray-600">Decide whether to develop custom solutions or use existing platforms.</p>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                        Build or Buy
+                      </h3>
+                      <p className="text-gray-600">
+                        Decide whether to develop custom solutions or use
+                        existing platforms.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">5</div>
+                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">
+                      5
+                    </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Train Your Team</h3>
-                      <p className="text-gray-600">Invest in upskilling employees to work with AI technologies.</p>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                        Train Your Team
+                      </h3>
+                      <p className="text-gray-600">
+                        Invest in upskilling employees to work with AI
+                        technologies.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">6</div>
+                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">
+                      6
+                    </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Measure Impact</h3>
-                      <p className="text-gray-600">Track KPIs to quantify the business value of AI initiatives.</p>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                        Measure Impact
+                      </h3>
+                      <p className="text-gray-600">
+                        Track KPIs to quantify the business value of AI
+                        initiatives.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">7</div>
+                    <div className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold mr-4 flex-shrink-0">
+                      7
+                    </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Scale Gradually</h3>
-                      <p className="text-gray-600">Expand successful pilots across the organization.</p>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                        Scale Gradually
+                      </h3>
+                      <p className="text-gray-600">
+                        Expand successful pilots across the organization.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -368,12 +478,21 @@ export default function AIMLArticle() {
 
             {/* Conclusion */}
             <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Conclusion</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">
+                Conclusion
+              </h2>
               <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                AI and Machine Learning are powerful tools that can transform your business operations and drive significant growth. By understanding the applications, choosing the right use cases, and implementing strategically, businesses can unlock new opportunities and stay competitive in today's digital landscape.
+                AI and Machine Learning are powerful tools that can transform
+                your business operations and drive significant growth. By
+                understanding the applications, choosing the right use cases,
+                and implementing strategically, businesses can unlock new
+                opportunities and stay competitive in today's digital landscape.
               </p>
               <p className="text-lg text-gray-600">
-                The key to success is starting with clear objectives, ensuring data quality, and gradually scaling your AI/ML initiatives. With the right approach, these technologies can deliver measurable results and provide a sustainable competitive advantage.
+                The key to success is starting with clear objectives, ensuring
+                data quality, and gradually scaling your AI/ML initiatives. With
+                the right approach, these technologies can deliver measurable
+                results and provide a sustainable competitive advantage.
               </p>
             </div>
           </div>
@@ -382,5 +501,5 @@ export default function AIMLArticle() {
 
       <Footer />
     </main>
-  )
+  );
 }

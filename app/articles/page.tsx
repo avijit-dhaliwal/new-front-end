@@ -8,6 +8,22 @@ import Link from "next/link";
 import NavBar from "@/components/NavBar";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import Footer from "@/components/Footer";
+import image_article_1 from "./images/article_1.jpg";
+import image_article_2 from "./images/article_2.jpg";
+import image_article_3 from "./images/article_3.jpg";
+import image_article_4 from "./images/article_4.jpg";
+import image_article_5 from "./images/article_5.jpg";
+import image_article_6 from "./images/article_6.jpg";
+import image_article_7 from "./images/article_7.jpg";
+import image_article_8 from "./images/article_8.jpg";
+import image_article_9 from "./images/article_9.jpg";
+import image_article_10 from "./images/article_10.jpg";
+import image_article_11 from "./images/article_11.jpg";
+import image_article_12 from "./images/article_12.jpg";
+import image_article_13 from "./images/article_13.jpg";
+import image_article_14 from "./images/article_14.jpg";
+import image_article_15 from "./images/article_15.jpg";
+import image_article_16 from "./images/article_16.jpg";
 
 const articles = [
   {
@@ -19,7 +35,7 @@ const articles = [
     readTime: "8 min read",
     publishDate: "Sep 2025",
     author: "Koby AI Team",
-    image: "/images/test.jpg",
+    image: image_article_1,
     featured: true,
     slug: "ai-powered-cloud-computing",
   },
@@ -32,7 +48,7 @@ const articles = [
     readTime: "10 min read",
     publishDate: "Sep 2025",
     author: "Security AI Expert",
-    image: "/api/placeholder/400/250",
+    image: image_article_2,
     featured: false,
     slug: "ai-enhanced-cybersecurity",
   },
@@ -45,7 +61,7 @@ const articles = [
     readTime: "12 min read",
     publishDate: "Sep 2025",
     author: "AI Specialist",
-    image: "/api/placeholder/400/250",
+    image: image_article_3,
     featured: false,
     slug: "ai-ml-business-applications",
   },
@@ -58,7 +74,7 @@ const articles = [
     readTime: "15 min read",
     publishDate: "Sep 2025",
     author: "Digital AI Strategy Team",
-    image: "/api/placeholder/400/250",
+    image: image_article_4,
     featured: false,
     slug: "digital-transformation-roadmap",
   },
@@ -71,7 +87,7 @@ const articles = [
     readTime: "9 min read",
     publishDate: "Sep 2025",
     author: "DevOps Engineer",
-    image: "/api/placeholder/400/250",
+    image: image_article_5,
     featured: false,
     slug: "devops-implementation-guide",
   },
@@ -84,7 +100,7 @@ const articles = [
     readTime: "11 min read",
     publishDate: "Sep 2025",
     author: "Infrastructure Team",
-    image: "/api/placeholder/400/250",
+    image: image_article_6,
     featured: false,
     slug: "data-backup-disaster-recovery",
   },
@@ -97,7 +113,7 @@ const articles = [
     readTime: "7 min read",
     publishDate: "Sep 2025",
     author: "Workplace Technology Expert",
-    image: "/api/placeholder/400/250",
+    image: image_article_7,
     featured: false,
     slug: "remote-work-technology-solutions",
   },
@@ -110,7 +126,7 @@ const articles = [
     readTime: "13 min read",
     publishDate: "Sep 2025",
     author: "Infrastructure Architect",
-    image: "/api/placeholder/400/250",
+    image: image_article_8,
     featured: false,
     slug: "it-infrastructure-modernization",
   },
@@ -123,7 +139,7 @@ const articles = [
     readTime: "10 min read",
     publishDate: "Oct 2025",
     author: "The Sales Team",
-    image: "/api/placeholder/400/250",
+    image: image_article_9,
     featured: false,
     slug: "how-ai-is-changing-legal-practice",
   },
@@ -136,7 +152,7 @@ const articles = [
     readTime: "12 min read",
     publishDate: "Oct 2025",
     author: "The Sales Team",
-    image: "/api/placeholder/400/250",
+    image: image_article_10,
     featured: false,
     slug: "ai-is-transforming-healthcare",
   },
@@ -150,7 +166,7 @@ const articles = [
     readTime: "10 min read",
     publishDate: "Oct 2025",
     author: "The Sales Team",
-    image: "/api/placeholder/400/250",
+    image: image_article_11,
     featured: false,
     slug: "ai-is-changing-property-management",
   },
@@ -164,7 +180,7 @@ const articles = [
     readTime: "9 min read",
     publishDate: "Oct 2025",
     author: "The Sales Team",
-    image: "/api/placeholder/400/250",
+    image: image_article_12,
     featured: false,
     slug: "contractors-are-winning-more-jobs",
   },
@@ -178,7 +194,7 @@ const articles = [
     readTime: "8 min read",
     publishDate: "Oct 2025",
     author: "The Sales Team",
-    image: "/api/placeholder/400/250",
+    image: image_article_13,
     featured: false,
     slug: "how-ai-is-changing-restaurants",
   },
@@ -192,7 +208,7 @@ const articles = [
     readTime: "8 min read",
     publishDate: "Oct 2025",
     author: "The Sales Team",
-    image: "/api/placeholder/400/250",
+    image: image_article_14,
     featured: false,
     slug: "ai-is-transforming-retail",
   },
@@ -206,7 +222,7 @@ const articles = [
     readTime: "9 min read",
     publishDate: "Oct 2025",
     author: "The Sales Team",
-    image: "/api/placeholder/400/250",
+    image: image_article_15,
     featured: false,
     slug: "how-ai-is-transforming-travel",
   },
@@ -220,7 +236,7 @@ const articles = [
     readTime: "7 min read",
     publishDate: "Oct 2025",
     author: "The Sales Team",
-    image: "/api/placeholder/400/250",
+    image: image_article_16,
     featured: false,
     slug: "ai-transforming-automotive",
   },
@@ -371,6 +387,7 @@ export default function ArticlesPage() {
               >
                 {/* Article Image */}
                 <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+                  <img src={article.image.src} alt="image" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="bg-accent-500 text-white px-3 py-1 rounded-full text-sm font-semibold">

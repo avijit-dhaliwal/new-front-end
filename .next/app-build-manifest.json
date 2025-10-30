@@ -16,50 +16,30 @@
       "static/chunks/main-app.js",
       "static/chunks/app/articles/page.js"
     ],
-    "/articles/how-ai-is-changing-legal-practice/page": [
+    "/articles/ai-powered-cloud-computing/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/articles/how-ai-is-changing-legal-practice/page.js"
-    ],
-    "/articles/ai-is-transforming-healthcare/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-is-transforming-healthcare/page.js"
-    ],
-    "/articles/ai-is-changing-property-management/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-is-changing-property-management/page.js"
-    ],
-    "/articles/contractors-are-winning-more-jobs/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/contractors-are-winning-more-jobs/page.js"
-    ],
-    "/articles/how-ai-is-changing-restaurants/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/how-ai-is-changing-restaurants/page.js"
-    ],
-    "/articles/ai-is-transforming-retail/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-is-transforming-retail/page.js"
+      "static/chunks/app/articles/ai-powered-cloud-computing/page.js"
     ],
     "/articles/ai-ml-business-applications/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/articles/ai-ml-business-applications/page.js"
     ],
-    "/articles/how-ai-is-transforming-travel/page": [
+    "/articles/ai-enhanced-cybersecurity/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/articles/how-ai-is-transforming-travel/page.js"
+      "static/chunks/app/articles/ai-enhanced-cybersecurity/page.js"
     ],
-    "/articles/ai-transforming-automotive/page": [
+    "/articles/digital-transformation-roadmap/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-transforming-automotive/page.js"
+      "static/chunks/app/articles/digital-transformation-roadmap/page.js"
+    ],
+    "/articles/devops-implementation-guide/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/devops-implementation-guide/page.js"
     ]
   }
 }
