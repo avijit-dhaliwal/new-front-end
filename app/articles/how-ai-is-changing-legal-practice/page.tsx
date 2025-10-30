@@ -6,6 +6,7 @@ import Link from "next/link";
 import NavBar from "@/components/NavBar";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import Footer from "@/components/Footer";
+import article_image_9 from "../images/article_9.jpg";
 
 export default function LegalAIArticle() {
   return (
@@ -59,6 +60,8 @@ export default function LegalAIArticle() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="max-w-4xl mx-auto px-6 sm:px-8 mb-16"
         >
+          <img src={article_image_9.src} alt="image_9" className="pb-6" />
+
           <div className="prose prose-lg max-w-none">
             {/* Introduction */}
             <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">

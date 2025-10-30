@@ -1,18 +1,27 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import { ArrowLeft, Home, Target, Zap, Users, CheckCircle, Shield } from 'lucide-react'
-import Link from 'next/link'
-import NavBar from '@/components/NavBar'
-import AnimatedBackground from '@/components/AnimatedBackground'
-import Footer from '@/components/Footer'
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Home,
+  Target,
+  Zap,
+  Users,
+  CheckCircle,
+  Shield,
+} from "lucide-react";
+import Link from "next/link";
+import NavBar from "@/components/NavBar";
+import AnimatedBackground from "@/components/AnimatedBackground";
+import Footer from "@/components/Footer";
+import article_image_7 from "../images/article_7.jpg";
 
 export default function RemoteWorkArticle() {
   return (
     <main className="min-h-screen bg-white">
       <AnimatedBackground />
       <NavBar />
-      
+
       <div className="pt-20">
         {/* Back Button */}
         <motion.div
@@ -21,7 +30,10 @@ export default function RemoteWorkArticle() {
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto px-6 sm:px-8 py-8"
         >
-          <Link href="/articles" className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-100">
+          <Link
+            href="/articles"
+            className="inline-flex items-center text-gray-600 hover:text-accent-500 transition-colors duration-100"
+          >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Articles
           </Link>
@@ -58,35 +70,53 @@ export default function RemoteWorkArticle() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="max-w-4xl mx-auto px-6 sm:px-8 mb-16"
         >
+          <img src={article_image_7.src} alt="image_7" className="pb-6" />
+
           <div className="prose prose-lg max-w-none">
             {/* Introduction */}
             <div className="bg-gray-50 rounded-2xl p-8 mb-8 border border-gray-200">
               <p className="text-xl text-gray-700 leading-relaxed mb-4">
-                Remote work has transformed from a temporary solution to a permanent fixture in the modern workplace. Success requires the right technology, processes, and culture to keep teams connected and productive.
+                Remote work has transformed from a temporary solution to a
+                permanent fixture in the modern workplace. Success requires the
+                right technology, processes, and culture to keep teams connected
+                and productive.
               </p>
               <p className="text-lg text-gray-600">
-                The shift to remote work has accelerated digital transformation across industries. Organizations that successfully enable remote work gain access to global talent, reduce overhead costs, and often see improved employee satisfaction and productivity.
+                The shift to remote work has accelerated digital transformation
+                across industries. Organizations that successfully enable remote
+                work gain access to global talent, reduce overhead costs, and
+                often see improved employee satisfaction and productivity.
               </p>
             </div>
 
             {/* The Remote Work Revolution */}
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">The Remote Work Revolution</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">
+                The Remote Work Revolution
+              </h2>
               <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
                 <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  However, effective remote work requires more than just sending employees home with laptops. It demands a comprehensive technology strategy that enables collaboration, maintains security, and preserves company culture across distributed teams.
+                  However, effective remote work requires more than just sending
+                  employees home with laptops. It demands a comprehensive
+                  technology strategy that enables collaboration, maintains
+                  security, and preserves company culture across distributed
+                  teams.
                 </p>
               </div>
             </div>
 
             {/* Essential Remote Work Technologies */}
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-8">Essential Remote Work Technologies</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-8">
+                Essential Remote Work Technologies
+              </h2>
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                   <div className="flex items-center mb-4">
                     <Users className="w-8 h-8 text-blue-500 mr-3" />
-                    <h3 className="text-xl font-semibold text-gray-800">Communication Tools</h3>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Communication Tools
+                    </h3>
                   </div>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
@@ -111,7 +141,9 @@ export default function RemoteWorkArticle() {
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                   <div className="flex items-center mb-4">
                     <Target className="w-8 h-8 text-green-500 mr-3" />
-                    <h3 className="text-xl font-semibold text-gray-800">Collaboration Platforms</h3>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Collaboration Platforms
+                    </h3>
                   </div>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
@@ -120,7 +152,8 @@ export default function RemoteWorkArticle() {
                     </li>
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                      Document Collaboration: Google Workspace, Microsoft 365, Dropbox
+                      Document Collaboration: Google Workspace, Microsoft 365,
+                      Dropbox
                     </li>
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -136,7 +169,9 @@ export default function RemoteWorkArticle() {
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                   <div className="flex items-center mb-4">
                     <Shield className="w-8 h-8 text-red-500 mr-3" />
-                    <h3 className="text-xl font-semibold text-gray-800">Security and Access</h3>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Security and Access
+                    </h3>
                   </div>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
@@ -145,7 +180,8 @@ export default function RemoteWorkArticle() {
                     </li>
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                      Zero Trust Security: Cloudflare Access, Zscaler, Palo Alto Prisma
+                      Zero Trust Security: Cloudflare Access, Zscaler, Palo Alto
+                      Prisma
                     </li>
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -161,7 +197,9 @@ export default function RemoteWorkArticle() {
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                   <div className="flex items-center mb-4">
                     <Zap className="w-8 h-8 text-purple-500 mr-3" />
-                    <h3 className="text-xl font-semibold text-gray-800">Employee Experience</h3>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Employee Experience
+                    </h3>
                   </div>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
@@ -178,7 +216,8 @@ export default function RemoteWorkArticle() {
                     </li>
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                      Learning Platforms: Udemy Business, LinkedIn Learning, Coursera
+                      Learning Platforms: Udemy Business, LinkedIn Learning,
+                      Coursera
                     </li>
                   </ul>
                 </div>
@@ -187,33 +226,53 @@ export default function RemoteWorkArticle() {
 
             {/* Building a Remote Work Infrastructure */}
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-8">Building a Remote Work Infrastructure</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-8">
+                Building a Remote Work Infrastructure
+              </h2>
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Network Requirements</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Network Requirements
+                  </h3>
                   <p className="text-gray-600 mb-4">
-                    Ensure employees have reliable internet connections with sufficient bandwidth for video calls and file transfers. Consider providing internet stipends or mobile hotspots for critical roles.
+                    Ensure employees have reliable internet connections with
+                    sufficient bandwidth for video calls and file transfers.
+                    Consider providing internet stipends or mobile hotspots for
+                    critical roles.
                   </p>
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Hardware Provisioning</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Hardware Provisioning
+                  </h3>
                   <p className="text-gray-600 mb-4">
-                    Standardize hardware configurations and establish processes for shipping, setup, and return of equipment. Include laptops, monitors, keyboards, mice, and ergonomic accessories.
+                    Standardize hardware configurations and establish processes
+                    for shipping, setup, and return of equipment. Include
+                    laptops, monitors, keyboards, mice, and ergonomic
+                    accessories.
                   </p>
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Software Licensing</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Software Licensing
+                  </h3>
                   <p className="text-gray-600 mb-4">
-                    Manage software licenses centrally and ensure all remote workers have access to necessary applications. Consider cloud-based solutions that don't require local installation.
+                    Manage software licenses centrally and ensure all remote
+                    workers have access to necessary applications. Consider
+                    cloud-based solutions that don't require local installation.
                   </p>
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">IT Support</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    IT Support
+                  </h3>
                   <p className="text-gray-600 mb-4">
-                    Establish remote support capabilities including help desk software, remote desktop tools, and self-service resources. Ensure support hours align with distributed team schedules.
+                    Establish remote support capabilities including help desk
+                    software, remote desktop tools, and self-service resources.
+                    Ensure support hours align with distributed team schedules.
                   </p>
                 </div>
               </div>
@@ -221,36 +280,56 @@ export default function RemoteWorkArticle() {
 
             {/* Security Best Practices */}
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-8">Security Best Practices</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-8">
+                Security Best Practices
+              </h2>
               <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div className="flex items-start">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-gray-800">Endpoint Security</h4>
-                        <p className="text-gray-600 text-sm">Deploy antivirus, firewall, and endpoint detection on all devices</p>
+                        <h4 className="font-semibold text-gray-800">
+                          Endpoint Security
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Deploy antivirus, firewall, and endpoint detection on
+                          all devices
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-gray-800">Data Encryption</h4>
-                        <p className="text-gray-600 text-sm">Encrypt data at rest and in transit</p>
+                        <h4 className="font-semibold text-gray-800">
+                          Data Encryption
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Encrypt data at rest and in transit
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-gray-800">Access Control</h4>
-                        <p className="text-gray-600 text-sm">Implement role-based access and principle of least privilege</p>
+                        <h4 className="font-semibold text-gray-800">
+                          Access Control
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Implement role-based access and principle of least
+                          privilege
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-gray-800">Regular Updates</h4>
-                        <p className="text-gray-600 text-sm">Automate OS and software updates</p>
+                        <h4 className="font-semibold text-gray-800">
+                          Regular Updates
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Automate OS and software updates
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -258,29 +337,45 @@ export default function RemoteWorkArticle() {
                     <div className="flex items-start">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-gray-800">Security Training</h4>
-                        <p className="text-gray-600 text-sm">Educate employees on phishing and social engineering</p>
+                        <h4 className="font-semibold text-gray-800">
+                          Security Training
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Educate employees on phishing and social engineering
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-gray-800">Secure Networks</h4>
-                        <p className="text-gray-600 text-sm">Use VPNs and secure Wi-Fi connections</p>
+                        <h4 className="font-semibold text-gray-800">
+                          Secure Networks
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Use VPNs and secure Wi-Fi connections
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-gray-800">Device Management</h4>
-                        <p className="text-gray-600 text-sm">Implement mobile device management (MDM) solutions</p>
+                        <h4 className="font-semibold text-gray-800">
+                          Device Management
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Implement mobile device management (MDM) solutions
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-gray-800">Incident Response</h4>
-                        <p className="text-gray-600 text-sm">Have clear procedures for security incidents</p>
+                        <h4 className="font-semibold text-gray-800">
+                          Incident Response
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Have clear procedures for security incidents
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -290,10 +385,14 @@ export default function RemoteWorkArticle() {
 
             {/* Managing Remote Teams */}
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-8">Managing Remote Teams</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-8">
+                Managing Remote Teams
+              </h2>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Performance Management</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                    Performance Management
+                  </h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -315,11 +414,14 @@ export default function RemoteWorkArticle() {
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Communication Strategies</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                    Communication Strategies
+                  </h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                      Overcommunicate to compensate for lack of casual interaction
+                      Overcommunicate to compensate for lack of casual
+                      interaction
                     </li>
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -327,7 +429,8 @@ export default function RemoteWorkArticle() {
                     </li>
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                      Establish communication protocols and response time expectations
+                      Establish communication protocols and response time
+                      expectations
                     </li>
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -337,7 +440,9 @@ export default function RemoteWorkArticle() {
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Work-Life Balance</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                    Work-Life Balance
+                  </h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex items-center">
                       <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
@@ -362,12 +467,21 @@ export default function RemoteWorkArticle() {
 
             {/* Conclusion */}
             <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Conclusion</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">
+                Conclusion
+              </h2>
               <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                Successful remote work requires thoughtful implementation of technology, processes, and culture. By investing in the right tools, establishing clear communication protocols, and prioritizing employee experience, organizations can build thriving distributed teams.
+                Successful remote work requires thoughtful implementation of
+                technology, processes, and culture. By investing in the right
+                tools, establishing clear communication protocols, and
+                prioritizing employee experience, organizations can build
+                thriving distributed teams.
               </p>
               <p className="text-lg text-gray-600">
-                The future of work is flexible, and organizations that master remote work technology and practices will have significant competitive advantages in attracting talent, reducing costs, and adapting to changing business conditions.
+                The future of work is flexible, and organizations that master
+                remote work technology and practices will have significant
+                competitive advantages in attracting talent, reducing costs, and
+                adapting to changing business conditions.
               </p>
             </div>
           </div>
@@ -376,5 +490,5 @@ export default function RemoteWorkArticle() {
 
       <Footer />
     </main>
-  )
+  );
 }

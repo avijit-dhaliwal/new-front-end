@@ -14,6 +14,7 @@ import Link from "next/link";
 import NavBar from "@/components/NavBar";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import Footer from "@/components/Footer";
+import article_image_15 from "../images/article_15.jpg";
 
 export default function AITravelArticle() {
   return (
@@ -60,6 +61,8 @@ export default function AITravelArticle() {
             <span>Published Oct 2025</span>
           </div>
         </motion.div>
+
+        <img src={article_image_15.src} alt="image_15" className="pb-6" />
 
         <div className="prose prose-lg max-w-none">
           {/* Introduction */}

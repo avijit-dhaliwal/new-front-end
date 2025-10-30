@@ -15,6 +15,7 @@ import Link from "next/link";
 import NavBar from "@/components/NavBar";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import Footer from "@/components/Footer";
+import article_image_11 from "../images/article_11.jpg";
 
 export default function AIPropertyManagementArticle() {
   return (
@@ -61,6 +62,8 @@ export default function AIPropertyManagementArticle() {
             <span>Published Oct 2025</span>
           </div>
         </motion.div>
+
+        <img src={article_image_11.src} alt="image_11" className="pb-6" />
 
         <div className="prose prose-lg max-w-none">
           {/* Introduction */}

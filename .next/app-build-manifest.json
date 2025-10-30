@@ -16,30 +16,65 @@
       "static/chunks/main-app.js",
       "static/chunks/app/articles/page.js"
     ],
-    "/articles/ai-powered-cloud-computing/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-powered-cloud-computing/page.js"
-    ],
-    "/articles/ai-ml-business-applications/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-ml-business-applications/page.js"
-    ],
-    "/articles/ai-enhanced-cybersecurity/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/ai-enhanced-cybersecurity/page.js"
-    ],
-    "/articles/digital-transformation-roadmap/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/articles/digital-transformation-roadmap/page.js"
-    ],
     "/articles/devops-implementation-guide/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/articles/devops-implementation-guide/page.js"
+    ],
+    "/articles/data-backup-disaster-recovery/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/data-backup-disaster-recovery/page.js"
+    ],
+    "/articles/remote-work-technology-solutions/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/remote-work-technology-solutions/page.js"
+    ],
+    "/articles/it-infrastructure-modernization/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/it-infrastructure-modernization/page.js"
+    ],
+    "/articles/how-ai-is-changing-legal-practice/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/how-ai-is-changing-legal-practice/page.js"
+    ],
+    "/articles/ai-is-transforming-healthcare/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/ai-is-transforming-healthcare/page.js"
+    ],
+    "/articles/ai-is-changing-property-management/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/ai-is-changing-property-management/page.js"
+    ],
+    "/articles/contractors-are-winning-more-jobs/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/contractors-are-winning-more-jobs/page.js"
+    ],
+    "/articles/how-ai-is-changing-restaurants/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/how-ai-is-changing-restaurants/page.js"
+    ],
+    "/articles/ai-is-transforming-retail/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/ai-is-transforming-retail/page.js"
+    ],
+    "/articles/how-ai-is-transforming-travel/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/how-ai-is-transforming-travel/page.js"
+    ],
+    "/articles/ai-transforming-automotive/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/articles/ai-transforming-automotive/page.js"
     ]
   }
 }
