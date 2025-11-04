@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import NavBar from '@/components/NavBar'
-import ChatBot from '@/components/legalservices/ChatBot'
 import Script from 'next/script'
 
 export default function LegalServicesDemo() {
@@ -20,31 +19,19 @@ export default function LegalServicesDemo() {
             className="text-center mb-12"
           >
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Legal Services Support
+              Legal Services Voice Assistant
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-
-              Start a conversation to experience intelligent legal support.
+              Speak with our AI-powered legal assistant for instant support and guidance.
             </p>
-
-
           </motion.div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <ChatBot onClose={() => {}} />
-              </motion.div>
-            </div>
-
+          <div className="flex justify-center items-center">
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
+              className="w-full max-w-2xl"
             >
               <elevenlabs-convai agent-id="agent_6101k97ydt1xf4psr8sempwz701n"></elevenlabs-convai>
             </motion.div>
