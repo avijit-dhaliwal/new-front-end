@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import NavBar from '@/components/NavBar'
-import GenericVoiceAgent from '@/components/demo/GenericVoiceAgent'
+import CustomElevenLabsVoiceWidget from '@/components/demo/CustomElevenLabsVoiceWidget'
 import { Phone, Zap, Shield, Headphones } from 'lucide-react'
 
 export default function VoiceDemo() {
@@ -82,7 +82,7 @@ export default function VoiceDemo() {
             className="mb-8 bg-blue-50 border border-blue-200 rounded-xl p-4"
           >
             <p className="text-blue-900 text-sm text-center">
-              <strong>Note:</strong> This demo uses your browser's built-in speech recognition.
+              <strong>Note:</strong> This demo uses advanced voice AI technology.
               For best results, use Chrome, Edge, or Safari and allow microphone access when prompted.
             </p>
           </motion.div>
@@ -94,7 +94,7 @@ export default function VoiceDemo() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mb-12"
           >
-            <GenericVoiceAgent />
+            <CustomElevenLabsVoiceWidget agentId="agent_01jvap5cwxfd486ghvmc6x6gzw" />
           </motion.div>
 
           {/* How to Use */}
@@ -158,10 +158,9 @@ export default function VoiceDemo() {
               Ready to Customize for Your Practice?
             </h2>
             <p className="text-lg mb-6 max-w-2xl mx-auto">
-              This is a generic demonstration using browser-based speech technology. In production, we use advanced voice AI
-              with natural-sounding voices and can fully customize the assistant to match your dental practice's
-              specific services, scheduling system, and policies. The voice, personality, and responses can all be tailored
-              to your brand.
+              This is a generic demonstration of our voice AI technology. We can fully customize the assistant to match
+              your dental practice's specific services, scheduling system, and policies. The voice, personality, and
+              responses can all be tailored to your brand, and we can integrate with your phone system for seamless call handling.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -242,12 +241,12 @@ export default function VoiceDemo() {
             transition={{ duration: 0.6, delay: 1.2 }}
             className="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200"
           >
-            <h3 className="font-semibold text-gray-900 mb-3 text-center">Production Implementation</h3>
+            <h3 className="font-semibold text-gray-900 mb-3 text-center">Enterprise Voice AI Technology</h3>
             <p className="text-sm text-gray-600 text-center max-w-3xl mx-auto">
-              This demonstration uses browser-based speech recognition for simplicity. Our production voice assistants
-              utilize enterprise-grade voice AI technology with natural-sounding voices, advanced speech recognition,
-              and seamless integration with your practice management software. We can integrate with your phone system,
-              appointment scheduling, and CRM to provide a complete automated receptionist solution.
+              This demonstration uses enterprise-grade voice AI technology with natural-sounding voices and advanced
+              speech recognition. Our production implementations offer seamless integration with your phone system,
+              practice management software, appointment scheduling, and CRM to provide a complete automated receptionist solution.
+              We can handle multiple calls simultaneously, transfer to staff when needed, and capture detailed call information.
             </p>
           </motion.div>
         </div>
