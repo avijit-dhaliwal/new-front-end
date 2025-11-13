@@ -1,7 +1,4 @@
 {
-  "/articles/how-ai-is-transforming-travel/page": "app/articles/how-ai-is-transforming-travel/page.js",
-  "/articles/how-ai-is-changing-restaurants/page": "app/articles/how-ai-is-changing-restaurants/page.js",
-  "/articles/page": "app/articles/page.js",
-  "/articles/ai-is-transforming-retail/page": "app/articles/ai-is-transforming-retail/page.js",
-  "/articles/ai-transforming-automotive/page": "app/articles/ai-transforming-automotive/page.js"
+  "/page": "app/page.js",
+  "/legalservices/page": "app/legalservices/page.js"
 }
