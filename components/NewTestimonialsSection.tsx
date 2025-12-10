@@ -1,236 +1,160 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
-import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useRef } from 'react'
+import { Star } from 'lucide-react'
 
 const testimonials = [
   {
     name: "Sarah Chen",
-    role: "CTO",
-    company: "TechFlow Inc.",
+    role: "CTO, TechFlow Inc.",
     avatar: "SC",
+    avatarColor: "from-blue-500 to-blue-600",
+    text: "Koby AI has transformed how we handle customer support. Our response time dropped from hours to seconds, and customer satisfaction is at an all-time high.",
     rating: 5,
-    text: "Koby AI has revolutionized our data analysis process. We've seen a 300% increase in efficiency and our team can now focus on strategic decisions rather than manual data processing.",
-    highlight: "300% efficiency increase"
   },
   {
     name: "Michael Rodriguez",
-    role: "Head of Marketing",
-    company: "GrowthCo",
+    role: "Head of Marketing, GrowthCo",
     avatar: "MR",
+    avatarColor: "from-purple-500 to-purple-600",
+    text: "The AI chatbot captures leads 24/7 while we sleep. We've seen a 300% increase in qualified leads since implementing Koby AI on our website.",
     rating: 5,
-    text: "The content generation suite is absolutely incredible. We've reduced our content creation time by 80% while maintaining the highest quality standards. Our engagement rates have never been higher.",
-    highlight: "80% time saved"
   },
   {
-    name: "Emily Watson",
-    role: "Customer Success Director",
-    company: "ServicePro",
+    name: "Dr. Emily Watson",
+    role: "Practice Manager, WellCare Medical",
     avatar: "EW",
+    avatarColor: "from-pink-500 to-pink-600",
+    text: "The phone service handles appointment scheduling perfectly. Patients love the instant responses, and our staff can focus on actual patient care instead of answering phones.",
     rating: 5,
-    text: "Our customer support has been transformed. The AI chatbot handles 90% of inquiries instantly, and our customer satisfaction scores have improved dramatically. It's like having a superhuman support team.",
-    highlight: "90% auto-resolution"
   },
   {
     name: "David Kim",
-    role: "CEO",
-    company: "InnovateLab",
+    role: "CEO, InnovateLab",
     avatar: "DK",
+    avatarColor: "from-green-500 to-green-600",
+    text: "We tried multiple chatbot solutions before Koby AI. The difference in quality is night and day. It actually understands context and provides helpful answers.",
     rating: 5,
-    text: "The sales optimization suite helped us increase our conversion rates by 150%. The AI insights are incredibly accurate and have become essential to our sales strategy.",
-    highlight: "150% conversion increase"
   },
   {
     name: "Lisa Thompson",
-    role: "Operations Manager",
-    company: "LogiFlow",
+    role: "Real Estate Broker, Premier Properties",
     avatar: "LT",
+    avatarColor: "from-amber-500 to-amber-600",
+    text: "Every missed call used to be a missed opportunity. Now Koby AI handles inquiries instantly, qualifies leads, and books viewings while I'm showing properties.",
     rating: 5,
-    text: "Koby AI's predictive analytics have saved us millions in operational costs. The accuracy of their forecasting models is remarkable, and the ROI has been immediate.",
-    highlight: "$2M+ cost savings"
   },
   {
-    name: "James Wilson",
-    role: "Product Manager",
-    company: "AppVenture",
-    avatar: "JW",
+    name: "James Park",
+    role: "Owner, Park's Dental Care",
+    avatar: "JP",
+    avatarColor: "from-indigo-500 to-indigo-600",
+    text: "The AI phone service has been a game-changer for our practice. It handles after-hours calls, appointment reminders, and even insurance questions automatically.",
     rating: 5,
-    text: "The integration was seamless and the support team is outstanding. We went from concept to production in just 2 weeks. The AI capabilities have exceeded all our expectations.",
-    highlight: "2 weeks time to production"
-  }
+  },
+  {
+    name: "Amanda Foster",
+    role: "Operations Director, ServicePro",
+    avatar: "AF",
+    avatarColor: "from-cyan-500 to-cyan-600",
+    text: "Implementation was incredibly smooth. The Koby AI team walked us through everything, and we were up and running within a week. The ROI was immediate.",
+    rating: 5,
+  },
+  {
+    name: "Robert Martinez",
+    role: "Partner, Martinez Law Firm",
+    avatar: "RM",
+    avatarColor: "from-rose-500 to-rose-600",
+    text: "Client intake used to be our biggest bottleneck. Now potential clients can get their questions answered and schedule consultations any time of day.",
+    rating: 5,
+  },
 ]
 
-const companies = [
-  "Microsoft", "Google", "Amazon", "OpenAI", "Anthropic", "Tesla", "Meta", "Apple"
-]
+function TestimonialCard({ testimonial, index }: { testimonial: typeof testimonials[0]; index: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+      className="group"
+    >
+      <div className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 h-full">
+        {/* Rating */}
+        <div className="flex gap-0.5 mb-4">
+          {[...Array(testimonial.rating)].map((_, i) => (
+            <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+          ))}
+        </div>
+
+        {/* Text */}
+        <p className="text-gray-600 text-sm leading-relaxed mb-4">
+          "{testimonial.text}"
+        </p>
+
+        {/* Author */}
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${testimonial.avatarColor} flex items-center justify-center text-white text-sm font-semibold`}>
+            {testimonial.avatar}
+          </div>
+          <div>
+            <div className="font-semibold text-gray-900 text-sm">{testimonial.name}</div>
+            <div className="text-gray-500 text-xs">{testimonial.role}</div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
 
 export default function NewTestimonialsSection() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-50px" })
-  const [currentIndex, setCurrentIndex] = useState(0)
-
-  const nextTestimonial = () => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length)
-  }
-
-  const prevTestimonial = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)
-  }
-
-  const goToTestimonial = (index: number) => {
-    setCurrentIndex(index)
-  }
 
   return (
-    <div ref={ref} className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+    <section ref={ref} className="py-24 lg:py-32 bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-6 font-display">
-            Trusted by Industry Leaders
+          <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-100 rounded-full px-4 py-1.5 mb-6">
+            <span className="text-amber-600 text-sm font-medium">Testimonials</span>
+          </div>
+          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+            Loved by Businesses
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            See how companies worldwide are transforming their operations with Koby AI
+          <p className="text-4xl sm:text-5xl font-bold text-gray-300">
+            Across Industries
           </p>
         </motion.div>
 
-        {/* Company Logos */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-          className="flex flex-wrap justify-center items-center gap-8 mb-16 opacity-60"
-        >
-          {companies.map((company, index) => (
-            <motion.div
-              key={company}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
-              whileHover={{
-                scale: 1.1,
-                opacity: 1,
-                transition: { type: "spring", stiffness: 400, damping: 17 }
-              }}
-              style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-              className="text-gray-400 font-semibold text-lg hover:text-accent-500"
-            >
-              {company}
-            </motion.div>
+        {/* Masonry Grid */}
+        <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+          {testimonials.map((testimonial, index) => (
+            <div key={testimonial.name} className="break-inside-avoid">
+              <TestimonialCard testimonial={testimonial} index={index} />
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Testimonials Carousel */}
+        {/* Bottom CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-          className="relative"
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-16 text-center"
         >
-          <div className="bg-gray-50 rounded-2xl p-12 shadow-lg">
-            <div className="max-w-4xl mx-auto text-center">
-              {/* Quote Icon */}
-              <div className="w-16 h-16 bg-accent-100 rounded-2xl flex items-center justify-center mx-auto mb-8">
-                <Quote className="w-8 h-8 text-accent-500" />
-              </div>
-
-              {/* Rating */}
-              <div className="flex items-center justify-center mb-6">
-                {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                  <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />
-                ))}
-              </div>
-
-              {/* Testimonial Text */}
-              <motion.p
-                key={currentIndex}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-                className="text-xl text-gray-700 leading-relaxed mb-8"
-              >
-                "{testimonials[currentIndex].text}"
-              </motion.p>
-
-              {/* Highlight */}
-              <motion.div
-                key={`highlight-${currentIndex}`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="bg-accent-100 text-accent-700 px-6 py-3 rounded-full inline-block font-semibold mb-8"
-              >
-                {testimonials[currentIndex].highlight}
-              </motion.div>
-
-              {/* Author */}
-              <motion.div
-                key={`author-${currentIndex}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="flex items-center justify-center"
-              >
-                <div className="w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-600 rounded-full flex items-center justify-center text-white font-bold text-xl mr-6">
-                  {testimonials[currentIndex].avatar}
-                </div>
-                <div className="text-left">
-                  <div className="text-xl font-semibold text-gray-800">{testimonials[currentIndex].name}</div>
-                  <div className="text-gray-600">{testimonials[currentIndex].role}</div>
-                  <div className="text-accent-500 font-medium">{testimonials[currentIndex].company}</div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Carousel Controls */}
-          <div className="flex justify-center mt-8 space-x-4">
-            <button
-              onClick={prevTestimonial}
-              className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 orange-glow"
-            >
-              <ChevronLeft className="w-6 h-6 text-gray-600" />
-            </button>
-            
-            {/* Dots Indicator */}
-            <div className="flex space-x-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentIndex 
-                      ? 'bg-accent-500 w-8' 
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                />
-              ))}
-            </div>
-
-            <button
-              onClick={nextTestimonial}
-              className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 orange-glow"
-            >
-              <ChevronRight className="w-6 h-6 text-gray-600" />
-            </button>
-          </div>
+          <p className="text-gray-500 text-sm">
+            Join 500+ businesses already using Koby AI
+          </p>
         </motion.div>
       </div>
-    </div>
+    </section>
   )
 }

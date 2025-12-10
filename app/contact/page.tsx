@@ -1,12 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
-import { ArrowLeft, Mail, Phone, Clock, Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import { ArrowLeft, Mail, Phone, Clock, Send, CheckCircle, AlertCircle, Loader2, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import NavBar from '@/components/NavBar'
-import AnimatedBackground from '@/components/AnimatedBackground'
 import Footer from '@/components/Footer'
 import {
   Select,
@@ -18,18 +16,22 @@ import {
 
 const contactInfo = [
   {
-    icon: <Mail className="w-6 h-6 text-accent-500" />,
+    icon: Mail,
     title: "Email Us",
     description: "Send us an email and we'll respond within 24 hours",
     contact: "admin@kobyai.com",
-    action: "mailto:admin@kobyai.com"
+    action: "mailto:admin@kobyai.com",
+    color: "bg-blue-50",
+    iconColor: "text-blue-600"
   },
   {
-    icon: <Phone className="w-6 h-6 text-accent-500" />,
+    icon: Phone,
     title: "Call Us",
     description: "Speak directly with our team during business hours",
     contact: "(559) 960-9723",
-    action: "tel:+15599609723"
+    action: "tel:+15599609723",
+    color: "bg-green-50",
+    iconColor: "text-green-600"
   },
 ]
 
@@ -54,7 +56,6 @@ const faqs = [
 
 export default function ContactPage() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-50px" })
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -126,101 +127,121 @@ export default function ContactPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      <AnimatedBackground />
       <NavBar />
-      
-      <div className="pt-20">
-        {/* Back Button */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-          className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
-        >
-          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-accent-500">
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Home
-          </Link>
-        </motion.div>
 
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-          className="text-center max-w-4xl mx-auto px-6 sm:px-8 mb-16"
-        >
-          <h1 className="text-5xl sm:text-6xl font-bold text-gray-800 mb-6 font-display">
-            Get in Touch
-          </h1>
-          <p className="text-xl text-gray-600 leading-relaxed">
-            Have questions about our AI solutions? Need help getting started? 
-            We're here to help you succeed. Reach out to our team and let's 
-            discuss how we can transform your business.
-          </p>
-        </motion.div>
+      {/* Hero Section */}
+      <section className="pt-28 lg:pt-36 pb-16 lg:pb-20 relative overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white pointer-events-none" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-accent-200/20 rounded-full blur-3xl" />
 
-        {/* Contact Info Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-          className="max-w-7xl mx-auto px-6 sm:px-8 mb-16"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Back Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <Link
+              href="/"
+              className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
+            </Link>
+          </motion.div>
+
+          <div className="max-w-3xl">
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3"
+            >
+              Contact Us
+            </motion.span>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 font-display tracking-tight"
+            >
+              Get in Touch
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-lg text-gray-600 leading-relaxed"
+            >
+              Have questions about our AI solutions? Need help getting started?
+              We're here to help you succeed. Reach out to our team and let's
+              discuss how we can transform your business.
+            </motion.p>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Info Cards */}
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
             {contactInfo.map((info, index) => (
-              <motion.div
+              <motion.a
                 key={index}
+                href={info.action}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                whileHover={{ y: -8, scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } }}
-                transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
-                style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-                className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl text-center"
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -4 }}
+                className="bg-white rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100 flex items-center gap-5 group"
               >
-                <div className="w-16 h-16 bg-accent-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  {info.icon}
+                <div className={`w-14 h-14 ${info.color} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                  <info.icon className={`w-7 h-7 ${info.iconColor}`} />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">{info.title}</h3>
-                <p className="text-gray-600 mb-4">{info.description}</p>
-                <a 
-                  href={info.action}
-                  className="text-accent-500 font-semibold hover:text-accent-600"
-                >
-                  {info.contact}
-                </a>
-              </motion.div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1 font-display">
+                    {info.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-2">{info.description}</p>
+                  <span className="text-accent-600 font-semibold">{info.contact}</span>
+                </div>
+              </motion.a>
             ))}
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
+      </section>
 
-        {/* Contact Form & Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-          className="max-w-7xl mx-auto px-6 sm:px-8 mb-16"
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      {/* Contact Form & Info */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
             {/* Contact Form */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 font-display">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="bg-white rounded-3xl p-8 lg:p-10 shadow-soft border border-gray-100"
+            >
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 font-display">
                 Send us a Message
               </h2>
-              
+
               {submitError && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ ease: [0.43, 0.13, 0.23, 0.96] }}
-                  style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
                   className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3"
                 >
                   <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
@@ -233,19 +254,19 @@ export default function ContactPage() {
 
               {isSubmitted ? (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ ease: [0.43, 0.13, 0.23, 0.96] }}
-                  style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-                  className="text-center py-8"
+                  className="text-center py-12"
                 >
-                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">Message Sent!</h3>
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 font-display">Message Sent!</h3>
                   <p className="text-gray-600">We'll get back to you within 24 hours.</p>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                         Full Name *
@@ -258,7 +279,7 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent  disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                         placeholder="Your full name"
                       />
                     </div>
@@ -274,7 +295,7 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent  disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                         placeholder="your@email.com"
                       />
                     </div>
@@ -291,7 +312,7 @@ export default function ContactPage() {
                       value={formData.company}
                       onChange={handleChange}
                       disabled={isSubmitting}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent  disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                       placeholder="Your company name"
                     />
                   </div>
@@ -306,7 +327,7 @@ export default function ContactPage() {
                       disabled={isSubmitting}
                       required
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full h-12 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500">
                         <SelectValue placeholder="Select a subject" />
                       </SelectTrigger>
                       <SelectContent>
@@ -331,60 +352,63 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={handleChange}
                       disabled={isSubmitting}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent  resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white transition-all duration-200 resize-none disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                       placeholder="Tell us how we can help you..."
                     />
                   </div>
 
-                  <motion.button
+                  <button
                     type="submit"
                     disabled={isSubmitting}
-                    whileHover={!isSubmitting ? { scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } } : {}}
-                    whileTap={!isSubmitting ? { scale: 0.98 } : {}}
-                    style={{ transform: "translateZ(0)", willChange: "transform" }}
-                    className="w-full bg-gradient-to-r from-accent-500 to-accent-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                         Sending...
                       </>
                     ) : (
                       <>
-                        <Send className="w-5 h-5 mr-2" />
+                        <Send className="w-4 h-4 mr-2" />
                         Send Message
                       </>
                     )}
-                  </motion.button>
+                  </button>
                 </form>
               )}
-            </div>
+            </motion.div>
 
             {/* Additional Info */}
-            <div className="space-y-8">
-              <div className="bg-gray-50 rounded-2xl p-8">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Business Hours</h3>
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="space-y-6"
+            >
+              <div className="bg-gray-50 rounded-2xl p-6 lg:p-8">
+                <h3 className="text-lg font-bold text-gray-900 mb-4 font-display">Business Hours</h3>
                 <div className="space-y-3">
                   <div className="flex items-center">
                     <Clock className="w-5 h-5 text-accent-500 mr-3" />
-                    <span className="text-gray-600">Monday - Friday: 9:00 AM - 6:00 PM PST</span>
+                    <span className="text-gray-600 text-sm">Monday - Friday: 9:00 AM - 6:00 PM PST</span>
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-5 h-5 text-accent-500 mr-3" />
-                    <span className="text-gray-600">Saturday: 10:00 AM - 4:00 PM PST</span>
+                    <span className="text-gray-600 text-sm">Saturday: 10:00 AM - 4:00 PM PST</span>
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-5 h-5 text-accent-500 mr-3" />
-                    <span className="text-gray-600">Sunday: Closed</span>
+                    <span className="text-gray-600 text-sm">Sunday: Closed</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Quick Response</h3>
-                <p className="text-gray-600 mb-4">
-                  We typically respond to all inquiries within 24 hours. For urgent matters, 
-                  please call us directly or use our live chat feature.
+              <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 mb-4 font-display">Quick Response</h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  We typically respond to all inquiries within 24 hours. For urgent matters,
+                  please call us directly.
                 </p>
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-gray-600">
@@ -401,48 +425,49 @@ export default function ContactPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </motion.div>
+        </div>
+      </section>
 
-        {/* FAQ Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-          className="bg-gray-50 py-16"
-        >
-          <div className="max-w-4xl mx-auto px-6 sm:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-4 font-display">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-gray-600">
-                Quick answers to common questions about our AI solutions.
-              </p>
-            </div>
+      {/* FAQ Section */}
+      <section className="py-20 lg:py-28 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12"
+          >
+            <span className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3">
+              FAQ
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 font-display tracking-tight">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-gray-600">
+              Quick answers to common questions about our AI solutions.
+            </p>
+          </motion.div>
 
-            <div className="space-y-6">
-              {faqs.map((faq, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.6, delay: 0.1 * index, ease: [0.43, 0.13, 0.23, 0.96] }}
-                  style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-                  className="bg-white rounded-xl p-6 shadow-lg"
-                >
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">{faq.question}</h3>
-                  <p className="text-gray-600">{faq.answer}</p>
-                </motion.div>
-              ))}
-            </div>
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{faq.question}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
+              </motion.div>
+            ))}
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </section>
 
       <Footer />
     </main>

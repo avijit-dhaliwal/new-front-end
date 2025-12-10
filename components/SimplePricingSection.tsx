@@ -1,259 +1,188 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
-import { CheckCircle, Zap, Phone, Crown, MessageCircle } from "lucide-react";
+import { Check, MessageCircle, Phone, Crown, Sparkles, ArrowRight } from "lucide-react";
+
+const plans = [
+  {
+    name: "AI Chatbot",
+    price: "50",
+    description: "24/7 customer support & lead generation",
+    icon: MessageCircle,
+    color: "from-blue-500 to-blue-600",
+    iconBg: "bg-blue-50",
+    iconColor: "text-blue-600",
+    features: [
+      "24/7 AI chatbot availability",
+      "Multi-language support",
+      "Calendar integration",
+      "Lead qualification",
+      "Custom responses",
+      "Analytics dashboard"
+    ],
+    cta: "Get Started",
+    popular: false
+  },
+  {
+    name: "Bundle Pack",
+    price: "425",
+    description: "AI Chatbot + Phone Service combined",
+    icon: Crown,
+    color: "from-accent-500 to-accent-600",
+    iconBg: "bg-accent-50",
+    iconColor: "text-accent-600",
+    features: [
+      "Everything in Chatbot",
+      "Everything in Phone Service",
+      "Unified dashboard",
+      "Priority support",
+      "Save $25/month",
+      "Custom integrations"
+    ],
+    cta: "Get Started",
+    popular: true
+  },
+  {
+    name: "AI Phone Service",
+    price: "400",
+    description: "AI virtual receptionist for your business",
+    icon: Phone,
+    color: "from-green-500 to-green-600",
+    iconBg: "bg-green-50",
+    iconColor: "text-green-600",
+    features: [
+      "Unlimited calls handled",
+      "24/7 availability",
+      "Custom greeting setup",
+      "Calendar integration",
+      "Call transcriptions",
+      "Voicemail management"
+    ],
+    cta: "Get Started",
+    popular: false
+  }
+];
 
 export default function SimplePricingSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   return (
-    <div ref={ref} className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+    <section ref={ref} className="py-20 lg:py-28 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{
-            transform: "translateZ(0)",
-            willChange: "transform, opacity",
-          }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-6 font-display">
+          <span className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3">
+            Pricing
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-5 font-display tracking-tight">
             Simple, Transparent Pricing
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Choose the perfect plan for your business needs.
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Choose the perfect plan for your business needs. All plans include setup assistance and ongoing support.
           </p>
         </motion.div>
 
         {/* Pricing Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+          {plans.map((plan, index) => (
+            <motion.div
+              key={plan.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -6 }}
+              className={`relative group ${plan.popular ? 'md:-mt-4 md:mb-4' : ''}`}
+            >
+              {/* Popular Badge */}
+              {plan.popular && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                  <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-accent-500 to-accent-600 text-white text-sm font-semibold px-4 py-1.5 rounded-full shadow-lg">
+                    <Sparkles className="w-4 h-4" />
+                    Best Value
+                  </span>
+                </div>
+              )}
+
+              <div className={`bg-white rounded-2xl p-6 lg:p-8 h-full border ${
+                plan.popular
+                  ? 'border-accent-200 shadow-glow-orange'
+                  : 'border-gray-100 shadow-soft'
+              } hover:shadow-soft-lg transition-all duration-300`}>
+                {/* Header */}
+                <div className="text-center mb-6">
+                  <div className={`w-14 h-14 ${plan.iconBg} rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <plan.icon className={`w-7 h-7 ${plan.iconColor}`} />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 font-display mb-2">
+                    {plan.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-4">{plan.description}</p>
+                  <div className="flex items-baseline justify-center">
+                    <span className="text-sm text-gray-500">Starting at</span>
+                    <span className="text-4xl font-bold text-gray-900 font-display mx-2">
+                      ${plan.price}
+                    </span>
+                    <span className="text-gray-500">/month</span>
+                  </div>
+                </div>
+
+                {/* Features */}
+                <ul className="space-y-3 mb-8">
+                  {plan.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-start">
+                      <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
+                        <Check className="w-3 h-3 text-green-600" />
+                      </div>
+                      <span className="text-sm text-gray-600">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA */}
+                <Link href="/contact" className="block">
+                  <button className={`w-full py-3.5 px-6 rounded-full font-semibold text-sm transition-all duration-200 flex items-center justify-center group/btn ${
+                    plan.popular
+                      ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white hover:shadow-lg'
+                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                  }`}>
+                    {plan.cta}
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                  </button>
+                </Link>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Custom Solution CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{
-            duration: 0.8,
-            delay: 0.2,
-            ease: [0.43, 0.13, 0.23, 0.96],
-          }}
-          style={{
-            transform: "translateZ(0)",
-            willChange: "transform, opacity",
-          }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-14 text-center"
         >
-          {/* AI Chatbot Plan */}
-          <motion.div
-            whileHover={{
-              y: -8,
-              scale: 1.02,
-              transition: { type: "spring", stiffness: 400, damping: 17 },
-            }}
-            style={{ transform: "translateZ(0)", willChange: "transform" }}
-            className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl flex flex-col"
+          <p className="text-gray-600 mb-4">
+            Need a custom AI solution for your industry?
+          </p>
+          <Link
+            href="/contact"
+            className="inline-flex items-center text-accent-600 font-semibold hover:text-accent-700 transition-colors group"
           >
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <MessageCircle className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">
-                AI Chatbot
-              </h3>
-              <div className="text-3xl font-bold text-gray-800 mb-2">
-                Starting at $50
-                <span className="text-lg text-gray-600">/month</span>
-              </div>
-              <p className="text-gray-600 text-sm">
-                Customer support & lead generation
-              </p>
-            </div>
-            <ul className="space-y-2 mb-6 flex-grow">
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                24/7 AI chatbot availability
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Multi-language support
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Calendar integration
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Lead qualification
-              </li>
-            </ul>
-            <Link href="/contact">
-              <button className="w-full bg-gradient-to-r from-accent-500 to-accent-600 text-white font-semibold py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-150">
-                Contact Us
-              </button>
-            </Link>
-          </motion.div>
-
-          {/* AI Phone Service Plan */}
-          <motion.div
-            whileHover={{
-              y: -8,
-              scale: 1.02,
-              transition: { type: "spring", stiffness: 400, damping: 17 },
-            }}
-            style={{ transform: "translateZ(0)", willChange: "transform" }}
-            className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl flex flex-col"
-          >
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Phone className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">
-                AI Phone Service
-              </h3>
-              <div className="text-3xl font-bold text-gray-800 mb-2">
-                Starting at $400
-                <span className="text-lg text-gray-600">/month</span>
-              </div>
-              <p className="text-gray-600 text-sm">
-                Professional AI virtual receptionist
-              </p>
-            </div>
-            <ul className="space-y-2 mb-6 flex-grow">
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Unlimited calls handled
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                24/7 availability
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Custom greeting setup
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Calendar integration
-              </li>
-            </ul>
-            <Link href="/contact">
-              <button className="w-full bg-gradient-to-r from-accent-500 to-accent-600 text-white font-semibold py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-150">
-                Contact Us
-              </button>
-            </Link>
-          </motion.div>
-
-          {/* Bundle Pack Plan */}
-          <motion.div
-            whileHover={{
-              y: -8,
-              scale: 1.02,
-              transition: { type: "spring", stiffness: 400, damping: 17 },
-            }}
-            style={{ transform: "translateZ(0)", willChange: "transform" }}
-            className="bg-white rounded-2xl p-6 shadow-lg border-2 border-accent-500 orange-glow relative flex flex-col"
-          >
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-gradient-to-r from-accent-500 to-accent-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                Best Value
-              </span>
-            </div>
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Crown className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">
-                Bundle Pack
-              </h3>
-              <div className="text-3xl font-bold text-gray-800 mb-2">
-                Starting at $425
-                <span className="text-lg text-gray-600">/month</span>
-              </div>
-              <p className="text-gray-600 text-sm">
-                AI Chatbot + Phone Service
-              </p>
-            </div>
-            <ul className="space-y-2 mb-6 flex-grow">
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Everything in AI Chatbot
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Everything in Phone Service
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Unified dashboard
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Save $25/month
-              </li>
-            </ul>
-            <Link href="/contact">
-              <button className="w-full bg-gradient-to-r from-accent-500 to-accent-600 text-white font-semibold py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-150">
-                Contact Us
-              </button>
-            </Link>
-          </motion.div>
-
-          {/* Custom AI Suite Plan */}
-          <motion.div
-            whileHover={{
-              y: -8,
-              scale: 1.02,
-              transition: { type: "spring", stiffness: 400, damping: 17 },
-            }}
-            style={{ transform: "translateZ(0)", willChange: "transform" }}
-            className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl flex flex-col"
-          >
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Crown className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">
-                Custom AI Suite
-              </h3>
-              <div className="text-3xl font-bold text-gray-800 mb-2">
-                Custom
-              </div>
-              <p className="text-gray-600 text-sm">
-                Tailored solutions for your industry
-              </p>
-            </div>
-            <ul className="space-y-2 mb-6 flex-grow">
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Industry-specific features
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Custom integrations
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Dedicated support
-              </li>
-              <li className="flex items-center text-sm text-gray-700">
-                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                Requires consultation
-              </li>
-            </ul>
-            <Link href="/contact">
-              <button className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold py-3 px-4 rounded-xl hover:shadow-lg transition-all duration-150">
-                Contact Us
-              </button>
-            </Link>
-          </motion.div>
+            Contact us for enterprise pricing
+            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </motion.div>
       </div>
-    </div>
+    </section>
   );
 }
