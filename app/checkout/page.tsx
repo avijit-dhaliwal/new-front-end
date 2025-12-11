@@ -166,7 +166,6 @@ export default function CheckoutPage() {
             <p className="text-gray-600">Secure checkout powered by industry-leading encryption</p>
           </motion.div>
         </div>
-      </section>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
@@ -523,7 +522,7 @@ export default function CheckoutPage() {
             </motion.div>
           </div>
         </div>
-      </div>
+      </section>
 
       <Footer />
     </main>
