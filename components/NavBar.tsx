@@ -17,7 +17,7 @@ const navLinks = [
 
 const products = [
   {
-    name: 'AI Suites',
+    name: 'AI Automations',
     description: 'Industry-specific AI solutions',
     href: '/ai-suites',
     icon: Cpu,
