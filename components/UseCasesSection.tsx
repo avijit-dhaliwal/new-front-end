@@ -42,18 +42,18 @@ const products = [
   },
   {
     icon: Cpu,
-    title: 'AI Suites',
-    description: 'Industry-specific AI solutions tailored for healthcare, real estate, legal, marketing, and more. Custom-built for your workflow.',
+    title: 'Automations',
+    description: 'Connect all your software to eliminate manual work. Automate invoices, CRM updates, scheduling, and more.',
     href: '/ai-suites',
     gradient: 'from-orange-500 to-orange-600',
     lightBg: 'bg-orange-50',
-    features: ['Industry-specific', 'Custom workflows', 'Analytics dashboard', 'Team collaboration'],
+    features: ['No manual entry', 'Reduce errors', 'Sync all data', 'Custom workflows'],
     preview: {
       type: 'dashboard',
       stats: [
-        { label: 'Leads Today', value: '47' },
-        { label: 'Calls Handled', value: '124' },
-        { label: 'Response Rate', value: '98%' },
+        { label: 'Tasks Automated', value: '234' },
+        { label: 'Hours Saved', value: '47' },
+        { label: 'Accuracy', value: '99%' },
       ]
     }
   },

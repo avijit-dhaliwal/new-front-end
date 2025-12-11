@@ -7,7 +7,7 @@ import KobyLogo from './KobyLogo'
 
 const footerLinks = {
   products: [
-    { name: 'AI Suites', href: '/ai-suites' },
+    { name: 'Automations', href: '/ai-suites' },
     { name: 'AI Chatbot', href: '/chatbot' },
     { name: 'AI Phone Service', href: '/phone-service' },
     { name: 'Custom Solutions', href: '/contact' },

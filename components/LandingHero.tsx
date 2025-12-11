@@ -14,7 +14,7 @@ const floatingIcons = [
   { id: 5, icon: '📈', label: 'Marketing', x: '5%', y: '42%', size: 44, delay: 0.8 },
   { id: 6, icon: '⚖️', label: 'Legal', x: '92%', y: '40%', size: 46, delay: 1.0 },
   { id: 7, icon: '🛒', label: 'Retail', x: '15%', y: '85%', size: 50, delay: 1.2 },
-  { id: 8, icon: '🤖', label: 'AI Suite', x: '82%', y: '78%', size: 48, delay: 1.4 },
+  { id: 8, icon: '🤖', label: 'Automation', x: '82%', y: '78%', size: 48, delay: 1.4 },
 ]
 
 // Animated counter component
@@ -98,7 +98,7 @@ function FloatingIcon({ icon, label, x, y, size, delay }: {
 }
 
 const stats = [
-  { value: 500, suffix: '+', label: 'Happy Clients' },
+  { value: 50, suffix: '+', label: 'Happy Clients' },
   { value: 24, suffix: '/7', label: 'AI Availability' },
   { value: 99.9, suffix: '%', label: 'Uptime' },
   { value: 21, suffix: 'x', label: 'Lead Conversion' },
@@ -208,7 +208,7 @@ export default function LandingHero() {
               <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
             ))}
           </div>
-          <span>Trusted by 500+ businesses</span>
+          <span>Trusted by 50+ businesses</span>
         </motion.div>
 
         {/* Stats Section */}

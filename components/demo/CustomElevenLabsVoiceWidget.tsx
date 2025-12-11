@@ -109,9 +109,16 @@ export default function CustomElevenLabsVoiceWidget({ agentId }: CustomElevenLab
       })
       streamRef.current = stream
 
-      // Create WebSocket connection
-      const wsUrl = `wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${agentId}`
-      const ws = new WebSocket(wsUrl)
+      // Get signed URL from our API
+      const signedUrlResponse = await fetch(`/api/elevenlabs-signed-url?agent_id=${agentId}`)
+      if (!signedUrlResponse.ok) {
+        const errorData = await signedUrlResponse.json()
+        throw new Error(errorData.error || 'Failed to get signed URL')
+      }
+      const { signed_url } = await signedUrlResponse.json()
+
+      // Create WebSocket connection with signed URL
+      const ws = new WebSocket(signed_url)
       websocketRef.current = ws
 
       ws.onopen = () => {

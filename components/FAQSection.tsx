@@ -23,7 +23,7 @@ const faqs = [
   },
   {
     question: "What industries do you serve?",
-    answer: "We serve a wide range of industries including healthcare, real estate, legal, retail, hospitality, and professional services. Our AI Suites offer industry-specific solutions with pre-built workflows and compliance features tailored to each sector."
+    answer: "We serve a wide range of industries including healthcare, real estate, legal, retail, hospitality, and professional services. Our automation solutions offer industry-specific workflows and compliance features tailored to each sector."
   },
   {
     question: "Is my data secure?",
