@@ -7,7 +7,7 @@ import { Menu, X, ChevronDown, Cpu, MessageCircle, Phone, ArrowRight } from 'luc
 import KobyLogo from './KobyLogo'
 
 const navLinks = [
-  { name: 'AI Suites', href: '/ai-suites' },
+  { name: 'AI Automations', href: '/ai-suites' },
   { name: 'Chatbot', href: '/chatbot' },
   { name: 'Phone Service', href: '/phone-service' },
   { name: 'Articles', href: '/articles' },
