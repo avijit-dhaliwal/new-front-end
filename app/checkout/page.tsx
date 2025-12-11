@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { ArrowLeft, CreditCard, Lock, CheckCircle, Shield, User, Mail, Phone, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import NavBar from '@/components/NavBar'
-import AnimatedBackground from '@/components/AnimatedBackground'
 import Footer from '@/components/Footer'
 
 const plans = [
@@ -134,43 +133,53 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <AnimatedBackground />
+    <main className="min-h-screen bg-white">
       <NavBar />
-      
-      <div className="pt-20">
-        {/* Back Button */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-          className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
-        >
-          <Link href="/get-started" className="inline-flex items-center text-gray-600 hover:text-accent-500">
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Plans
-          </Link>
-        </motion.div>
 
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 pb-16">
-          <div className="grid lg:grid-cols-2 gap-12">
+      {/* Hero Section */}
+      <section className="pt-28 lg:pt-36 pb-8 relative overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white pointer-events-none" />
+        <div className="absolute top-20 right-10 w-72 h-72 bg-accent-200/20 rounded-full blur-3xl" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Back Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <Link href="/get-started" className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Plans
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2 font-display tracking-tight">Complete Your Purchase</h1>
+            <p className="text-gray-600">Secure checkout powered by industry-leading encryption</p>
+          </motion.div>
+        </div>
+      </section>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Checkout Form */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-              style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-              className="space-y-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="space-y-6"
             >
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-2 font-display">Complete Your Purchase</h1>
-                <p className="text-gray-600">Secure checkout powered by industry-leading encryption</p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Plan Selection */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100">
                   <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                     <User className="w-5 h-5 mr-2 text-accent-500" />
                     Select Your Plan
@@ -213,7 +222,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Contact Information */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100">
                   <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                     <Mail className="w-5 h-5 mr-2 text-accent-500" />
                     Contact Information
@@ -276,7 +285,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Billing Address */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100">
                   <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                     <MapPin className="w-5 h-5 mr-2 text-accent-500" />
                     Billing Address
@@ -348,7 +357,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Payment Information */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100">
                   <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                     <CreditCard className="w-5 h-5 mr-2 text-accent-500" />
                     Payment Information
@@ -410,16 +419,13 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Submit Button */}
-                <motion.button
+                <button
                   type="submit"
                   disabled={isProcessing}
-                  whileHover={{ scale: isProcessing ? 1 : 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } }}
-                  whileTap={{ scale: isProcessing ? 1 : 0.98 }}
-                  style={{ transform: "translateZ(0)", willChange: "transform" }}
-                  className={`w-full py-4 px-6 rounded-xl font-semibold text-white flex items-center justify-center ${
+                  className={`w-full py-3.5 px-6 rounded-full font-semibold text-white flex items-center justify-center transition-all duration-200 ${
                     isProcessing
                       ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-accent-500 to-accent-600 hover:shadow-lg'
+                      : 'bg-gradient-to-r from-accent-500 to-accent-600 hover:shadow-lg hover:-translate-y-0.5'
                   }`}
                 >
                   {isProcessing ? (
@@ -433,20 +439,19 @@ export default function CheckoutPage() {
                       Complete Purchase
                     </>
                   )}
-                </motion.button>
+                </button>
               </form>
             </motion.div>
 
             {/* Order Summary */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
-              style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
               className="space-y-6"
             >
               <div className="sticky top-24">
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100">
                   <h2 className="text-xl font-semibold text-gray-800 mb-6">Order Summary</h2>
                   
                   {selectedPlanData && (
@@ -490,7 +495,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Security Features */}
-                <div className="mt-6 bg-green-50 rounded-xl p-6 border border-green-200">
+                <div className="mt-6 bg-green-50 rounded-2xl p-6 border border-green-100">
                   <h3 className="font-semibold text-green-800 mb-3 flex items-center">
                     <Shield className="w-5 h-5 mr-2" />
                     Secure Checkout

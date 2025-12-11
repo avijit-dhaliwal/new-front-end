@@ -1,12 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
 import { ArrowLeft, Calendar, Clock, User, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import NavBar from "@/components/NavBar";
-import AnimatedBackground from "@/components/AnimatedBackground";
 import Footer from "@/components/Footer";
 import image_article_1 from "./images/article_1.jpg";
 import image_article_2 from "./images/article_2.jpg";
@@ -243,76 +240,83 @@ const articles = [
 ];
 
 export default function ArticlesPage() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-
   const featuredArticle = articles.find((article) => article.featured);
   const regularArticles = articles.filter((article) => !article.featured);
 
   return (
     <main className="min-h-screen bg-white">
-      <AnimatedBackground />
       <NavBar />
 
-      <div className="pt-20">
-        {/* Back Button */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{
-            transform: "translateZ(0)",
-            willChange: "transform, opacity",
-          }}
-          className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
-        >
-          <Link
-            href="/"
-            className="inline-flex items-center text-gray-600 hover:text-accent-500"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Home
-          </Link>
-        </motion.div>
+      {/* Hero Section */}
+      <section className="pt-28 lg:pt-36 pb-16 lg:pb-20 relative overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white pointer-events-none" />
+        <div className="absolute top-20 right-10 w-72 h-72 bg-accent-200/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 left-10 w-96 h-96 bg-blue-200/15 rounded-full blur-3xl" />
 
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{
-            transform: "translateZ(0)",
-            willChange: "transform, opacity",
-          }}
-          className="text-center max-w-4xl mx-auto px-6 sm:px-8 mb-16"
-        >
-          <h1 className="text-5xl sm:text-6xl font-bold text-gray-800 mb-6 font-display">
-            AI & Technology Articles
-          </h1>
-          <p className="text-xl text-gray-600 leading-relaxed mb-8">
-            Stay informed with the latest insights in artificial intelligence,
-            automation, and business transformation.
-          </p>
-        </motion.div>
-
-        {/* Featured Article */}
-        {featuredArticle && (
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Back Button */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{
-              duration: 0.8,
-              delay: 0.4,
-              ease: [0.43, 0.13, 0.23, 0.96],
-            }}
-            style={{
-              transform: "translateZ(0)",
-              willChange: "transform, opacity",
-            }}
-            className="max-w-7xl mx-auto px-6 sm:px-8 mb-16"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
           >
-            <div className="bg-gradient-to-r from-accent-500 to-accent-600 rounded-2xl p-8 text-white">
+            <Link
+              href="/"
+              className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
+            </Link>
+          </motion.div>
+
+          <div className="text-center max-w-3xl mx-auto">
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3"
+            >
+              Articles
+            </motion.span>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 font-display tracking-tight"
+            >
+              AI & Technology{" "}
+              <span className="bg-gradient-to-r from-accent-500 to-accent-600 bg-clip-text text-transparent">
+                Insights
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-lg text-gray-600 leading-relaxed"
+            >
+              Stay informed with the latest insights in artificial intelligence,
+              automation, and business transformation.
+            </motion.p>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Article */}
+      {featuredArticle && (
+        <section className="pb-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="bg-gradient-to-r from-accent-500 to-accent-600 rounded-3xl p-8 lg:p-12 text-white"
+            >
               <div className="flex items-center mb-4">
                 <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm font-semibold mr-4">
                   Featured Article
@@ -321,75 +325,62 @@ export default function ArticlesPage() {
                   {featuredArticle.category}
                 </span>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-display">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-display tracking-tight">
                 {featuredArticle.title}
               </h2>
-              <p className="text-accent-100 text-lg mb-6 leading-relaxed">
+              <p className="text-accent-100 text-lg mb-6 leading-relaxed max-w-3xl">
                 {featuredArticle.excerpt}
               </p>
-              <div className="flex items-center text-accent-100 text-sm mb-6">
-                <User className="w-4 h-4 mr-2" />
-                <span className="mr-6">{featuredArticle.author}</span>
-                <Calendar className="w-4 h-4 mr-2" />
-                <span className="mr-6">{featuredArticle.publishDate}</span>
-                <Clock className="w-4 h-4 mr-2" />
-                <span>{featuredArticle.readTime}</span>
+              <div className="flex flex-wrap items-center text-accent-100 text-sm mb-6 gap-4">
+                <div className="flex items-center">
+                  <User className="w-4 h-4 mr-2" />
+                  <span>{featuredArticle.author}</span>
+                </div>
+                <div className="flex items-center">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  <span>{featuredArticle.publishDate}</span>
+                </div>
+                <div className="flex items-center">
+                  <Clock className="w-4 h-4 mr-2" />
+                  <span>{featuredArticle.readTime}</span>
+                </div>
               </div>
               <Link
                 href={`/articles/${featuredArticle.slug}`}
-                className="bg-white text-accent-500 font-semibold py-3 px-6 rounded-xl hover:bg-gray-100 flex items-center"
+                className="inline-flex items-center bg-white text-accent-600 font-semibold py-3 px-6 rounded-full hover:bg-gray-100 transition-colors"
               >
                 Read More
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          </div>
+        </section>
+      )}
 
-        {/* Articles Grid */}
-        <motion.div
-          initial={{ opacity: 1, y: 30 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{
-            duration: 0.8,
-            delay: 0.6,
-            ease: [0.43, 0.13, 0.23, 0.96],
-          }}
-          style={{
-            transform: "translateZ(0)",
-            willChange: "transform, opacity",
-          }}
-          className="max-w-7xl mx-auto px-6 sm:px-8 mb-16"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Articles Grid */}
+      <section className="py-16 lg:py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {regularArticles.map((article, index) => (
               <motion.article
                 key={article.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                whileHover={{
-                  y: -8,
-                  scale: 1.02,
-                  transition: { type: "spring", stiffness: 400, damping: 17 },
-                }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.1 * index,
-                  ease: [0.43, 0.13, 0.23, 0.96],
-                }}
-                style={{
-                  transform: "translateZ(0)",
-                  willChange: "transform, opacity",
-                }}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-xl overflow-hidden group cursor-pointer"
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                whileHover={{ y: -4 }}
+                className="bg-white rounded-2xl shadow-soft hover:shadow-soft-lg overflow-hidden group border border-gray-100 transition-all duration-300"
               >
                 {/* Article Image */}
                 <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
-                  <img src={article.image.src} alt="image" />
+                  <img
+                    src={article.image.src}
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   <div className="absolute top-4 left-4">
-                    <span className="bg-accent-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    <span className="bg-accent-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
                       {article.category}
                     </span>
                   </div>
@@ -397,58 +388,54 @@ export default function ArticlesPage() {
 
                 {/* Article Content */}
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-accent-500 line-clamp-2">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-accent-600 transition-colors line-clamp-2 font-display">
                     {article.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
                     {article.excerpt}
                   </p>
 
                   {/* Article Meta */}
-                  <div className="flex items-center text-gray-500 text-sm mb-4">
-                    <User className="w-4 h-4 mr-2" />
-                    <span className="mr-4">{article.author}</span>
-                    <Calendar className="w-4 h-4 mr-2" />
-                    <span className="mr-4">{article.publishDate}</span>
-                    <Clock className="w-4 h-4 mr-2" />
-                    <span>{article.readTime}</span>
+                  <div className="flex flex-wrap items-center text-gray-500 text-xs mb-4 gap-3">
+                    <div className="flex items-center">
+                      <Calendar className="w-3 h-3 mr-1" />
+                      <span>{article.publishDate}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Clock className="w-3 h-3 mr-1" />
+                      <span>{article.readTime}</span>
+                    </div>
                   </div>
 
                   {/* Read More Button */}
                   <Link
                     href={`/articles/${article.slug}`}
-                    className="text-accent-500 font-semibold hover:text-accent-600 flex items-center group"
+                    className="text-accent-600 font-semibold text-sm hover:text-accent-700 flex items-center group/link"
                   >
                     Read More
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1" />
+                    <ArrowRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </motion.article>
             ))}
           </div>
-        </motion.div>
+        </div>
+      </section>
 
-        {/* Newsletter Signup */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{
-            duration: 0.8,
-            delay: 0.8,
-            ease: [0.43, 0.13, 0.23, 0.96],
-          }}
-          style={{
-            transform: "translateZ(0)",
-            willChange: "transform, opacity",
-          }}
-          className="bg-gray-50 py-16"
-        >
-          <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4 font-display">
+      {/* Newsletter Signup */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="bg-white rounded-3xl p-8 lg:p-12 shadow-soft border border-gray-100 text-center"
+          >
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 font-display tracking-tight">
               Stay Updated
             </h2>
-            <p className="text-gray-600 mb-8">
+            <p className="text-gray-600 mb-8 max-w-xl mx-auto">
               Get the latest AI insights and technology articles delivered to
               your inbox.
             </p>
@@ -456,15 +443,41 @@ export default function ArticlesPage() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white transition-all duration-200 text-sm"
               />
-              <button className="bg-accent-500 text-white font-semibold py-3 px-6 rounded-xl hover:bg-accent-600">
+              <button className="btn-primary whitespace-nowrap">
                 Subscribe
               </button>
             </div>
-          </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 lg:py-28 bg-gradient-to-r from-accent-500 to-accent-600">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 font-display tracking-tight">
+              Ready to Transform Your Business?
+            </h2>
+            <p className="text-accent-100 text-lg mb-8 max-w-2xl mx-auto">
+              See how our AI solutions can help your business grow.
+            </p>
+            <Link
+              href="/get-started"
+              className="inline-flex items-center justify-center bg-white text-accent-600 font-semibold py-3.5 px-7 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              Get Started
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
 
       <Footer />
     </main>

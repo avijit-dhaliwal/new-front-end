@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { Calendar, Clock, CheckCircle, ArrowLeft, User, Mail, Phone, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import NavBar from '@/components/NavBar'
-import AnimatedBackground from '@/components/AnimatedBackground'
 import Footer from '@/components/Footer'
 
 const timeSlots = [
@@ -122,32 +121,33 @@ export default function ScheduleMeetingPage() {
 
   if (isScheduled) {
     return (
-      <main className="min-h-screen bg-gray-50">
-        <AnimatedBackground />
+      <main className="min-h-screen bg-white">
         <NavBar />
-        
-        <div className="pt-20">
-          <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16">
+
+        <section className="pt-28 lg:pt-36 pb-16 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white pointer-events-none" />
+          <div className="absolute top-20 right-10 w-72 h-72 bg-green-200/20 rounded-full blur-3xl" />
+
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-              style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
+              transition={{ duration: 0.5 }}
               className="text-center"
             >
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="w-10 h-10 text-green-600" />
               </div>
-              
-              <h1 className="text-4xl font-bold text-gray-800 mb-4 font-display">
+
+              <h1 className="text-4xl font-bold text-gray-900 mb-4 font-display tracking-tight">
                 Meeting Scheduled Successfully!
               </h1>
-              
-              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+
+              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
                 Your meeting has been scheduled. We'll send you a confirmation email with all the details and a calendar invite.
               </p>
-              
-              <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200 mb-8">
+
+              <div className="bg-white rounded-2xl p-8 shadow-soft border border-gray-100 mb-8">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">Meeting Details</h2>
                 <div className="space-y-4 text-left">
                   <div className="flex items-center">
@@ -175,69 +175,75 @@ export default function ScheduleMeetingPage() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/" className="bg-gradient-to-r from-accent-500 to-accent-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg">
+                <Link href="/" className="btn-primary">
                   Back to Home
                 </Link>
-                <Link href="/get-started" className="bg-white text-accent-600 px-8 py-3 rounded-xl font-semibold border-2 border-accent-500 hover:bg-accent-50">
+                <Link href="/get-started" className="btn-secondary">
                   View Plans
                 </Link>
               </div>
             </motion.div>
           </div>
-        </div>
-        
+        </section>
+
         <Footer />
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <AnimatedBackground />
+    <main className="min-h-screen bg-white">
       <NavBar />
-      
-      <div className="pt-20">
-        {/* Back Button */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-          style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-          className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
-        >
-          <Link href="/checkout" className="inline-flex items-center text-gray-600 hover:text-accent-500">
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Checkout
-          </Link>
-        </motion.div>
 
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 pb-16">
+      {/* Hero Section */}
+      <section className="pt-28 lg:pt-36 pb-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white pointer-events-none" />
+        <div className="absolute top-20 right-10 w-72 h-72 bg-accent-200/20 rounded-full blur-3xl" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Back Button */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-            style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-            className="text-center mb-12"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
           >
-            <h1 className="text-4xl font-bold text-gray-800 mb-4 font-display">
+            <Link href="/checkout" className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Checkout
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center max-w-3xl mx-auto"
+          >
+            <span className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3">
+              Schedule Meeting
+            </span>
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 font-display tracking-tight">
               Schedule Your Personal Meeting
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600">
               Let's work directly with you and your team to set up everything perfectly for your business needs.
             </p>
           </motion.div>
+        </div>
+      </section>
 
-          <div className="grid lg:grid-cols-2 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Calendar Section */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
-              style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-              className="space-y-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="space-y-6"
             >
               {/* Meeting Type Selection */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <User className="w-5 h-5 mr-2 text-accent-500" />
                   Meeting Type
@@ -272,7 +278,7 @@ export default function ScheduleMeetingPage() {
               </div>
 
               {/* Date Selection */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <Calendar className="w-5 h-5 mr-2 text-accent-500" />
                   Select Date
@@ -332,7 +338,7 @@ export default function ScheduleMeetingPage() {
               </div>
 
               {/* Time Selection */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <Clock className="w-5 h-5 mr-2 text-accent-500" />
                   Select Time
@@ -360,13 +366,12 @@ export default function ScheduleMeetingPage() {
 
             {/* Contact Information */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.43, 0.13, 0.23, 0.96] }}
-              style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
-              className="space-y-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="space-y-6"
             >
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-6">Contact Information</h2>
                 <div className="space-y-4">
                   <div>
@@ -426,16 +431,13 @@ export default function ScheduleMeetingPage() {
               </div>
 
               {/* Schedule Button */}
-              <motion.button
+              <button
                 onClick={handleSchedule}
                 disabled={!selectedDate || !selectedTime || !selectedMeetingType || isScheduling}
-                whileHover={{ scale: isScheduling ? 1 : 1.02, transition: { type: "spring", stiffness: 400, damping: 17 } }}
-                whileTap={{ scale: isScheduling ? 1 : 0.98 }}
-                style={{ transform: "translateZ(0)", willChange: "transform" }}
-                className={`w-full py-4 px-6 rounded-xl font-semibold text-white flex items-center justify-center ${
+                className={`w-full py-3.5 px-6 rounded-full font-semibold text-white flex items-center justify-center transition-all duration-200 ${
                   !selectedDate || !selectedTime || !selectedMeetingType || isScheduling
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-accent-500 to-accent-600 hover:shadow-lg'
+                    : 'bg-gradient-to-r from-accent-500 to-accent-600 hover:shadow-lg hover:-translate-y-0.5'
                 }`}
               >
                 {isScheduling ? (
@@ -449,11 +451,11 @@ export default function ScheduleMeetingPage() {
                     Schedule Meeting
                   </>
                 )}
-              </motion.button>
+              </button>
 
               {/* Meeting Summary */}
               {selectedDate && selectedTime && selectedMeetingType && (
-                <div className="bg-accent-50 rounded-xl p-6 border border-accent-200">
+                <div className="bg-accent-50 rounded-2xl p-6 border border-accent-100">
                   <h3 className="font-semibold text-accent-800 mb-3">Meeting Summary</h3>
                   <div className="space-y-2 text-sm text-accent-700">
                     <div className="flex items-center">
@@ -479,7 +481,6 @@ export default function ScheduleMeetingPage() {
             </motion.div>
           </div>
         </div>
-      </div>
 
       <Footer />
     </main>

@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { ArrowLeft, FileSpreadsheet } from 'lucide-react'
 import Link from 'next/link'
 import NavBar from '@/components/NavBar'
-import AnimatedBackground from '@/components/AnimatedBackground'
 import Footer from '@/components/Footer'
 
 interface InvoiceData {
@@ -151,44 +150,57 @@ If any field cannot be found, use "Not found" for strings or 0 for materialCost.
 
   return (
     <main className="min-h-screen bg-white">
-      <AnimatedBackground />
       <NavBar />
 
-      <div className="pt-20 pb-16">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-7xl mx-auto px-6 sm:px-8 py-8"
-        >
-          <Link href="/" className="inline-flex items-center text-gray-600 hover:text-accent-500">
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Home
-          </Link>
-        </motion.div>
+      {/* Hero Section */}
+      <section className="pt-28 lg:pt-36 pb-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white pointer-events-none" />
+        <div className="absolute top-20 right-10 w-72 h-72 bg-accent-200/20 rounded-full blur-3xl" />
 
-        <div className="max-w-5xl mx-auto px-6 sm:px-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <Link href="/" className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
+            </Link>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            transition={{ duration: 0.5 }}
+            className="text-center max-w-3xl mx-auto"
           >
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-4 font-display">
-              Invoice Data Extraction
+            <span className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3">
+              Automation Demo
+            </span>
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 font-display tracking-tight">
+              Invoice Data{" "}
+              <span className="bg-gradient-to-r from-accent-500 to-accent-600 bg-clip-text text-transparent">
+                Extraction
+              </span>
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600">
               Automatically extract supplier information, invoice numbers, project details, and material costs from email invoices
             </p>
           </motion.div>
+        </div>
+      </section>
 
-          <div className="grid lg:grid-cols-2 gap-8 mb-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 mb-12">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-6">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-soft p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-gray-800">Invoice Email</h2>
                   <button
@@ -223,11 +235,11 @@ If any field cannot be found, use "Not found" for strings or 0 for materialCost.
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-6">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-soft p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-gray-800">Extracted Data</h2>
                   <FileSpreadsheet className="w-5 h-5 text-gray-400" />
@@ -315,9 +327,10 @@ If any field cannot be found, use "Not found" for strings or 0 for materialCost.
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white rounded-xl border border-gray-200 shadow-lg p-8 mb-12"
+            transition={{ duration: 0.5 }}
+            className="bg-white rounded-2xl border border-gray-100 shadow-soft p-8 mb-12"
           >
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 font-display">How It Works</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 font-display tracking-tight">How It Works</h2>
 
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
@@ -356,22 +369,22 @@ If any field cannot be found, use "Not found" for strings or 0 for materialCost.
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-8 text-center"
+            transition={{ duration: 0.5 }}
+            className="bg-gradient-to-r from-accent-500 to-accent-600 rounded-2xl p-8 lg:p-12 text-center"
           >
-            <h2 className="text-2xl font-bold text-gray-800 mb-3 font-display">
+            <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3 font-display tracking-tight">
               Ready to Automate Your Workflow?
             </h2>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            <p className="text-accent-100 mb-6 max-w-2xl mx-auto">
               Stop manually copying invoice data into spreadsheets. Let AI handle it automatically.
             </p>
             <Link href="/get-started">
-              <button className="bg-gradient-to-r from-accent-500 to-accent-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
+              <button className="inline-flex items-center justify-center bg-white text-accent-600 font-semibold py-3.5 px-7 rounded-full hover:bg-gray-100 transition-colors">
                 Get Started
               </button>
             </Link>
           </motion.div>
         </div>
-      </div>
 
       <Footer />
     </main>
