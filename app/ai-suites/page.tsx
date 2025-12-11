@@ -1,121 +1,101 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
 import {
   ArrowLeft,
-  Check,
-  Cpu,
   ArrowRight,
-  ChevronDown,
-  ChevronUp
+  Zap,
+  RefreshCw,
+  Database,
+  Users,
+  FileText,
+  ShoppingCart,
+  Calendar,
+  Mail,
+  CheckCircle,
+  Link2
 } from "lucide-react";
 import Link from "next/link";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
-const suites = [
+const benefits = [
   {
-    id: 1,
-    title: "Marketing Suite",
-    description:
-      "Complete AI-powered marketing automation for agencies and businesses. Create campaigns, manage social media, and optimize conversions.",
-    icon: "marketing",
-    color: "from-blue-500 to-blue-600",
-    iconBg: "bg-blue-50",
-    iconColor: "text-blue-600",
-    features: [
-      "Unlimited campaign creation",
-      "Multi-platform social media posting",
-      "Email sequence automation",
-      "SEO content optimization",
-      "Brand voice consistency",
-      "Real-time performance analytics",
-    ],
-    pricing: "From $79/month",
+    title: "Eliminate Manual Work",
+    description: "Stop wasting hours on repetitive data entry. Our automations handle the busywork so your team can focus on what matters.",
+    icon: Zap,
+    color: "bg-amber-50",
+    iconColor: "text-amber-600"
   },
   {
-    id: 2,
-    title: "Real Estate Suite",
-    description:
-      "Specialized AI tools for real estate professionals. Generate property descriptions, qualify leads, and manage client communications.",
-    icon: "realestate",
-    color: "from-green-500 to-green-600",
-    iconBg: "bg-green-50",
-    iconColor: "text-green-600",
-    features: [
-      "Automated property descriptions",
-      "Lead scoring and qualification",
-      "Calendar integration for showings",
-      "Market trend analysis",
-      "Client follow-up automation",
-      "Listing optimization tools",
-    ],
-    pricing: "From $59/month",
+    title: "No More Multiple Entry",
+    description: "Enter data once and watch it flow everywhere it needs to go. No more copying and pasting between systems.",
+    icon: RefreshCw,
+    color: "bg-blue-50",
+    iconColor: "text-blue-600"
   },
   {
-    id: 3,
-    title: "Boutique Shop Suite",
-    description:
-      "Perfect for small retail businesses. Manage inventory, create product descriptions, and optimize your online presence.",
-    icon: "retail",
-    color: "from-purple-500 to-purple-600",
-    iconBg: "bg-purple-50",
-    iconColor: "text-purple-600",
-    features: [
-      "Automated product descriptions",
-      "Inventory level monitoring",
-      "24/7 customer support chatbot",
-      "Social media content creation",
-      "Email marketing campaigns",
-      "Sales performance tracking",
-    ],
-    pricing: "From $39/month",
+    title: "Reduce Human Error",
+    description: "Automated processes don't make typos or forget steps. Get accurate data every time, automatically.",
+    icon: CheckCircle,
+    color: "bg-green-50",
+    iconColor: "text-green-600"
   },
   {
-    id: 4,
-    title: "Healthcare Suite",
-    description:
-      "HIPAA-compliant AI tools for healthcare providers. Manage appointments, handle patient inquiries, and streamline administrative tasks.",
-    icon: "healthcare",
-    color: "from-accent-500 to-accent-600",
-    iconBg: "bg-accent-50",
-    iconColor: "text-accent-600",
-    features: [
-      "HIPAA-compliant patient communication",
-      "Automated appointment scheduling",
-      "Insurance verification assistance",
-      "Medical document generation",
-      "Patient follow-up automation",
-      "Compliance reporting tools",
-    ],
-    pricing: "From $99/month",
-  },
+    title: "Keep Everyone in Sync",
+    description: "All your data syncs across systems in real-time. Everyone on your team sees the same up-to-date information.",
+    icon: Users,
+    color: "bg-purple-50",
+    iconColor: "text-purple-600"
+  }
 ];
 
-const iconMap: { [key: string]: string } = {
-  marketing: "analytics",
-  realestate: "home_work",
-  retail: "storefront",
-  healthcare: "local_hospital",
-};
+const automationExamples = [
+  {
+    title: "Invoice Automation",
+    description: "Automatically extract invoice data, update your accounting software, and notify your team when payments are due.",
+    icon: FileText,
+    flow: ["Invoice received", "Data extracted", "QuickBooks updated", "Team notified"]
+  },
+  {
+    title: "CRM Updating",
+    description: "New leads from your website, emails, or forms automatically create contacts and update your CRM with all relevant details.",
+    icon: Database,
+    flow: ["Lead captured", "Contact created", "Tags applied", "Follow-up scheduled"]
+  },
+  {
+    title: "Order Processing",
+    description: "When a customer places an order, automatically update inventory, create shipping labels, and send confirmation emails.",
+    icon: ShoppingCart,
+    flow: ["Order placed", "Inventory updated", "Shipping created", "Customer notified"]
+  },
+  {
+    title: "Appointment Scheduling",
+    description: "Sync calendars across platforms, send reminders, update your CRM, and prepare meeting notes automatically.",
+    icon: Calendar,
+    flow: ["Booking made", "Calendars synced", "Reminders sent", "CRM updated"]
+  },
+  {
+    title: "Email & Communication",
+    description: "Route emails to the right team members, create tasks from messages, and keep your communication organized.",
+    icon: Mail,
+    flow: ["Email received", "Categorized", "Task created", "Team assigned"]
+  },
+  {
+    title: "Data Synchronization",
+    description: "Keep all your databases, spreadsheets, and apps in perfect sync. Changes in one place update everywhere.",
+    icon: Link2,
+    flow: ["Data changed", "Systems detected", "Updates pushed", "All synced"]
+  }
+];
 
-export default function AISuitesPage() {
-  const ref = useRef(null);
-  const [expandedSuites, setExpandedSuites] = useState<Set<number>>(new Set());
+const integrations = [
+  "QuickBooks", "Salesforce", "HubSpot", "Slack", "Google Workspace",
+  "Microsoft 365", "Shopify", "Stripe", "Calendly", "Mailchimp",
+  "Notion", "Airtable", "Zapier", "Make", "And many more..."
+];
 
-  const toggleExpanded = (suiteId: number) => {
-    setExpandedSuites((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(suiteId)) {
-        newSet.delete(suiteId);
-      } else {
-        newSet.add(suiteId);
-      }
-      return newSet;
-    });
-  };
-
+export default function AutomationsPage() {
   return (
     <main className="min-h-screen bg-white">
       <NavBar />
@@ -152,7 +132,7 @@ export default function AISuitesPage() {
               className="flex justify-center mb-6"
             >
               <div className="w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-600 rounded-2xl flex items-center justify-center shadow-glow-orange">
-                <Cpu className="w-8 h-8 text-white" />
+                <RefreshCw className="w-8 h-8 text-white" />
               </div>
             </motion.div>
 
@@ -162,7 +142,7 @@ export default function AISuitesPage() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3"
             >
-              AI Solutions
+              Automations
             </motion.span>
 
             <motion.h1
@@ -171,102 +151,131 @@ export default function AISuitesPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 font-display tracking-tight"
             >
-              Industry AI Suites
+              Connect Your Software,{" "}
+              <span className="bg-gradient-to-r from-accent-500 to-accent-600 bg-clip-text text-transparent">
+                Eliminate Manual Work
+              </span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="text-lg text-gray-600 leading-relaxed"
+              className="text-lg text-gray-600 leading-relaxed mb-8"
             >
-              Specialized AI solutions tailored for your industry. From marketing
-              agencies to healthcare providers, we have the perfect suite to
-              accelerate your business growth.
+              We connect all your business software so data flows automatically between systems.
+              No more manual entry, no more errors, no more wasted time. Everything stays in sync,
+              and it all happens automatically.
             </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <Link href="/contact" className="btn-primary">
+                Get a Custom Automation
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Suites Grid */}
-      <section className="py-16 lg:py-20">
+      {/* Benefits Section */}
+      <section className="py-20 lg:py-28 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-            {suites.map((suite, index) => (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <span className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3">
+              Why Automate
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-5 font-display tracking-tight">
+              Work Smarter, Not Harder
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Stop wasting time on tasks that should happen automatically.
+              Let your systems do the work while you focus on growing your business.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {benefits.map((benefit, index) => (
               <motion.div
-                key={suite.id}
+                key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -4 }}
-                className="group"
+                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-soft hover:shadow-soft-lg transition-all duration-300"
               >
-                <div className="bg-white rounded-2xl p-6 lg:p-8 border border-gray-100 shadow-soft hover:shadow-soft-lg transition-all duration-300 h-full">
-                  {/* Header */}
-                  <div className="flex items-start gap-4 mb-5">
-                    <div className={`w-14 h-14 ${suite.iconBg} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
-                      <span className={`text-2xl ${suite.iconColor}`}>
-                        {suite.icon === "marketing" && ""}
-                        {suite.icon === "realestate" && ""}
-                        {suite.icon === "retail" && ""}
-                        {suite.icon === "healthcare" && ""}
+                <div className={`w-12 h-12 ${benefit.color} rounded-xl flex items-center justify-center mb-4`}>
+                  <benefit.icon className={`w-6 h-6 ${benefit.iconColor}`} />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2 font-display">{benefit.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{benefit.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Automation Examples */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <span className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3">
+              Examples
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-5 font-display tracking-tight">
+              What We Can Automate
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Here are just a few examples of how we can connect your systems and automate your workflows.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {automationExamples.map((example, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -4 }}
+                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-soft hover:shadow-soft-lg transition-all duration-300"
+              >
+                <div className="w-12 h-12 bg-accent-50 rounded-xl flex items-center justify-center mb-4">
+                  <example.icon className="w-6 h-6 text-accent-600" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2 font-display">{example.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed mb-4">{example.description}</p>
+
+                {/* Flow visualization */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {example.flow.map((step, stepIndex) => (
+                    <div key={stepIndex} className="flex items-center">
+                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                        {step}
                       </span>
-                      <div className={`w-7 h-7 bg-gradient-to-br ${suite.color} rounded-lg`} />
+                      {stepIndex < example.flow.length - 1 && (
+                        <ArrowRight className="w-3 h-3 text-gray-400 mx-1" />
+                      )}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900 font-display mb-1">
-                        {suite.title}
-                      </h3>
-                      <p className="text-sm text-accent-600 font-semibold">{suite.pricing}</p>
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                    {suite.description}
-                  </p>
-
-                  {/* Features */}
-                  <div className="mb-6">
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                      What's Included
-                    </h4>
-                    <ul className="space-y-2">
-                      {suite.features.slice(0, expandedSuites.has(suite.id) ? undefined : 4).map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-start">
-                          <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
-                            <Check className="w-3 h-3 text-green-600" />
-                          </div>
-                          <span className="text-sm text-gray-600">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    {suite.features.length > 4 && (
-                      <button
-                        onClick={() => toggleExpanded(suite.id)}
-                        className="mt-3 flex items-center text-xs text-accent-600 hover:text-accent-700 font-medium transition-colors"
-                      >
-                        {expandedSuites.has(suite.id) ? (
-                          <>
-                            Show less <ChevronUp className="w-3 h-3 ml-1" />
-                          </>
-                        ) : (
-                          <>
-                            +{suite.features.length - 4} more features <ChevronDown className="w-3 h-3 ml-1" />
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-
-                  {/* CTA */}
-                  <Link href="/get-started" className="block">
-                    <button className={`w-full py-3 px-6 rounded-full font-semibold text-sm bg-gradient-to-r ${suite.color} text-white hover:shadow-lg transition-all duration-200 flex items-center justify-center group/btn`}>
-                      Get Started
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                    </button>
-                  </Link>
+                  ))}
                 </div>
               </motion.div>
             ))}
@@ -274,8 +283,45 @@ export default function AISuitesPage() {
         </div>
       </section>
 
+      {/* Integrations */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-10"
+          >
+            <h3 className="text-xl font-bold text-gray-900 mb-2 font-display">
+              Connect With Your Favorite Tools
+            </h3>
+            <p className="text-sm text-gray-600">
+              We integrate with hundreds of apps and services
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-wrap justify-center gap-3"
+          >
+            {integrations.map((integration, index) => (
+              <span
+                key={index}
+                className="px-4 py-2 bg-white rounded-full text-sm text-gray-600 border border-gray-200 hover:border-accent-300 hover:text-accent-600 transition-colors"
+              >
+                {integration}
+              </span>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       {/* Custom Suite CTA */}
-      <section className="py-20 lg:py-28 bg-gray-50">
+      <section className="py-20 lg:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -285,46 +331,45 @@ export default function AISuitesPage() {
             className="bg-white rounded-3xl p-8 lg:p-12 shadow-soft border border-gray-100 text-center"
           >
             <div className="w-14 h-14 bg-accent-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Cpu className="w-7 h-7 text-accent-600" />
+              <RefreshCw className="w-7 h-7 text-accent-600" />
             </div>
 
             <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 font-display tracking-tight">
-              Don't See What You're Looking For?
+              Every Business is Different
             </h2>
 
             <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              We understand every business is unique. Our team can create a
-              custom AI suite tailored specifically to your industry,
-              workflow, and business needs.
+              We don't believe in one-size-fits-all solutions. Tell us about your workflow,
+              and we'll design a custom automation that fits exactly how your business operates.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="text-center">
                 <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <span className="text-blue-600 text-xl">$</span>
+                  <span className="text-blue-600 text-xl">1</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 text-sm mb-1">Custom Features</h3>
-                <p className="text-xs text-gray-500">Tailored AI tools for your use cases</p>
+                <h3 className="font-semibold text-gray-900 text-sm mb-1">Tell Us Your Process</h3>
+                <p className="text-xs text-gray-500">Share how you currently work</p>
               </div>
               <div className="text-center">
                 <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <span className="text-green-600 text-xl">~</span>
+                  <span className="text-green-600 text-xl">2</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 text-sm mb-1">Integration</h3>
-                <p className="text-xs text-gray-500">Seamless with your existing systems</p>
+                <h3 className="font-semibold text-gray-900 text-sm mb-1">We Design the Automation</h3>
+                <p className="text-xs text-gray-500">Custom-built for your needs</p>
               </div>
               <div className="text-center">
                 <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <span className="text-purple-600 text-xl">*</span>
+                  <span className="text-purple-600 text-xl">3</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 text-sm mb-1">Dedicated Support</h3>
-                <p className="text-xs text-gray-500">Personalized onboarding & assistance</p>
+                <h3 className="font-semibold text-gray-900 text-sm mb-1">Watch It Work</h3>
+                <p className="text-xs text-gray-500">Sit back while tasks complete automatically</p>
               </div>
             </div>
 
             <Link href="/contact">
               <button className="btn-primary">
-                Contact Us for Custom Suite
+                Contact Us for Custom Automation
                 <ArrowRight className="w-4 h-4 ml-2" />
               </button>
             </Link>
@@ -342,13 +387,13 @@ export default function AISuitesPage() {
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 font-display tracking-tight">
-              Ready to Transform Your Business?
+              Ready to Automate Your Business?
             </h2>
             <p className="text-accent-100 text-lg mb-8 max-w-2xl mx-auto">
-              Get started with our AI suites today and see the difference AI can make.
+              Stop doing things manually. Let us connect your systems and put your workflows on autopilot.
             </p>
             <Link
-              href="/get-started"
+              href="/contact"
               className="inline-flex items-center justify-center bg-white text-accent-600 font-semibold py-3.5 px-7 rounded-full hover:bg-gray-100 transition-colors"
             >
               Get Started

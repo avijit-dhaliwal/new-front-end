@@ -45,13 +45,6 @@ const features = [
   }
 ]
 
-const useCases = [
-  { title: "Restaurants", description: "Take reservations, answer menu questions", icon: "" },
-  { title: "Medical Offices", description: "Schedule appointments, answer insurance questions", icon: "" },
-  { title: "Real Estate", description: "Qualify leads, schedule showings", icon: "" },
-  { title: "E-commerce", description: "Product recommendations, order tracking", icon: "" }
-]
-
 const includedFeatures = [
   "24/7 AI chatbot availability",
   "Multi-language support",
@@ -215,46 +208,6 @@ export default function ChatbotPage() {
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2 font-display">{feature.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Use Cases Section */}
-      <section className="py-20 lg:py-28 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
-            <span className="inline-block text-primary-600 font-semibold text-sm uppercase tracking-wider mb-3">
-              Use Cases
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-5 font-display tracking-tight">
-              Perfect For
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {useCases.map((useCase, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-soft hover:shadow-soft-lg transition-all duration-300"
-              >
-                <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
-                  <MessageCircle className="w-6 h-6 text-primary-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2 font-display">{useCase.title}</h3>
-                <p className="text-sm text-gray-600">{useCase.description}</p>
               </motion.div>
             ))}
           </div>
