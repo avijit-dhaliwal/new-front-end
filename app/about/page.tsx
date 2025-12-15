@@ -239,10 +239,9 @@ export default function AboutPage() {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="bg-white rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100 flex items-start gap-5"
+                className="bg-white rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100 flex items-start gap-5 hover:-translate-y-1 transition-transform duration-300"
               >
                 <div className={`w-12 h-12 ${value.color} rounded-xl flex items-center justify-center flex-shrink-0`}>
                   <value.icon className={`w-6 h-6 ${value.iconColor}`} />

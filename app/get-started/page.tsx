@@ -251,10 +251,9 @@ export default function GetStartedPage() {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-soft hover:shadow-soft-lg transition-all duration-300 text-center"
+                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-soft hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-300 text-center"
               >
                 <div className={`w-12 h-12 ${benefit.color} rounded-xl flex items-center justify-center mx-auto mb-4`}>
                   <benefit.icon className={`w-6 h-6 ${benefit.iconColor}`} />
@@ -347,10 +346,9 @@ export default function GetStartedPage() {
                 key={plan.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
-                className={`relative bg-white rounded-2xl p-6 lg:p-8 shadow-soft hover:shadow-soft-lg transition-all duration-300 border-2 flex flex-col ${
+                className={`relative bg-white rounded-2xl p-6 lg:p-8 shadow-soft hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-300 border-2 flex flex-col ${
                   plan.popular
                     ? "border-accent-500"
                     : "border-gray-100 hover:border-gray-200"

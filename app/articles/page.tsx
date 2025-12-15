@@ -366,10 +366,9 @@ export default function ArticlesPage() {
                 key={article.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
-                whileHover={{ y: -4 }}
-                className="bg-white rounded-2xl shadow-soft hover:shadow-soft-lg overflow-hidden group border border-gray-100 transition-all duration-300"
+                className="bg-white rounded-2xl shadow-soft hover:shadow-soft-lg overflow-hidden group border border-gray-100 hover:-translate-y-1 transition-all duration-300"
               >
                 {/* Article Image */}
                 <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">

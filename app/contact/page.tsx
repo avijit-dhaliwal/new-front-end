@@ -201,10 +201,9 @@ export default function ContactPage() {
                 href={info.action}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="bg-white rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100 flex items-center gap-5 group"
+                className="bg-white rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100 flex items-center gap-5 group hover:-translate-y-1 transition-transform duration-300"
               >
                 <div className={`w-14 h-14 ${info.color} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
                   <info.icon className={`w-7 h-7 ${info.iconColor}`} />

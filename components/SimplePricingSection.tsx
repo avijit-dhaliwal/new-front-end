@@ -97,10 +97,9 @@ export default function SimplePricingSection() {
               key={plan.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -6 }}
-              className={`relative group ${plan.popular ? 'md:-mt-4 md:mb-4' : ''}`}
+              className={`relative group hover:-translate-y-1.5 transition-transform duration-300 ${plan.popular ? 'md:-mt-4 md:mb-4' : ''}`}
             >
               {/* Popular Badge */}
               {plan.popular && (

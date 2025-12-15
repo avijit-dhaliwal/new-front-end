@@ -51,10 +51,9 @@ export default function IntegrationsSection() {
               key={integration.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.4, delay: index * 0.05 }}
-              whileHover={{ y: -4, scale: 1.05 }}
-              className="group cursor-pointer"
+              className="group cursor-pointer hover:-translate-y-1 hover:scale-105 transition-all duration-300"
             >
               <div className="bg-white rounded-2xl p-4 lg:p-6 border border-gray-100 shadow-sm hover:shadow-lg hover:border-gray-200 transition-all duration-300 flex flex-col items-center">
                 <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gray-50 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
