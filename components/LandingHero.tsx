@@ -169,7 +169,7 @@ export default function LandingHero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto text-center leading-relaxed mb-10"
         >
-          From intelligent chatbots to AI-powered phone services, we deliver cutting-edge solutions that help businesses automate, engage, and grow.
+          Koby connects all your systems, automates manual work, and uses AI to transform raw data into insights, reports, and smarter decisions.
         </motion.p>
 
         {/* CTA Buttons */}
