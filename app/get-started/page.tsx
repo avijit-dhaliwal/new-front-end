@@ -356,8 +356,8 @@ export default function GetStartedPage() {
               >
                 {/* Popular Badge */}
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-accent-500 to-accent-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                    <span className="bg-gradient-to-r from-accent-500 to-accent-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap">
                       Most Popular
                     </span>
                   </div>

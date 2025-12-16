@@ -53,7 +53,7 @@ const values = [
 
 const stats = [
   { value: "99.9%", label: "Uptime Guarantee" },
-  { value: "500+", label: "Happy Clients" },
+  { value: "50+", label: "Happy Clients" },
   { value: "24/7", label: "Support Available" },
   { value: "5/5", label: "Customer Rating" },
 ];

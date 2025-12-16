@@ -151,7 +151,7 @@ export default function NewTestimonialsSection() {
           className="mt-16 text-center"
         >
           <p className="text-gray-500 text-sm">
-            Join 500+ businesses already using Koby AI
+            Join 50+ businesses already using Koby AI
           </p>
         </motion.div>
       </div>

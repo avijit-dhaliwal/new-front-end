@@ -6,15 +6,16 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowRight, Play, Star } from 'lucide-react'
 
 // Floating app icons - representing Koby AI products
+// Positioned further from center to avoid covering text
 const floatingIcons = [
-  { id: 1, icon: '💬', label: 'Chatbot', x: '8%', y: '18%', size: 56, delay: 0 },
-  { id: 2, icon: '📞', label: 'Phone AI', x: '85%', y: '22%', size: 52, delay: 0.2 },
-  { id: 3, icon: '🏥', label: 'Healthcare', x: '12%', y: '65%', size: 48, delay: 0.4 },
-  { id: 4, icon: '🏠', label: 'Real Estate', x: '88%', y: '58%', size: 54, delay: 0.6 },
-  { id: 5, icon: '📈', label: 'Marketing', x: '5%', y: '42%', size: 44, delay: 0.8 },
-  { id: 6, icon: '⚖️', label: 'Legal', x: '92%', y: '40%', size: 46, delay: 1.0 },
-  { id: 7, icon: '🛒', label: 'Retail', x: '15%', y: '85%', size: 50, delay: 1.2 },
-  { id: 8, icon: '🤖', label: 'Automation', x: '82%', y: '78%', size: 48, delay: 1.4 },
+  { id: 1, icon: '💬', label: 'Chatbot', x: '3%', y: '18%', size: 52, delay: 0 },
+  { id: 2, icon: '📞', label: 'Phone AI', x: '90%', y: '22%', size: 48, delay: 0.2 },
+  { id: 3, icon: '🏥', label: 'Healthcare', x: '5%', y: '60%', size: 44, delay: 0.4 },
+  { id: 4, icon: '🏠', label: 'Real Estate', x: '92%', y: '55%', size: 48, delay: 0.6 },
+  { id: 5, icon: '📈', label: 'Marketing', x: '2%', y: '40%', size: 40, delay: 0.8 },
+  { id: 6, icon: '⚖️', label: 'Legal', x: '95%', y: '40%', size: 42, delay: 1.0 },
+  { id: 7, icon: '🛒', label: 'Retail', x: '6%', y: '80%', size: 46, delay: 1.2 },
+  { id: 8, icon: '🤖', label: 'Automation', x: '88%', y: '75%', size: 44, delay: 1.4 },
 ]
 
 // Animated counter component
@@ -120,8 +121,8 @@ export default function LandingHero() {
         }}
       />
 
-      {/* Floating Icons */}
-      <div className="absolute inset-0 hidden lg:block">
+      {/* Floating Icons - only show on xl screens and up */}
+      <div className="absolute inset-0 hidden xl:block pointer-events-none">
         {floatingIcons.map((item) => (
           <FloatingIcon key={item.id} {...item} />
         ))}
