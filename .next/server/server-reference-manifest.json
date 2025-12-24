@@ -200,6 +200,24 @@
           "exportedName": "detectKeylessEnvDriftAction",
           "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
         },
+        "app/portal/select-org/page": {
+          "moduleId": 32981,
+          "async": false,
+          "exportedName": "detectKeylessEnvDriftAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
+        "app/portal/settings/page": {
+          "moduleId": 79511,
+          "async": false,
+          "exportedName": "detectKeylessEnvDriftAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
+        "app/portal/team/page": {
+          "moduleId": 81142,
+          "async": false,
+          "exportedName": "detectKeylessEnvDriftAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
         "app/schedule-meeting/page": {
           "moduleId": 9649,
           "async": false,
@@ -253,6 +271,9 @@
         "app/pannudental/page": "rsc",
         "app/phone-service/page": "rsc",
         "app/portal/page": "rsc",
+        "app/portal/select-org/page": "rsc",
+        "app/portal/settings/page": "rsc",
+        "app/portal/team/page": "rsc",
         "app/schedule-meeting/page": "rsc",
         "app/sign-in/[[...sign-in]]/page": "rsc",
         "app/sign-up/[[...sign-up]]/page": "rsc"
@@ -460,6 +481,24 @@
           "exportedName": "invalidateCacheAction",
           "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js"
         },
+        "app/portal/select-org/page": {
+          "moduleId": 32981,
+          "async": false,
+          "exportedName": "invalidateCacheAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js"
+        },
+        "app/portal/settings/page": {
+          "moduleId": 79511,
+          "async": false,
+          "exportedName": "invalidateCacheAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js"
+        },
+        "app/portal/team/page": {
+          "moduleId": 81142,
+          "async": false,
+          "exportedName": "invalidateCacheAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js"
+        },
         "app/schedule-meeting/page": {
           "moduleId": 9649,
           "async": false,
@@ -513,6 +552,9 @@
         "app/pannudental/page": "action-browser",
         "app/phone-service/page": "action-browser",
         "app/portal/page": "action-browser",
+        "app/portal/select-org/page": "action-browser",
+        "app/portal/settings/page": "action-browser",
+        "app/portal/team/page": "action-browser",
         "app/schedule-meeting/page": "action-browser",
         "app/sign-in/[[...sign-in]]/page": "action-browser",
         "app/sign-up/[[...sign-up]]/page": "action-browser"
@@ -720,6 +762,24 @@
           "exportedName": "createOrReadKeylessAction",
           "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
         },
+        "app/portal/select-org/page": {
+          "moduleId": 32981,
+          "async": false,
+          "exportedName": "createOrReadKeylessAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
+        "app/portal/settings/page": {
+          "moduleId": 79511,
+          "async": false,
+          "exportedName": "createOrReadKeylessAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
+        "app/portal/team/page": {
+          "moduleId": 81142,
+          "async": false,
+          "exportedName": "createOrReadKeylessAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
         "app/schedule-meeting/page": {
           "moduleId": 9649,
           "async": false,
@@ -773,6 +833,9 @@
         "app/pannudental/page": "rsc",
         "app/phone-service/page": "rsc",
         "app/portal/page": "rsc",
+        "app/portal/select-org/page": "rsc",
+        "app/portal/settings/page": "rsc",
+        "app/portal/team/page": "rsc",
         "app/schedule-meeting/page": "rsc",
         "app/sign-in/[[...sign-in]]/page": "rsc",
         "app/sign-up/[[...sign-up]]/page": "rsc"
@@ -980,6 +1043,24 @@
           "exportedName": "collectKeylessMetadata",
           "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/server/keyless-custom-headers.js"
         },
+        "app/portal/select-org/page": {
+          "moduleId": 32981,
+          "async": false,
+          "exportedName": "collectKeylessMetadata",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/server/keyless-custom-headers.js"
+        },
+        "app/portal/settings/page": {
+          "moduleId": 79511,
+          "async": false,
+          "exportedName": "collectKeylessMetadata",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/server/keyless-custom-headers.js"
+        },
+        "app/portal/team/page": {
+          "moduleId": 81142,
+          "async": false,
+          "exportedName": "collectKeylessMetadata",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/server/keyless-custom-headers.js"
+        },
         "app/schedule-meeting/page": {
           "moduleId": 9649,
           "async": false,
@@ -1033,6 +1114,9 @@
         "app/pannudental/page": "rsc",
         "app/phone-service/page": "rsc",
         "app/portal/page": "rsc",
+        "app/portal/select-org/page": "rsc",
+        "app/portal/settings/page": "rsc",
+        "app/portal/team/page": "rsc",
         "app/schedule-meeting/page": "rsc",
         "app/sign-in/[[...sign-in]]/page": "rsc",
         "app/sign-up/[[...sign-up]]/page": "rsc"
@@ -1240,6 +1324,24 @@
           "exportedName": "formatMetadataHeaders",
           "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/server/keyless-custom-headers.js"
         },
+        "app/portal/select-org/page": {
+          "moduleId": 32981,
+          "async": false,
+          "exportedName": "formatMetadataHeaders",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/server/keyless-custom-headers.js"
+        },
+        "app/portal/settings/page": {
+          "moduleId": 79511,
+          "async": false,
+          "exportedName": "formatMetadataHeaders",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/server/keyless-custom-headers.js"
+        },
+        "app/portal/team/page": {
+          "moduleId": 81142,
+          "async": false,
+          "exportedName": "formatMetadataHeaders",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/server/keyless-custom-headers.js"
+        },
         "app/schedule-meeting/page": {
           "moduleId": 9649,
           "async": false,
@@ -1293,6 +1395,9 @@
         "app/pannudental/page": "rsc",
         "app/phone-service/page": "rsc",
         "app/portal/page": "rsc",
+        "app/portal/select-org/page": "rsc",
+        "app/portal/settings/page": "rsc",
+        "app/portal/team/page": "rsc",
         "app/schedule-meeting/page": "rsc",
         "app/sign-in/[[...sign-in]]/page": "rsc",
         "app/sign-up/[[...sign-up]]/page": "rsc"
@@ -1500,6 +1605,24 @@
           "exportedName": "deleteKeylessAction",
           "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
         },
+        "app/portal/select-org/page": {
+          "moduleId": 32981,
+          "async": false,
+          "exportedName": "deleteKeylessAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
+        "app/portal/settings/page": {
+          "moduleId": 79511,
+          "async": false,
+          "exportedName": "deleteKeylessAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
+        "app/portal/team/page": {
+          "moduleId": 81142,
+          "async": false,
+          "exportedName": "deleteKeylessAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
         "app/schedule-meeting/page": {
           "moduleId": 9649,
           "async": false,
@@ -1553,6 +1676,9 @@
         "app/pannudental/page": "action-browser",
         "app/phone-service/page": "action-browser",
         "app/portal/page": "action-browser",
+        "app/portal/select-org/page": "action-browser",
+        "app/portal/settings/page": "action-browser",
+        "app/portal/team/page": "action-browser",
         "app/schedule-meeting/page": "action-browser",
         "app/sign-in/[[...sign-in]]/page": "action-browser",
         "app/sign-up/[[...sign-up]]/page": "action-browser"
@@ -1760,6 +1886,24 @@
           "exportedName": "syncKeylessConfigAction",
           "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
         },
+        "app/portal/select-org/page": {
+          "moduleId": 32981,
+          "async": false,
+          "exportedName": "syncKeylessConfigAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
+        "app/portal/settings/page": {
+          "moduleId": 79511,
+          "async": false,
+          "exportedName": "syncKeylessConfigAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
+        "app/portal/team/page": {
+          "moduleId": 81142,
+          "async": false,
+          "exportedName": "syncKeylessConfigAction",
+          "filename": "Desktop/Projects/new-front-end/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js"
+        },
         "app/schedule-meeting/page": {
           "moduleId": 9649,
           "async": false,
@@ -1813,6 +1957,9 @@
         "app/pannudental/page": "action-browser",
         "app/phone-service/page": "action-browser",
         "app/portal/page": "action-browser",
+        "app/portal/select-org/page": "action-browser",
+        "app/portal/settings/page": "action-browser",
+        "app/portal/team/page": "action-browser",
         "app/schedule-meeting/page": "action-browser",
         "app/sign-in/[[...sign-in]]/page": "action-browser",
         "app/sign-up/[[...sign-up]]/page": "action-browser"

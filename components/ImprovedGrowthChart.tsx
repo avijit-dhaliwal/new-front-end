@@ -42,7 +42,7 @@ export default function ImprovedGrowthChart() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
@@ -58,7 +58,7 @@ export default function ImprovedGrowthChart() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="bg-gray-50 rounded-2xl p-8 shadow-lg"
         >
@@ -107,7 +107,7 @@ export default function ImprovedGrowthChart() {
                   key={index}
                   initial={{ height: 0 }}
                   whileInView={{ height: "100%" }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, amount: 0.2 }}
                   transition={{ duration: 1, delay: 0.1 * index }}
                   className="flex flex-col items-center flex-1 group"
                 >
@@ -116,7 +116,7 @@ export default function ImprovedGrowthChart() {
                     <motion.div
                       initial={{ height: 0 }}
                       whileInView={{ height: ((data.revenue - revenueMin) / (revenueMax - revenueMin)) * 100 + "%" }}
-                      viewport={{ once: true }}
+                      viewport={{ once: true, amount: 0.2 }}
                       transition={{ duration: 1, delay: 0.1 * index + 0.5 }}
                       className="w-full bg-primary-500 rounded-t-lg relative group-hover:bg-primary-600 transition-colors duration-300"
                     >
@@ -129,7 +129,7 @@ export default function ImprovedGrowthChart() {
                     <motion.div
                       initial={{ height: 0 }}
                       whileInView={{ height: ((data.users - userMin) / (userMax - userMin)) * 100 + "%" }}
-                      viewport={{ once: true }}
+                      viewport={{ once: true, amount: 0.2 }}
                       transition={{ duration: 1, delay: 0.1 * index + 0.7 }}
                       className="w-full bg-accent-500 rounded-b-lg relative group-hover:bg-accent-600 transition-colors duration-300"
                     >

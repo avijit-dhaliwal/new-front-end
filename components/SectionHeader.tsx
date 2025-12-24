@@ -36,7 +36,7 @@ export default function SectionHeader({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.5, delay }}
       className={centered ? 'text-center max-w-3xl mx-auto' : 'max-w-3xl'}
     >
@@ -77,7 +77,7 @@ export default function SectionHeader({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5, delay: delay + 0.1 }}
         >
           {sideContent}

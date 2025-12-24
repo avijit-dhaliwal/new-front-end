@@ -47,7 +47,7 @@ export default function CTASection({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.5 }}
         className="panel-card p-6"
       >
@@ -91,7 +91,7 @@ export default function CTASection({
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="panel-card p-8 lg:p-12"
           >
@@ -137,7 +137,7 @@ export default function CTASection({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto"
         >

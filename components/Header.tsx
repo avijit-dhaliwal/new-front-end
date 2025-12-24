@@ -4,14 +4,12 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Sun, Moon } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
-import { useTheme } from '@/components/ThemeProvider'
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -81,45 +79,6 @@ export function Header() {
               </motion.div>
             ))}
             
-            {/* Login temporarily removed */}
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleTheme}
-                className="relative overflow-hidden group"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-orange-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <motion.div
-                  initial={false}
-                  animate={{
-                    rotate: theme === 'dark' ? 0 : 180,
-                    scale: theme === 'dark' ? 1 : 0
-                  }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute"
-                >
-                  <Moon className="h-5 w-5" />
-                </motion.div>
-                <motion.div
-                  initial={false}
-                  animate={{
-                    rotate: theme === 'light' ? 0 : -180,
-                    scale: theme === 'light' ? 1 : 0
-                  }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute"
-                >
-                  <Sun className="h-5 w-5" />
-                </motion.div>
-              </Button>
-            </motion.div>
-
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -139,13 +98,6 @@ export function Header() {
           </nav>
 
           <div className="flex md:hidden items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-            >
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
             <button
               className="p-2"
               onClick={() => setIsMenuOpen(!isMenuOpen)}

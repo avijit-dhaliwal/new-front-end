@@ -452,11 +452,13 @@ a {
 .panel-card {
   @apply rounded-3xl border bg-[var(--panel)] shadow-[var(--shadow-soft)];
   border-color: var(--line);
+  will-change: transform, opacity;
 }
 
 .panel-card-sm {
   @apply rounded-2xl border bg-[var(--panel)] shadow-[var(--shadow-soft)];
   border-color: var(--line);
+  will-change: transform, opacity;
 }
 
 /* Icon container - standardized icon wrapper */
@@ -530,6 +532,7 @@ a {
   @apply rounded-2xl border px-3 py-3 text-center;
   background-color: var(--panel);
   border-color: var(--line);
+  will-change: transform, opacity;
 }
 
 /* Inner card - nested cards within panels */
@@ -537,6 +540,7 @@ a {
   @apply rounded-2xl border px-4 py-3;
   background-color: var(--paper-muted);
   border-color: var(--line);
+  will-change: transform, opacity;
 }
 
 /* Hero background - paper + grid combo */

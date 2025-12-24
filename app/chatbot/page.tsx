@@ -195,7 +195,7 @@ export default function ChatbotPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="grid grid-cols-2 lg:grid-cols-4 gap-8"
           >
@@ -217,7 +217,7 @@ export default function ChatbotPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="text-center mb-16"
           >
@@ -254,7 +254,7 @@ export default function ChatbotPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-8 lg:p-12 shadow-[var(--shadow-soft)] text-center"
           >
@@ -296,7 +296,7 @@ export default function ChatbotPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-8 lg:p-12 shadow-[var(--shadow-soft)] text-center"
           >

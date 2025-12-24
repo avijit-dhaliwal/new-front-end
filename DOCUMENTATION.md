@@ -61,6 +61,13 @@ This is a Next.js-based landing page for Koby AI, featuring a modern, responsive
 - **Language**: TypeScript
 - **Deployment**: Ready for Vercel/Netlify
 
+## 🗄️ Platform Contract (Agent 1)
+
+- **Core tables (D1)**: `orgs`, `portal_sites`, `chat_sessions`, `chat_messages`, `metrics_daily`, `portal_config`, plus Actions/Integrations (`action_definitions`, `action_runs`, `integration_connections`, `webhook_events`, `outcome_events`, `billing_records`, `audit_logs`, `retention_policies`).
+- **Knowledge + Flow**: `knowledge_sources`, `knowledge_documents`, `knowledge_versions`, `knowledge_chunks`, `knowledge_policies`, `flows`, `flow_steps`, `flow_rules`, `flow_tests`, `flow_runs` (see `cloudflare-workers/portal-schema.sql` for schema + demo seeds).
+- **Shared types**: `types/portal.ts` (portal contract, events, integrations), `types/knowledge.ts` (knowledge + flow entities) — camelCase in API payloads, snake_case in storage.
+- **Portal worker endpoints**: `/portal/overview|engines|insights|team|config|clients|events|integrations`, `/outcomes`, `/billing/usage` returning the above shapes, auth-scoped by org with Clerk JWT.
+
 ## 📁 Project Structure
 
 ```

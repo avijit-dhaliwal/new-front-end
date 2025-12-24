@@ -65,7 +65,7 @@ export default function SimplePricingSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto"
         >
@@ -144,7 +144,7 @@ export default function SimplePricingSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-12 text-center"
         >

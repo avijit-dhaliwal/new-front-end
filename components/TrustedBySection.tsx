@@ -54,7 +54,7 @@ export default function TrustedBySection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5 }}
           className="max-w-3xl"
         >
@@ -70,7 +70,7 @@ export default function TrustedBySection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mt-10 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-6"
         >
@@ -133,7 +133,7 @@ export default function TrustedBySection() {
               key={industry.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.4 }}
               className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-4 shadow-[var(--shadow-soft)]"
             >

@@ -73,7 +73,7 @@ export default function FloatingFeaturesCarousel() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5 }}
           className="text-center mb-20"
         >
@@ -96,7 +96,7 @@ export default function FloatingFeaturesCarousel() {
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.4, delay: index * 0.08 }}
               className="group"
             >
@@ -127,7 +127,7 @@ export default function FloatingFeaturesCarousel() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-16 text-center"
         >

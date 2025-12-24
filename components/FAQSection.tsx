@@ -45,7 +45,7 @@ function FAQItem({ faq, isOpen, onClick, index }: {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
       className="border-b border-[var(--line)] last:border-b-0"
     >
@@ -95,7 +95,7 @@ export default function FAQSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5 }}
           className="text-center"
         >
@@ -125,7 +125,7 @@ export default function FAQSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-10 text-center"
         >

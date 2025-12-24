@@ -190,7 +190,7 @@ export default function ContactPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
@@ -228,7 +228,7 @@ export default function ContactPage() {
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6 }}
               className="bg-[var(--panel)] rounded-3xl p-8 lg:p-10 shadow-[var(--shadow-soft)] border border-[var(--line)]"
             >
@@ -380,7 +380,7 @@ export default function ContactPage() {
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6 }}
               className="space-y-6"
             >
@@ -434,7 +434,7 @@ export default function ContactPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
@@ -455,7 +455,7 @@ export default function ContactPage() {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-[var(--panel)] rounded-2xl p-6 shadow-[var(--shadow-soft)] border border-[var(--line)]"
               >

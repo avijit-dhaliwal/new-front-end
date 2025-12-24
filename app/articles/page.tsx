@@ -313,7 +313,7 @@ export default function ArticlesPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.5 }}
               className="bg-[var(--panel)] rounded-3xl p-8 lg:p-12 shadow-[var(--shadow-soft)] border border-[var(--line)]"
             >
@@ -427,7 +427,7 @@ export default function ArticlesPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="bg-[var(--panel)] rounded-3xl p-8 lg:p-12 shadow-[var(--shadow-soft)] border border-[var(--line)] text-center"
           >
@@ -458,7 +458,7 @@ export default function ArticlesPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="bg-[var(--panel)] rounded-3xl p-10 lg:p-14 shadow-[var(--shadow-soft)] border border-[var(--line)] text-center"
           >

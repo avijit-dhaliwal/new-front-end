@@ -3,19 +3,9 @@
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, ChevronDown, Cpu, MessageCircle, Phone, ArrowRight, Sun, Moon } from 'lucide-react'
+import { Menu, X, ChevronDown, Cpu, MessageCircle, Phone, ArrowRight } from 'lucide-react'
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import KobyLogo from './KobyLogo'
-import { useTheme } from './ThemeProvider'
-
-const navLinks = [
-  { name: 'AI Automations', href: '/ai-suites' },
-  { name: 'Chatbot', href: '/chatbot' },
-  { name: 'Phone Service', href: '/phone-service' },
-  { name: 'Articles', href: '/articles' },
-  { name: 'About', href: '/about' },
-  { name: 'Contact', href: '/contact' },
-]
 
 const products = [
   {
@@ -43,7 +33,6 @@ export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isProductsOpen, setIsProductsOpen] = useState(false)
   const { scrollY } = useScroll()
-  const { theme, toggleTheme } = useTheme()
 
   const backgroundColorLight = useTransform(
     scrollY,
@@ -51,13 +40,7 @@ export default function NavBar() {
     ['rgba(247, 244, 238, 0)', 'rgba(247, 244, 238, 0.95)']
   )
 
-  const backgroundColorDark = useTransform(
-    scrollY,
-    [0, 50],
-    ['rgba(12, 11, 10, 0)', 'rgba(12, 11, 10, 0.95)']
-  )
-
-  const backgroundColor = theme === 'dark' ? backgroundColorDark : backgroundColorLight
+  const backgroundColor = backgroundColorLight
 
   const borderOpacity = useTransform(
     scrollY,
@@ -98,12 +81,13 @@ export default function NavBar() {
           style={{ opacity: borderOpacity }}
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center h-16 lg:h-20">
             {/* Logo */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
+              className="justify-self-start"
             >
               <Link href="/" className="flex items-center space-x-2.5 group">
                 <KobyLogo className="w-9 h-9 transition-transform duration-200 group-hover:scale-105" />
@@ -118,7 +102,7 @@ export default function NavBar() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="hidden lg:flex items-center space-x-1"
+              className="hidden lg:flex items-center justify-center space-x-1"
             >
               {/* Products Dropdown */}
               <div
@@ -159,7 +143,7 @@ export default function NavBar() {
                       </div>
                       <div className="border-t border-gray-100 dark:border-gray-800 p-2">
                         <Link
-                          href="/ai-suites"
+                          href="/#solutions"
                           className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150 text-sm font-medium text-accent-600 dark:text-accent-400"
                         >
                           View all products
@@ -187,14 +171,14 @@ export default function NavBar() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="hidden lg:flex items-center gap-3"
+              className="hidden lg:flex items-center justify-end gap-3 justify-self-end"
             >
               <SignedOut>
                 <Link
                   href="/sign-in"
                   className="btn-secondary text-sm"
                 >
-                  Client Login
+                  Login
                 </Link>
               </SignedOut>
               <SignedIn>
@@ -205,17 +189,6 @@ export default function NavBar() {
                   Portal
                 </Link>
               </SignedIn>
-              <button
-                onClick={toggleTheme}
-                className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
-                aria-label="Toggle theme"
-              >
-                {theme === 'light' ? (
-                  <Moon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                ) : (
-                  <Sun className="w-5 h-5 text-yellow-500" />
-                )}
-              </button>
               <Link
                 href="/get-started"
                 className="btn-primary text-sm"
@@ -241,7 +214,7 @@ export default function NavBar() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150 justify-self-end"
             >
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
@@ -282,25 +255,12 @@ export default function NavBar() {
                     <KobyLogo className="w-8 h-8" />
                     <span className="text-lg font-bold text-gray-900 dark:text-white font-display">Koby AI</span>
                   </Link>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={toggleTheme}
-                      className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-                      aria-label="Toggle theme"
-                    >
-                      {theme === 'light' ? (
-                        <Moon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                      ) : (
-                        <Sun className="w-5 h-5 text-yellow-500" />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
-                    >
-                      <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
+                  >
+                    <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                  </button>
                 </div>
 
                 {/* Navigation Links */}
@@ -359,7 +319,7 @@ export default function NavBar() {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="btn-secondary w-full justify-center mb-3"
                     >
-                      Client Login
+                      Login
                     </Link>
                   </SignedOut>
                   <SignedIn>

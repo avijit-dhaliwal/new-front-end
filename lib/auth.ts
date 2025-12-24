@@ -58,7 +58,7 @@ export async function getActiveOrgId(searchParams?: { orgId?: string }): Promise
     return searchParams.orgId
   }
   
-  return orgId
+  return orgId ?? null
 }
 
 /**
@@ -72,11 +72,11 @@ export async function getAuthContext(searchParams?: { orgId?: string }): Promise
   if (orgRole === 'org:client_admin' || orgRole === 'org:admin') mappedRole = 'client_admin'
   else if (orgRole === 'org:client_viewer' || orgRole === 'org:member') mappedRole = 'client_viewer'
   
-  const activeOrgId = staff && searchParams?.orgId ? searchParams.orgId : orgId
+  const activeOrgId = staff && searchParams?.orgId ? searchParams.orgId : (orgId ?? null)
   
   return {
-    userId,
-    orgId,
+    userId: userId ?? null,
+    orgId: orgId ?? null,
     orgRole: mappedRole,
     isKobyStaff: staff,
     activeOrgId,

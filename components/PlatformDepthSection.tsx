@@ -43,7 +43,7 @@ export default function PlatformDepthSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5 }}
           className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-start"
         >

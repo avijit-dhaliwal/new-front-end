@@ -3,5 +3,11 @@ main = "chadis-chat-worker.js"
 compatibility_date = "2024-10-15"
 account_id = "4fcec980c07ca7ef02087d9e61f20e42"
 
+# D1 Database binding (optional - enables site_key auth and logging)
+[[d1_databases]]
+binding = "DB"
+database_name = "koby-portal-db"
+database_id = "" # Fill in after running: wrangler d1 create koby-portal-db
+
 # To set secrets after deployment:
 # wrangler secret put GEMINI_API_KEY --name chadis-chat

@@ -48,7 +48,7 @@ export default function StatGrid({
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.4, delay: delay + index * 0.1 }}
             className="text-center"
           >
@@ -76,7 +76,7 @@ export default function StatGrid({
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.4, delay: delay + index * 0.05 }}
             className="stat-card"
           >
@@ -96,7 +96,7 @@ export default function StatGrid({
           key={stat.label}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.4, delay: delay + index * 0.1 }}
           className="panel-card-sm p-4"
         >

@@ -326,7 +326,7 @@ If any field cannot be found, use "Not found" for strings or 0 for materialCost.
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="bg-white rounded-2xl border border-gray-100 shadow-soft p-8 mb-12"
           >
@@ -368,7 +368,7 @@ If any field cannot be found, use "Not found" for strings or 0 for materialCost.
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="bg-gradient-to-r from-accent-500 to-accent-600 rounded-2xl p-8 lg:p-12 text-center"
           >

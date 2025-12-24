@@ -229,7 +229,7 @@ export default function AutomationsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="text-center mb-16"
           >
@@ -270,7 +270,7 @@ export default function AutomationsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="text-center mb-16"
           >
@@ -324,7 +324,7 @@ export default function AutomationsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
@@ -339,7 +339,7 @@ export default function AutomationsPage() {
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="flex flex-wrap justify-center gap-3"
           >
@@ -361,7 +361,7 @@ export default function AutomationsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-8 lg:p-12 shadow-[var(--shadow-soft)] text-center"
           >
@@ -416,7 +416,7 @@ export default function AutomationsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5 }}
             className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-8 lg:p-12 shadow-[var(--shadow-soft)] text-center"
           >

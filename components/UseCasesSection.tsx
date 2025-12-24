@@ -44,12 +44,12 @@ export default function UseCasesSection() {
   const ref = useRef(null)
 
   return (
-    <section ref={ref} className="py-24 lg:py-32 bg-[var(--paper-muted)]">
+    <section id="solutions" ref={ref} className="py-24 lg:py-32 bg-[var(--paper-muted)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5 }}
           className="max-w-3xl"
         >
