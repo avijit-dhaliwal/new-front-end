@@ -1,15 +1,23 @@
 'use client'
 
 import { UserButton, OrganizationSwitcher, useOrganization, useUser } from '@clerk/nextjs'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Shield, Building2 } from 'lucide-react'
+import { isKobyInternalOrg } from '@/lib/koby-org'
 
 export default function PortalHeader() {
   const { organization } = useOrganization()
   const { user } = useUser()
+  const searchParams = useSearchParams()
   
   // Check if user is Koby staff
   const isKobyStaff = user?.publicMetadata?.kobyRole === 'staff'
+  const viewingOrgId = searchParams.get('orgId')
+  const activeOrgId = viewingOrgId || organization?.id || null
+  const isInternalOrgView = isKobyInternalOrg(activeOrgId)
+  const isKobyTeamMember = isKobyStaff || isKobyInternalOrg(organization?.id)
+  const viewingClientOrg = Boolean(viewingOrgId && !isKobyInternalOrg(viewingOrgId))
   
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[var(--paper)]/90 backdrop-blur">
@@ -17,10 +25,17 @@ export default function PortalHeader() {
         <div className="flex items-center gap-4">
           {/* Organization info / Koby staff badge */}
           <div className="flex items-center gap-3">
-            {isKobyStaff ? (
+            {isInternalOrgView ? (
               <div className="flex items-center gap-2 rounded-full border border-[var(--accent-soft)] bg-[var(--accent-soft)] px-3 py-1.5">
                 <Shield className="w-4 h-4 text-[var(--accent-strong)]" />
-                <span className="text-xs font-semibold text-[var(--accent-strong)]">Koby Staff</span>
+                <span className="text-xs font-semibold text-[var(--accent-strong)]">Koby Ops</span>
+              </div>
+            ) : viewingClientOrg ? (
+              <div className="flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--panel)] px-3 py-1.5">
+                <Building2 className="w-4 h-4 text-[var(--ink-muted)]" />
+                <span className="text-xs font-medium text-[var(--ink)]">
+                  Client {viewingOrgId?.slice(0, 8)}
+                </span>
               </div>
             ) : organization ? (
               <div className="flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--panel)] px-3 py-1.5">
@@ -32,17 +47,25 @@ export default function PortalHeader() {
           
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)]">
-              {isKobyStaff && !organization ? 'All Clients' : 'Koby AI Portal'}
+              {isInternalOrgView
+                ? 'Koby AI Ops'
+                : viewingClientOrg
+                ? 'Client View'
+                : 'Koby AI Portal'}
             </p>
             <h1 className="text-lg font-semibold text-[var(--ink)]">
-              {isKobyStaff && !organization ? 'Client Management' : 'Operations overview'}
+              {isInternalOrgView
+                ? 'Operations command center'
+                : viewingClientOrg
+                ? 'Client operations'
+                : 'Operations overview'}
             </h1>
           </div>
         </div>
         
         <div className="flex items-center gap-3">
           {/* Koby staff: Note about accessing any org */}
-          {isKobyStaff && (
+          {isKobyTeamMember && (
             <p className="hidden lg:block text-xs text-[var(--ink-muted)] max-w-[200px]">
               You can view any client organization
             </p>

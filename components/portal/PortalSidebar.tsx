@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useOrganization, useUser } from '@clerk/nextjs'
 import KobyLogo from '@/components/KobyLogo'
+import { isKobyInternalOrg } from '@/lib/koby-org'
 import { 
   LayoutDashboard, 
   Activity, 
@@ -20,7 +21,7 @@ import {
   HelpCircle
 } from 'lucide-react'
 
-const navItems = [
+const clientNavItems = [
   { label: 'Overview', href: '/portal#overview', icon: LayoutDashboard },
   { label: 'Live Ops', href: '/portal#operations', icon: Activity },
   { label: 'Automations', href: '/portal#automations', icon: Workflow },
@@ -28,6 +29,16 @@ const navItems = [
   { label: 'Knowledge', href: '/portal#knowledge', icon: BookOpen },
   { label: 'Integrations', href: '/portal#integrations', icon: Puzzle },
   { label: 'Insights', href: '/portal#insights', icon: LineChart },
+]
+
+const internalNavItems = [
+  { label: 'Overview', href: '/portal#overview', icon: LayoutDashboard },
+  { label: 'Portfolio', href: '/portal#portfolio', icon: Building2 },
+  { label: 'Live Ops', href: '/portal#operations', icon: Activity },
+  { label: 'Automations', href: '/portal#automations', icon: Workflow },
+  { label: 'Outcomes', href: '/portal#outcomes', icon: Flag },
+  { label: 'Insights', href: '/portal#insights', icon: LineChart },
+  { label: 'Integrations', href: '/portal#integrations', icon: Puzzle },
 ]
 
 const managementItems = [
@@ -43,9 +54,17 @@ export default function PortalSidebar() {
   
   // Check if user is Koby staff
   const isKobyStaff = user?.publicMetadata?.kobyRole === 'staff'
+  const activeOrgId = viewingOrgId || organization?.id || null
+  const isInternalOrgView = isKobyInternalOrg(activeOrgId)
+  const isKobyTeamMember = isKobyStaff || isKobyInternalOrg(organization?.id)
   
   // Koby staff viewing all clients (no specific org)
-  const isStaffAllClientsView = isKobyStaff && !organization && !viewingOrgId
+  const isStaffAllClientsView = isKobyTeamMember && !organization && !viewingOrgId
+  const navItems = isInternalOrgView ? internalNavItems : clientNavItems
+  const orgLabel = viewingOrgId ? 'Client org' : 'Organization'
+  const orgName = viewingOrgId
+    ? `Client ${viewingOrgId.slice(0, 8)}`
+    : organization?.name || 'Loading...'
 
   // Build href with orgId if viewing a specific client
   const buildHref = (baseHref: string) => {
@@ -64,25 +83,25 @@ export default function PortalSidebar() {
           <div>
             <p className="text-sm font-semibold text-[var(--ink)]">Koby AI</p>
             <p className="text-xs text-[var(--ink-muted)]">
-              {isKobyStaff ? 'Staff Portal' : 'Client Portal'}
+              {isInternalOrgView ? 'Ops Portal' : isKobyTeamMember ? 'Team View' : 'Client Portal'}
             </p>
           </div>
         </Link>
         
         {/* Koby Staff: Workspace Navigation */}
-        {isKobyStaff && (
+        {isKobyTeamMember && (
           <nav className="mt-8 space-y-1">
-            <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)] mb-3 px-3">Workspace</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)] mb-3 px-3">Koby Ops</p>
             <Link
               href="/portal"
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
-                isStaffAllClientsView
+                isInternalOrgView
                   ? 'bg-[var(--accent-soft)] text-[var(--accent-strong)] font-medium'
                   : 'text-[var(--ink-muted)] hover:bg-[var(--paper-muted)] hover:text-[var(--ink)]'
               }`}
             >
               <Building2 className="w-4 h-4" />
-              All Clients
+              Portfolio
             </Link>
             <Link
               href="/portal?filter=at-risk"
@@ -101,7 +120,7 @@ export default function PortalSidebar() {
         {/* Current Organization Display */}
         {(organization || viewingOrgId) && (
           <div className="mt-6">
-            {isKobyStaff && viewingOrgId && (
+            {isKobyTeamMember && viewingOrgId && (
               <Link
                 href="/portal"
                 className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors mb-2"
@@ -114,9 +133,9 @@ export default function PortalSidebar() {
               <div className="flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-[var(--ink-muted)]" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-[var(--ink-muted)]">Organization</p>
+                  <p className="text-xs text-[var(--ink-muted)]">{orgLabel}</p>
                   <p className="text-sm font-medium text-[var(--ink)] truncate">
-                    {organization?.name || 'Loading...'}
+                    {orgName}
                   </p>
                 </div>
               </div>
@@ -127,7 +146,7 @@ export default function PortalSidebar() {
         {/* Koby Staff indicator when no org selected */}
         {isStaffAllClientsView && (
           <div className="mt-6 rounded-xl border border-[var(--accent-soft)] bg-[var(--accent-soft)] p-3">
-            <p className="text-xs font-medium text-[var(--accent-strong)]">Koby Staff View</p>
+            <p className="text-xs font-medium text-[var(--accent-strong)]">Koby Ops View</p>
             <p className="text-xs text-[var(--ink-muted)] mt-1">Select a client to view their portal</p>
           </div>
         )}

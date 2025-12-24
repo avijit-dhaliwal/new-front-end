@@ -372,18 +372,8 @@ export interface PortalConfigResponse {
 // Integrations & Outcomes
 // =============================================================================
 
-export interface IntegrationStatus {
-  id: string
-  name: string
-  category: 'crm' | 'communications' | 'calendar' | 'billing' | 'analytics' | 'other'
-  status: 'connected' | 'error' | 'pending' | 'disconnected'
-  lastSynced?: string
-  health?: 'good' | 'warning' | 'critical'
-  note?: string
-}
-
 export interface PortalIntegrationsResponse {
-  integrations: IntegrationStatus[]
+  integrations: IntegrationConnection[]
 }
 
 export interface OutcomeMetric {
@@ -425,6 +415,10 @@ export interface PortalEventsResponse {
   events: PortalEvent[]
 }
 
+export interface ActionRunsResponse {
+  runs: ActionRun[]
+}
+
 // =============================================================================
 // Legacy Types (for backwards compatibility)
 // =============================================================================
@@ -464,6 +458,41 @@ export interface TrendDataPoint {
 export interface TeamAccess {
   role: string
   count: number
+}
+
+// =============================================================================
+// Compliance + Observability
+// =============================================================================
+
+export interface RetentionPolicy {
+  id: string
+  orgId: string
+  dataType: string
+  ttlDays: number
+  applyAnonymization: boolean
+  enforcedAt?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AuditLog {
+  id: string
+  orgId: string
+  actorType: 'user' | 'system' | 'integration'
+  actorId?: string
+  eventType: string
+  targetType?: string
+  targetId?: string
+  metadata?: Record<string, unknown>
+  createdAt: string
+}
+
+export interface AuditLogsResponse {
+  logs: AuditLog[]
+}
+
+export interface RetentionPoliciesResponse {
+  policies: RetentionPolicy[]
 }
 
 // =============================================================================

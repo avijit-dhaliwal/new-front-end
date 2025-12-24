@@ -15,7 +15,7 @@ import type {
   QualitySignal, 
   TrendDataPoint, 
   TeamAccess,
-  IntegrationStatus,
+  IntegrationConnection,
   OutcomeMetric,
   OutcomeEvent,
   BillingRecord,
@@ -30,6 +30,8 @@ import type {
   PortalEvent,
   OutcomesResponse,
   BillingUsageResponse,
+  ActionRun,
+  ActionRunsResponse,
   PortalIntegrationsResponse,
 } from '@/types/portal'
 import type {
@@ -54,7 +56,7 @@ interface PortalData {
   teamAccess: TeamAccess[]
   knowledge: KnowledgeOverviewResponse | null
   events: PortalEvent[]
-  integrations: IntegrationStatus[]
+  integrations: IntegrationConnection[]
   outcomes: OutcomeMetric[]
   auditLogs: AuditLog[]
   retentionPolicies: RetentionPolicy[]
@@ -1210,29 +1212,39 @@ function PortalPageContent() {
         return response.json()
       }
 
-      if (showStaffClientsView) {
-        // Fetch clients list for Koby staff
+      const shouldFetchClients = showStaffClientsView || showInternalOpsView
+
+      if (shouldFetchClients) {
+        setClientsError(null)
         if (!PORTAL_WORKER_URL) {
-          // No worker URL configured - show empty state with message
           setClients([])
-          setLoadingState('success')
-          return
+        } else {
+          try {
+            const response = await fetch(`${PORTAL_WORKER_URL}/portal/clients${filterParam ? `?filter=${filterParam}` : ''}`, {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            })
+
+            if (!response.ok) {
+              throw new Error(`Failed to fetch clients: ${response.status}`)
+            }
+
+            const data = await response.json()
+            setClients(data.clients || [])
+          } catch (clientError) {
+            setClients([])
+            setClientsError(clientError instanceof Error ? clientError.message : 'Failed to load clients')
+          }
         }
+      }
 
-        const response = await fetch(`${PORTAL_WORKER_URL}/portal/clients${filterParam ? `?filter=${filterParam}` : ''}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        })
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch clients: ${response.status}`)
-        }
-
-        const data = await response.json()
-        setClients(data.clients || [])
+      if (showStaffClientsView) {
         setLoadingState('success')
-      } else if (activeOrgId) {
+        return
+      }
+
+      if (activeOrgId) {
         // Fetch portal data for specific org
         if (!PORTAL_WORKER_URL) {
           // No worker URL configured - show empty state
@@ -1365,7 +1377,7 @@ function PortalPageContent() {
       fetchData()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, activeOrgId, showStaffClientsView, filterParam])
+  }, [user, activeOrgId, showStaffClientsView, showInternalOpsView, filterParam])
 
   // Loading state
   if (loadingState === 'loading') {
@@ -1381,8 +1393,19 @@ function PortalPageContent() {
   if (showStaffClientsView) {
     return (
       <div className="max-w-6xl mx-auto pt-10">
-        <KobyClientsList clients={clients} />
+        <KobyClientsList clients={clients} error={clientsError} />
       </div>
+    )
+  }
+
+  // Koby internal org: Show ops command center
+  if (showInternalOpsView && portalData) {
+    return (
+      <InternalPortalView
+        data={portalData}
+        clients={clients}
+        clientsError={clientsError}
+      />
     )
   }
 

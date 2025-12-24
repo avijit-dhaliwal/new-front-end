@@ -6,6 +6,9 @@ import type {
   PortalConfigResponse 
 } from '@/types/portal'
 
+// Re-export core contract types for convenience
+export type { PortalBranding, PortalConfig, PortalModule, CustomCard } from '@/types/portal'
+
 // ============================================================================
 // Preset Configurations
 // ============================================================================

@@ -16,6 +16,34 @@ function generateId() {
   return crypto.randomUUID()
 }
 
+// Simple per-IP rate limiter (sliding window)
+const RATE_LIMIT_WINDOW_MS = 60 * 1000
+const RATE_LIMIT_MAX = 120
+const rateLimitBuckets = new Map()
+
+function getClientIp(request) {
+  return request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || 'unknown'
+}
+
+function isRateLimited(request, env) {
+  if (env?.SKIP_PORTAL_RATE_LIMIT === 'true') return false
+
+  const ip = getClientIp(request)
+  const now = Date.now()
+  const windowStart = now - RATE_LIMIT_WINDOW_MS
+
+  const bucket = rateLimitBuckets.get(ip) || []
+  const recent = bucket.filter(ts => ts > windowStart)
+  if (recent.length >= (env?.PORTAL_RATE_LIMIT_MAX ? parseInt(env.PORTAL_RATE_LIMIT_MAX, 10) : RATE_LIMIT_MAX)) {
+    rateLimitBuckets.set(ip, recent)
+    return true
+  }
+
+  recent.push(now)
+  rateLimitBuckets.set(ip, recent)
+  return false
+}
+
 // Verify Clerk JWT and extract claims
 async function verifyClerkJWT(token, env) {
   try {
@@ -577,6 +605,84 @@ const routes = {
 
     const test = await db.prepare('SELECT * FROM flow_tests WHERE id = ?').bind(id).first()
     return jsonResponse({ test: mapFlowTest(test) }, 201)
+  },
+
+  // GET /portal/audit-logs - list recent audit logs
+  async getAuditLogs(request, env, auth) {
+    const { orgId, isKobyStaff } = auth
+
+    if (!orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    const db = env.DB
+    const limitParam = parseInt(new URL(request.url).searchParams.get('limit') || '100', 10)
+    const limit = Number.isFinite(limitParam) ? Math.min(Math.max(limitParam, 1), 500) : 100
+
+    const query = orgId
+      ? db.prepare('SELECT * FROM audit_logs WHERE org_id = ? ORDER BY datetime(created_at) DESC LIMIT ?').bind(orgId, limit)
+      : db.prepare('SELECT * FROM audit_logs ORDER BY datetime(created_at) DESC LIMIT ?').bind(limit)
+
+    const rows = await query.all()
+    return jsonResponse({ logs: (rows.results || []).map(mapAuditLog) })
+  },
+
+  // GET /portal/retention - list retention policies
+  async getRetentionPolicies(request, env, auth) {
+    const { orgId, isKobyStaff } = auth
+
+    if (!orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    const db = env.DB
+    const query = orgId
+      ? db.prepare('SELECT * FROM retention_policies WHERE org_id = ?').bind(orgId)
+      : db.prepare('SELECT * FROM retention_policies')
+
+    const rows = await query.all()
+    return jsonResponse({ policies: (rows.results || []).map(mapRetentionPolicy) })
+  },
+
+  // POST /portal/retention - upsert retention policy (admin/staff)
+  async upsertRetentionPolicy(request, env, auth) {
+    const { orgId, isKobyStaff, orgRole } = auth
+
+    if (!orgId) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    const adminRoles = ['org:admin', 'org:client_admin']
+    if (!isKobyStaff && !adminRoles.includes(orgRole)) {
+      return jsonResponse({ error: 'Admin access required' }, 403)
+    }
+
+    const body = await request.json()
+    const { dataType, ttlDays, applyAnonymization = false } = body
+
+    if (!dataType || typeof ttlDays !== 'number' || ttlDays < 0) {
+      return jsonResponse({ error: 'dataType and ttlDays (number) are required' }, 400)
+    }
+
+    const db = env.DB
+    const existing = await db.prepare('SELECT id FROM retention_policies WHERE org_id = ? AND data_type = ?').bind(orgId, dataType).first()
+    const now = new Date().toISOString()
+
+    if (existing) {
+      await db.prepare(`
+        UPDATE retention_policies 
+        SET ttl_days = ?, apply_anonymization = ?, updated_at = ?
+        WHERE org_id = ? AND data_type = ?
+      `).bind(ttlDays, applyAnonymization ? 1 : 0, now, orgId, dataType).run()
+    } else {
+      await db.prepare(`
+        INSERT INTO retention_policies (id, org_id, data_type, ttl_days, apply_anonymization, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).bind(generateId(), orgId, dataType, ttlDays, applyAnonymization ? 1 : 0, now, now).run()
+    }
+
+    const policy = await db.prepare('SELECT * FROM retention_policies WHERE org_id = ? AND data_type = ?').bind(orgId, dataType).first()
+    return jsonResponse({ policy: mapRetentionPolicy(policy) })
   },
 
   // GET /portal/clients - Koby staff only: list all clients
@@ -1911,6 +2017,35 @@ function mapFlowRunInsight(row) {
   }
 }
 
+function mapAuditLog(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    orgId: row.org_id,
+    actorType: row.actor_type,
+    actorId: row.actor_id || null,
+    eventType: row.event_type,
+    targetType: row.target_type || null,
+    targetId: row.target_id || null,
+    metadata: parseJsonField(row.metadata, {}),
+    createdAt: row.created_at,
+  }
+}
+
+function mapRetentionPolicy(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    orgId: row.org_id,
+    dataType: row.data_type,
+    ttlDays: row.ttl_days,
+    applyAnonymization: !!row.apply_anonymization,
+    enforcedAt: row.enforced_at || null,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
 // Map portal_config row to API shape
 function mapConfigRow(row) {
   if (!row) return null
@@ -1999,6 +2134,11 @@ export default {
     // Health check
     if (path === '/health') {
       return jsonResponse({ status: 'ok', timestamp: new Date().toISOString() })
+    }
+
+    // Basic rate limiting
+    if (isRateLimited(request, env)) {
+      return jsonResponse({ error: 'Rate limit exceeded' }, 429)
     }
 
     // All portal routes require auth

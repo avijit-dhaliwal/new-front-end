@@ -1,16 +1,11 @@
 'use client'
 
-import { OrganizationList, useUser } from '@clerk/nextjs'
+import { OrganizationList } from '@clerk/nextjs'
 import Link from 'next/link'
 import { ArrowLeft, Building2, Users } from 'lucide-react'
 import KobyLogo from '@/components/KobyLogo'
 
 export default function SelectOrgPage() {
-  const { user } = useUser()
-  
-  // Check if user is Koby staff
-  const isKobyStaff = user?.publicMetadata?.kobyRole === 'staff'
-  
   return (
     <div className="min-h-screen bg-[var(--paper)] flex items-center justify-center p-6">
       <div className="w-full max-w-lg">
@@ -69,18 +64,6 @@ export default function SelectOrgPage() {
               </div>
             </div>
           </div>
-          
-          {/* Koby Staff Shortcut */}
-          {isKobyStaff && (
-            <div className="mt-6">
-              <Link
-                href="/portal"
-                className="block w-full text-center rounded-full bg-[var(--accent-soft)] border border-[var(--accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--accent-strong)] hover:bg-[var(--accent-strong)] hover:text-white transition-colors"
-              >
-                Continue as Koby Staff (All Clients View)
-              </Link>
-            </div>
-          )}
         </div>
         
         {/* Back link */}
