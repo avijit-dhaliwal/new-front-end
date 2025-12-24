@@ -2,37 +2,56 @@
 
 import { motion } from 'framer-motion'
 import NavBar from '@/components/NavBar'
+import Footer from '@/components/Footer'
 import CustomElevenLabsVoiceWidget from '@/components/demo/CustomElevenLabsVoiceWidget'
-import { Phone, Zap, Shield, Headphones } from 'lucide-react'
+import { Phone, Zap, Shield, Headphones, ArrowRight, ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 
 export default function VoiceDemo() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <main className="min-h-screen bg-[var(--paper)]">
       <NavBar />
 
       <div className="pt-20 px-4 sm:px-6 lg:px-8 pb-16">
         <div className="max-w-7xl mx-auto">
+          {/* Back Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <Link href="/" className="inline-flex items-center text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors text-sm font-medium">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
+            </Link>
+          </motion.div>
+
           {/* Hero Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="text-center mb-12 relative"
           >
+            <div className="absolute inset-0 paper-texture fine-grid opacity-[0.55] -z-10" />
             <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center">
-                <Phone className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-[var(--accent-soft)] rounded-2xl flex items-center justify-center">
+                <Phone className="w-8 h-8 text-[var(--accent)]" />
               </div>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+            <span className="inline-block text-[var(--accent)] font-semibold text-sm uppercase tracking-wider mb-3">
+              Live Demo
+            </span>
+            <h1 className="text-4xl md:text-6xl font-bold text-[var(--ink)] mb-6 font-display tracking-tight">
               AI Voice Assistant Demo
             </h1>
-            <p className="text-xl text-gray-600 mb-4 max-w-3xl mx-auto">
-              Experience natural voice conversations with our AI-powered dental office receptionist.
+            <p className="text-xl text-[var(--ink-muted)] mb-4 max-w-3xl mx-auto">
+              Experience natural voice conversations with our AI-powered receptionist.
             </p>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <p className="text-lg text-[var(--ink-muted)] max-w-2xl mx-auto">
               This demo showcases how our voice assistant can handle phone calls, answer questions,
-              and provide a human-like experience for your patients.
+              and provide a human-like experience for your customers.
             </p>
           </motion.div>
 
@@ -43,33 +62,33 @@ export default function VoiceDemo() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="grid md:grid-cols-3 gap-6 mb-12"
           >
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                <Zap className="w-6 h-6 text-green-600" />
+            <div className="bg-[var(--panel)] rounded-3xl p-6 shadow-[var(--shadow-soft)] border border-[var(--line)]">
+              <div className="w-12 h-12 bg-[var(--accent-soft)] rounded-xl flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6 text-[var(--accent)]" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Natural Conversations</h3>
-              <p className="text-gray-600 text-sm">
-                Advanced speech recognition and natural language processing enable fluid, human-like conversations with patients.
+              <h3 className="text-lg font-semibold text-[var(--ink)] mb-2 font-display">Natural Conversations</h3>
+              <p className="text-[var(--ink-muted)] text-sm">
+                Advanced speech recognition and natural language processing enable fluid, human-like conversations.
               </p>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <Headphones className="w-6 h-6 text-blue-600" />
+            <div className="bg-[var(--panel)] rounded-3xl p-6 shadow-[var(--shadow-soft)] border border-[var(--line)]">
+              <div className="w-12 h-12 bg-[var(--accent-soft)] rounded-xl flex items-center justify-center mb-4">
+                <Headphones className="w-6 h-6 text-[var(--accent)]" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Always Available</h3>
-              <p className="text-gray-600 text-sm">
-                Never miss a call. Our voice assistant answers every call instantly, ensuring no patient inquiry goes unanswered.
+              <h3 className="text-lg font-semibold text-[var(--ink)] mb-2 font-display">Always Available</h3>
+              <p className="text-[var(--ink-muted)] text-sm">
+                Never miss a call. Our voice assistant answers every call instantly, ensuring no inquiry goes unanswered.
               </p>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                <Shield className="w-6 h-6 text-purple-600" />
+            <div className="bg-[var(--panel)] rounded-3xl p-6 shadow-[var(--shadow-soft)] border border-[var(--line)]">
+              <div className="w-12 h-12 bg-[var(--accent-soft)] rounded-xl flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-[var(--accent)]" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Fully Customizable</h3>
-              <p className="text-gray-600 text-sm">
-                Customize the voice, personality, and knowledge base to perfectly match your practice's unique needs and brand.
+              <h3 className="text-lg font-semibold text-[var(--ink)] mb-2 font-display">Fully Customizable</h3>
+              <p className="text-[var(--ink-muted)] text-sm">
+                Customize the voice, personality, and knowledge base to perfectly match your business's unique needs and brand.
               </p>
             </div>
           </motion.div>
@@ -79,9 +98,9 @@ export default function VoiceDemo() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-8 bg-blue-50 border border-blue-200 rounded-xl p-4"
+            className="mb-8 bg-[var(--accent-soft)] border border-[var(--line)] rounded-2xl p-4"
           >
-            <p className="text-blue-900 text-sm text-center">
+            <p className="text-[var(--ink)] text-sm text-center">
               <strong>Note:</strong> This demo uses advanced voice AI technology.
               For best results, use Chrome, Edge, or Safari and allow microphone access when prompted.
             </p>
@@ -102,45 +121,45 @@ export default function VoiceDemo() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 mb-12"
+            className="bg-[var(--panel)] rounded-3xl p-8 shadow-[var(--shadow-soft)] border border-[var(--line)] mb-12"
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            <h2 className="text-2xl font-bold text-[var(--ink)] mb-6 text-center font-display">
               How to Use This Demo
             </h2>
             <div className="grid md:grid-cols-4 gap-6">
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                <div className="w-12 h-12 bg-[var(--accent)] text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
                   1
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Click Start Call</h3>
-                <p className="text-sm text-gray-600">
-                  Click the green phone button to initiate the voice conversation
+                <h3 className="font-semibold text-[var(--ink)] mb-2">Click Start Call</h3>
+                <p className="text-sm text-[var(--ink-muted)]">
+                  Click the phone button to initiate the voice conversation
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                <div className="w-12 h-12 bg-[var(--accent)] text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
                   2
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Allow Microphone</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold text-[var(--ink)] mb-2">Allow Microphone</h3>
+                <p className="text-sm text-[var(--ink-muted)]">
                   Grant permission when your browser asks to use your microphone
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                <div className="w-12 h-12 bg-[var(--accent)] text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
                   3
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Start Speaking</h3>
-                <p className="text-sm text-gray-600">
-                  Speak naturally as if you're calling a dental office receptionist
+                <h3 className="font-semibold text-[var(--ink)] mb-2">Start Speaking</h3>
+                <p className="text-sm text-[var(--ink-muted)]">
+                  Speak naturally as if you're calling a receptionist
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                <div className="w-12 h-12 bg-[var(--accent)] text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold text-lg">
                   4
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Listen & Interact</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold text-[var(--ink)] mb-2">Listen & Interact</h3>
+                <p className="text-sm text-[var(--ink-muted)]">
                   The assistant will respond and continue the conversation naturally
                 </p>
               </div>
@@ -152,29 +171,31 @@ export default function VoiceDemo() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-8 text-white text-center mb-12"
+            className="bg-[var(--panel)] rounded-3xl p-10 shadow-[var(--shadow-soft)] border border-[var(--line)] text-center mb-12"
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Ready to Customize for Your Practice?
+            <h2 className="text-2xl md:text-3xl font-bold text-[var(--ink)] mb-4 font-display tracking-tight">
+              Ready to Customize for Your Business?
             </h2>
-            <p className="text-lg mb-6 max-w-2xl mx-auto">
+            <p className="text-lg text-[var(--ink-muted)] mb-8 max-w-2xl mx-auto">
               This is a generic demonstration of our voice AI technology. We can fully customize the assistant to match
-              your dental practice's specific services, scheduling system, and policies. The voice, personality, and
+              your specific services, scheduling system, and policies. The voice, personality, and
               responses can all be tailored to your brand, and we can integrate with your phone system for seamless call handling.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-6 py-3 bg-white text-green-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+                className="btn-primary"
               >
                 Contact Us
-              </a>
-              <a
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+              <Link
                 href="/schedule-meeting"
-                className="inline-flex items-center justify-center px-6 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-green-600 transition-colors"
+                className="btn-secondary"
               >
                 Schedule a Demo
-              </a>
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
             </div>
           </motion.div>
 
@@ -183,51 +204,51 @@ export default function VoiceDemo() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.0 }}
-            className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200"
+            className="bg-[var(--panel)] rounded-3xl p-8 shadow-[var(--shadow-soft)] border border-[var(--line)]"
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            <h2 className="text-2xl font-bold text-[var(--ink)] mb-6 text-center font-display">
               What Can This Voice Assistant Do?
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <h3 className="font-semibold text-gray-900 mb-3">Call Handling</h3>
-                <ul className="space-y-2 text-gray-600">
+                <h3 className="font-semibold text-[var(--ink)] mb-3">Call Handling</h3>
+                <ul className="space-y-2 text-[var(--ink-muted)]">
                   <li className="flex items-start">
-                    <span className="text-green-600 mr-2">•</span>
-                    <span>Answer common patient questions about services and procedures</span>
+                    <span className="text-[var(--accent)] mr-2">•</span>
+                    <span>Answer common customer questions about services and procedures</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-green-600 mr-2">•</span>
+                    <span className="text-[var(--accent)] mr-2">•</span>
                     <span>Provide office hours, location, and contact information</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-green-600 mr-2">•</span>
-                    <span>Explain insurance acceptance and payment options</span>
+                    <span className="text-[var(--accent)] mr-2">•</span>
+                    <span>Explain payment options and policies</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-green-600 mr-2">•</span>
+                    <span className="text-[var(--accent)] mr-2">•</span>
                     <span>Route urgent matters to appropriate staff members</span>
                   </li>
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-3">Practice Benefits</h3>
-                <ul className="space-y-2 text-gray-600">
+                <h3 className="font-semibold text-[var(--ink)] mb-3">Business Benefits</h3>
+                <ul className="space-y-2 text-[var(--ink-muted)]">
                   <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
+                    <span className="text-[var(--accent)] mr-2">•</span>
                     <span>Handle multiple calls simultaneously</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
+                    <span className="text-[var(--accent)] mr-2">•</span>
                     <span>Reduce staff burden and improve efficiency</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
+                    <span className="text-[var(--accent)] mr-2">•</span>
                     <span>Capture after-hours calls and appointment requests</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
-                    <span>Provide consistent, professional patient experience</span>
+                    <span className="text-[var(--accent)] mr-2">•</span>
+                    <span>Provide consistent, professional customer experience</span>
                   </li>
                 </ul>
               </div>
@@ -239,10 +260,10 @@ export default function VoiceDemo() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.2 }}
-            className="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200"
+            className="mt-8 p-6 bg-[var(--paper-muted)] rounded-3xl border border-[var(--line)]"
           >
-            <h3 className="font-semibold text-gray-900 mb-3 text-center">Enterprise Voice AI Technology</h3>
-            <p className="text-sm text-gray-600 text-center max-w-3xl mx-auto">
+            <h3 className="font-semibold text-[var(--ink)] mb-3 text-center">Enterprise Voice AI Technology</h3>
+            <p className="text-sm text-[var(--ink-muted)] text-center max-w-3xl mx-auto">
               This demonstration uses enterprise-grade voice AI technology with natural-sounding voices and advanced
               speech recognition. Our production implementations offer seamless integration with your phone system,
               practice management software, appointment scheduling, and CRM to provide a complete automated receptionist solution.
@@ -251,6 +272,8 @@ export default function VoiceDemo() {
           </motion.div>
         </div>
       </div>
+
+      <Footer />
     </main>
   )
 }

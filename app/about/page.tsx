@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRef } from "react";
 import {
   ArrowLeft,
   Zap,
@@ -22,32 +21,24 @@ const values = [
     title: "Innovation",
     description:
       "We push the boundaries of what's possible with AI, constantly exploring new technologies and methodologies.",
-    color: "bg-amber-50",
-    iconColor: "text-amber-600",
   },
   {
     icon: Shield,
     title: "Trust",
     description:
       "Security and reliability are at the core of everything we build. Your data and success are our top priorities.",
-    color: "bg-blue-50",
-    iconColor: "text-blue-600",
   },
   {
     icon: Users,
     title: "Collaboration",
     description:
       "We believe in the power of working together, both within our team and with our clients to achieve extraordinary results.",
-    color: "bg-green-50",
-    iconColor: "text-green-600",
   },
   {
     icon: Heart,
     title: "Empathy",
     description:
       "We understand the challenges businesses face and design solutions that truly make a difference in people's lives.",
-    color: "bg-pink-50",
-    iconColor: "text-pink-600",
   },
 ];
 
@@ -59,17 +50,15 @@ const stats = [
 ];
 
 export default function AboutPage() {
-  const ref = useRef(null);
-
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-950">
+    <main className="min-h-screen bg-[var(--paper)]">
       <NavBar />
 
       {/* Hero Section */}
-      <section className="pt-28 lg:pt-36 pb-16 lg:pb-20 relative overflow-hidden">
+      <section className="pt-28 lg:pt-36 pb-16 lg:pb-20 relative overflow-hidden noise-overlay">
         {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white dark:from-gray-900/50 dark:to-gray-950 pointer-events-none" />
-        <div className="absolute top-20 right-10 w-72 h-72 bg-accent-200/20 rounded-full blur-3xl" />
+        <div className="absolute inset-0 paper-texture fine-grid opacity-[0.55]" />
+        <div className="absolute -top-28 right-[-5%] h-72 w-72 rounded-full bg-orange-400/20 blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Back Button */}
@@ -81,7 +70,7 @@ export default function AboutPage() {
           >
             <Link
               href="/"
-              className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors text-sm font-medium"
+              className="inline-flex items-center text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors text-sm font-medium"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
@@ -93,7 +82,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3"
+              className="inline-block text-[var(--accent)] font-semibold text-sm uppercase tracking-wider mb-3"
             >
               About Us
             </motion.span>
@@ -102,10 +91,10 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-display tracking-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--ink)] mb-6 font-display tracking-tight"
             >
               Transforming Business with{" "}
-              <span className="bg-gradient-to-r from-accent-500 to-accent-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-strong)] bg-clip-text text-transparent">
                 AI Innovation
               </span>
             </motion.h1>
@@ -114,7 +103,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed"
+              className="text-lg text-[var(--ink-muted)] leading-relaxed"
             >
               We're on a mission to democratize artificial intelligence and make
               it accessible to businesses of all sizes. Founded by AI researchers
@@ -126,7 +115,7 @@ export default function AboutPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <section className="py-16 bg-[var(--paper-muted)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -144,10 +133,10 @@ export default function AboutPage() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white font-display mb-1">
+                <div className="text-3xl lg:text-4xl font-bold text-[var(--accent)] font-display mb-1">
                   {stat.value}
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">{stat.label}</div>
+                <div className="text-sm text-[var(--ink-muted)]">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -164,20 +153,20 @@ export default function AboutPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <span className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3">
+              <span className="inline-block text-[var(--accent)] font-semibold text-sm uppercase tracking-wider mb-3">
                 Our Mission
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-6 font-display tracking-tight">
+              <h2 className="text-3xl sm:text-4xl font-bold text-[var(--ink)] mb-6 font-display tracking-tight">
                 Empowering Businesses Through AI
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+              <p className="text-[var(--ink-muted)] leading-relaxed mb-6">
                 To empower businesses with intelligent AI solutions that drive
                 growth, efficiency, and innovation. We believe that artificial
                 intelligence should be a force for good, helping companies
                 achieve their goals while creating better experiences for
                 their customers.
               </p>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-[var(--ink-muted)] leading-relaxed">
                 Our platform combines the latest advances in machine learning
                 with user-friendly interfaces, making it easy for any business
                 to harness the power of AI without needing a team of data
@@ -192,19 +181,19 @@ export default function AboutPage() {
               transition={{ duration: 0.6 }}
               className="grid grid-cols-2 gap-4"
             >
-              <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-soft border border-gray-100 dark:border-gray-800">
-                <div className="w-12 h-12 bg-accent-50 dark:bg-accent-900/30 rounded-xl flex items-center justify-center mb-4">
-                  <Target className="w-6 h-6 text-accent-600 dark:text-accent-400" />
+              <div className="bg-[var(--panel)] rounded-2xl p-6 shadow-[var(--shadow-soft)] border border-[var(--line)]">
+                <div className="w-12 h-12 bg-[var(--accent-soft)] rounded-xl flex items-center justify-center mb-4">
+                  <Target className="w-6 h-6 text-[var(--accent)]" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 font-display">Our Vision</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">AI-powered solutions for every business worldwide</p>
+                <h3 className="text-lg font-bold text-[var(--ink)] mb-2 font-display">Our Vision</h3>
+                <p className="text-sm text-[var(--ink-muted)]">AI-powered solutions for every business worldwide</p>
               </div>
-              <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-soft border border-gray-100 dark:border-gray-800 mt-8">
-                <div className="w-12 h-12 bg-green-50 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-4">
-                  <Award className="w-6 h-6 text-green-600 dark:text-green-400" />
+              <div className="bg-[var(--panel)] rounded-2xl p-6 shadow-[var(--shadow-soft)] border border-[var(--line)] mt-8">
+                <div className="w-12 h-12 bg-[var(--accent-soft)] rounded-xl flex items-center justify-center mb-4">
+                  <Award className="w-6 h-6 text-[var(--accent)]" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 font-display">Our Promise</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Reliable, secure, and innovative AI that delivers results</p>
+                <h3 className="text-lg font-bold text-[var(--ink)] mb-2 font-display">Our Promise</h3>
+                <p className="text-sm text-[var(--ink-muted)]">Reliable, secure, and innovative AI that delivers results</p>
               </div>
             </motion.div>
           </div>
@@ -212,7 +201,7 @@ export default function AboutPage() {
       </section>
 
       {/* Values Section */}
-      <section className="py-20 lg:py-28 bg-gray-50 dark:bg-gray-900">
+      <section className="py-20 lg:py-28 bg-[var(--paper-muted)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -221,13 +210,13 @@ export default function AboutPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-16"
           >
-            <span className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3">
+            <span className="inline-block text-[var(--accent)] font-semibold text-sm uppercase tracking-wider mb-3">
               Our Values
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-5 font-display tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--ink)] mb-5 font-display tracking-tight">
               What Drives Us
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-[var(--ink-muted)] max-w-2xl mx-auto">
               These core principles guide everything we do and shape how we
               build products and serve our customers.
             </p>
@@ -241,16 +230,16 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100 dark:border-gray-700 flex items-start gap-5 hover:-translate-y-1 transition-transform duration-300"
+                className="bg-[var(--panel)] rounded-2xl p-6 lg:p-8 shadow-[var(--shadow-soft)] border border-[var(--line)] flex items-start gap-5 hover:-translate-y-1 transition-transform duration-300"
               >
-                <div className={`w-12 h-12 ${value.color} dark:bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0`}>
-                  <value.icon className={`w-6 h-6 ${value.iconColor}`} />
+                <div className="w-12 h-12 bg-[var(--accent-soft)] rounded-xl flex items-center justify-center flex-shrink-0">
+                  <value.icon className="w-6 h-6 text-[var(--accent)]" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 font-display">
+                  <h3 className="text-xl font-bold text-[var(--ink)] mb-2 font-display">
                     {value.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{value.description}</p>
+                  <p className="text-[var(--ink-muted)] leading-relaxed">{value.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -259,31 +248,32 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 lg:py-28 bg-gradient-to-r from-accent-500 to-accent-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-20 lg:py-28">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
+            className="bg-[var(--panel)] rounded-3xl p-10 lg:p-14 shadow-[var(--shadow-soft)] border border-[var(--line)] text-center"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 font-display tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--ink)] mb-4 font-display tracking-tight">
               Ready to Join Our Journey?
             </h2>
-            <p className="text-accent-100 text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-[var(--ink-muted)] text-lg mb-8 max-w-2xl mx-auto">
               Be part of the AI revolution. Let's build the future together.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/get-started"
-                className="inline-flex items-center justify-center bg-white text-accent-600 font-semibold py-3.5 px-7 rounded-full hover:bg-gray-100 transition-colors"
+                className="btn-primary"
               >
                 Get Started
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center border-2 border-white text-white font-semibold py-3.5 px-7 rounded-full hover:bg-white hover:text-accent-600 transition-colors"
+                className="btn-secondary"
               >
                 Contact Us
               </Link>

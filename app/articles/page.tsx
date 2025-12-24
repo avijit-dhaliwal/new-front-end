@@ -244,15 +244,15 @@ export default function ArticlesPage() {
   const regularArticles = articles.filter((article) => !article.featured);
 
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-950">
+    <main className="min-h-screen bg-[var(--paper)]">
       <NavBar />
 
       {/* Hero Section */}
-      <section className="pt-28 lg:pt-36 pb-16 lg:pb-20 relative overflow-hidden">
+      <section className="pt-28 lg:pt-36 pb-16 lg:pb-20 relative overflow-hidden noise-overlay">
         {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white pointer-events-none" />
-        <div className="absolute top-20 right-10 w-72 h-72 bg-accent-200/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 left-10 w-96 h-96 bg-blue-200/15 rounded-full blur-3xl" />
+        <div className="absolute inset-0 paper-texture fine-grid opacity-[0.55]" />
+        <div className="absolute -top-28 right-[-5%] h-72 w-72 rounded-full bg-orange-400/20 blur-3xl" />
+        <div className="absolute -bottom-24 left-[-5%] h-72 w-72 rounded-full bg-sky-400/10 blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Back Button */}
@@ -264,7 +264,7 @@ export default function ArticlesPage() {
           >
             <Link
               href="/"
-              className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
+              className="inline-flex items-center text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors text-sm font-medium"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
@@ -276,7 +276,7 @@ export default function ArticlesPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3"
+              className="inline-block text-[var(--accent)] font-semibold text-sm uppercase tracking-wider mb-3"
             >
               Articles
             </motion.span>
@@ -285,10 +285,10 @@ export default function ArticlesPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 font-display tracking-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--ink)] mb-6 font-display tracking-tight"
             >
               AI & Technology{" "}
-              <span className="bg-gradient-to-r from-accent-500 to-accent-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-strong)] bg-clip-text text-transparent">
                 Insights
               </span>
             </motion.h1>
@@ -297,7 +297,7 @@ export default function ArticlesPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-lg text-gray-600 leading-relaxed"
+              className="text-lg text-[var(--ink-muted)] leading-relaxed"
             >
               Stay informed with the latest insights in artificial intelligence,
               automation, and business transformation.
@@ -315,23 +315,23 @@ export default function ArticlesPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="bg-gradient-to-r from-accent-500 to-accent-600 rounded-3xl p-8 lg:p-12 text-white"
+              className="bg-[var(--panel)] rounded-3xl p-8 lg:p-12 shadow-[var(--shadow-soft)] border border-[var(--line)]"
             >
               <div className="flex items-center mb-4">
-                <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm font-semibold mr-4">
+                <span className="bg-[var(--accent-soft)] text-[var(--accent)] px-3 py-1 rounded-full text-sm font-semibold mr-4">
                   Featured Article
                 </span>
-                <span className="text-accent-100">
+                <span className="text-[var(--ink-muted)]">
                   {featuredArticle.category}
                 </span>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-display tracking-tight">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 font-display tracking-tight text-[var(--ink)]">
                 {featuredArticle.title}
               </h2>
-              <p className="text-accent-100 text-lg mb-6 leading-relaxed max-w-3xl">
+              <p className="text-[var(--ink-muted)] text-lg mb-6 leading-relaxed max-w-3xl">
                 {featuredArticle.excerpt}
               </p>
-              <div className="flex flex-wrap items-center text-accent-100 text-sm mb-6 gap-4">
+              <div className="flex flex-wrap items-center text-[var(--ink-muted)] text-sm mb-6 gap-4">
                 <div className="flex items-center">
                   <User className="w-4 h-4 mr-2" />
                   <span>{featuredArticle.author}</span>
@@ -347,7 +347,7 @@ export default function ArticlesPage() {
               </div>
               <Link
                 href={`/articles/${featuredArticle.slug}`}
-                className="inline-flex items-center bg-white text-accent-600 font-semibold py-3 px-6 rounded-full hover:bg-gray-100 transition-colors"
+                className="btn-primary"
               >
                 Read More
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -358,7 +358,7 @@ export default function ArticlesPage() {
       )}
 
       {/* Articles Grid */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      <section className="py-16 lg:py-20 bg-[var(--paper-muted)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {regularArticles.map((article, index) => (
@@ -368,10 +368,10 @@ export default function ArticlesPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
-                className="bg-white rounded-2xl shadow-soft hover:shadow-soft-lg overflow-hidden group border border-gray-100 hover:-translate-y-1 transition-all duration-300"
+                className="bg-[var(--panel)] rounded-2xl shadow-[var(--shadow-soft)] hover:shadow-soft-lg overflow-hidden group border border-[var(--line)] hover:-translate-y-1 transition-all duration-300"
               >
                 {/* Article Image */}
-                <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+                <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 relative overflow-hidden">
                   <img
                     src={article.image.src}
                     alt={article.title}
@@ -379,7 +379,7 @@ export default function ArticlesPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   <div className="absolute top-4 left-4">
-                    <span className="bg-accent-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    <span className="bg-[var(--accent)] text-white px-3 py-1 rounded-full text-xs font-semibold">
                       {article.category}
                     </span>
                   </div>
@@ -387,15 +387,15 @@ export default function ArticlesPage() {
 
                 {/* Article Content */}
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-accent-600 transition-colors line-clamp-2 font-display">
+                  <h3 className="text-lg font-bold text-[var(--ink)] mb-3 group-hover:text-[var(--accent)] transition-colors line-clamp-2 font-display">
                     {article.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+                  <p className="text-sm text-[var(--ink-muted)] mb-4 line-clamp-3 leading-relaxed">
                     {article.excerpt}
                   </p>
 
                   {/* Article Meta */}
-                  <div className="flex flex-wrap items-center text-gray-500 text-xs mb-4 gap-3">
+                  <div className="flex flex-wrap items-center text-[var(--ink-muted)] text-xs mb-4 gap-3">
                     <div className="flex items-center">
                       <Calendar className="w-3 h-3 mr-1" />
                       <span>{article.publishDate}</span>
@@ -409,7 +409,7 @@ export default function ArticlesPage() {
                   {/* Read More Button */}
                   <Link
                     href={`/articles/${article.slug}`}
-                    className="text-accent-600 font-semibold text-sm hover:text-accent-700 flex items-center group/link"
+                    className="text-[var(--accent)] font-semibold text-sm hover:text-[var(--accent-strong)] flex items-center group/link"
                   >
                     Read More
                     <ArrowRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
@@ -429,12 +429,12 @@ export default function ArticlesPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="bg-white rounded-3xl p-8 lg:p-12 shadow-soft border border-gray-100 text-center"
+            className="bg-[var(--panel)] rounded-3xl p-8 lg:p-12 shadow-[var(--shadow-soft)] border border-[var(--line)] text-center"
           >
-            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 font-display tracking-tight">
+            <h2 className="text-2xl lg:text-3xl font-bold text-[var(--ink)] mb-4 font-display tracking-tight">
               Stay Updated
             </h2>
-            <p className="text-gray-600 mb-8 max-w-xl mx-auto">
+            <p className="text-[var(--ink-muted)] mb-8 max-w-xl mx-auto">
               Get the latest AI insights and technology articles delivered to
               your inbox.
             </p>
@@ -442,7 +442,7 @@ export default function ArticlesPage() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white transition-all duration-200 text-sm"
+                className="flex-1 px-4 py-3 bg-[var(--paper-muted)] border border-[var(--line)] rounded-xl focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent focus:bg-[var(--panel)] transition-all duration-200 text-sm text-[var(--ink)]"
               />
               <button className="btn-primary whitespace-nowrap">
                 Subscribe
@@ -453,27 +453,36 @@ export default function ArticlesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 lg:py-28 bg-gradient-to-r from-accent-500 to-accent-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-20 lg:py-28">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
+            className="bg-[var(--panel)] rounded-3xl p-10 lg:p-14 shadow-[var(--shadow-soft)] border border-[var(--line)] text-center"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 font-display tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--ink)] mb-4 font-display tracking-tight">
               Ready to Transform Your Business?
             </h2>
-            <p className="text-accent-100 text-lg mb-8 max-w-2xl mx-auto">
+            <p className="text-[var(--ink-muted)] text-lg mb-8 max-w-2xl mx-auto">
               See how our AI solutions can help your business grow.
             </p>
-            <Link
-              href="/get-started"
-              className="inline-flex items-center justify-center bg-white text-accent-600 font-semibold py-3.5 px-7 rounded-full hover:bg-gray-100 transition-colors"
-            >
-              Get Started
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/get-started"
+                className="btn-primary"
+              >
+                Get Started
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+              <Link
+                href="/demo/chat"
+                className="btn-secondary"
+              >
+                Try Demo
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>

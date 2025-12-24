@@ -447,3 +447,105 @@ a {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Panel card - consistent with design system */
+.panel-card {
+  @apply rounded-3xl border bg-[var(--panel)] shadow-[var(--shadow-soft)];
+  border-color: var(--line);
+}
+
+.panel-card-sm {
+  @apply rounded-2xl border bg-[var(--panel)] shadow-[var(--shadow-soft)];
+  border-color: var(--line);
+}
+
+/* Icon container - standardized icon wrapper */
+.icon-container {
+  @apply h-11 w-11 rounded-2xl border flex items-center justify-center;
+  background-color: var(--paper-muted);
+  border-color: var(--line);
+}
+
+.icon-container-sm {
+  @apply h-9 w-9 rounded-xl border flex items-center justify-center;
+  background-color: var(--paper-muted);
+  border-color: var(--line);
+}
+
+/* Accent pill - soft orange badge */
+.accent-pill {
+  @apply rounded-full px-3 py-1 text-xs font-semibold;
+  background-color: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+/* Tag - neutral border tag */
+.tag {
+  @apply rounded-full border px-3 py-1 text-xs;
+  background-color: var(--panel);
+  color: var(--ink-muted);
+  border-color: var(--line);
+}
+
+/* Section header - uppercase tracking label */
+.section-label {
+  @apply text-xs uppercase tracking-[0.3em];
+  color: var(--ink-muted);
+}
+
+/* Section title - large display heading */
+.section-title {
+  @apply text-3xl sm:text-4xl lg:text-5xl font-display font-semibold tracking-tight;
+  color: var(--ink);
+}
+
+/* Section description - muted body text */
+.section-description {
+  @apply text-base sm:text-lg;
+  color: var(--ink-muted);
+}
+
+/* Back link - standardized back navigation */
+.back-link {
+  @apply inline-flex items-center gap-2 text-sm font-medium transition-colors;
+  color: var(--ink-muted);
+}
+
+.back-link:hover {
+  color: var(--ink);
+}
+
+/* Accent link - orange text link with arrow */
+.accent-link {
+  @apply inline-flex items-center text-sm font-semibold;
+  color: var(--accent-strong);
+}
+
+.accent-link:hover {
+  color: var(--accent);
+}
+
+/* Stat card - for displaying metrics */
+.stat-card {
+  @apply rounded-2xl border px-3 py-3 text-center;
+  background-color: var(--panel);
+  border-color: var(--line);
+}
+
+/* Inner card - nested cards within panels */
+.inner-card {
+  @apply rounded-2xl border px-4 py-3;
+  background-color: var(--paper-muted);
+  border-color: var(--line);
+}
+
+/* Hero background - paper + grid combo */
+.hero-background {
+  @apply relative overflow-hidden;
+}
+
+.hero-background::before {
+  content: '';
+  @apply absolute inset-0 paper-texture fine-grid;
+  opacity: 0.55;
+}
