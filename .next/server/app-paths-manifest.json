@@ -35,5 +35,8 @@
   "/page": "app/page.js",
   "/pannudental/page": "app/pannudental/page.js",
   "/phone-service/page": "app/phone-service/page.js",
-  "/schedule-meeting/page": "app/schedule-meeting/page.js"
+  "/portal/page": "app/portal/page.js",
+  "/schedule-meeting/page": "app/schedule-meeting/page.js",
+  "/sign-in/[[...sign-in]]/page": "app/sign-in/[[...sign-in]]/page.js",
+  "/sign-up/[[...sign-up]]/page": "app/sign-up/[[...sign-up]]/page.js"
 }

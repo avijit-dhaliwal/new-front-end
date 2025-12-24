@@ -27,7 +27,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="fixed inset-0 z-50 flex items-center justify-center animated-gradient"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--paper)] paper-texture noise-overlay"
         >
           <div className="text-center">
             {/* Logo Animation */}
@@ -51,7 +51,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
               transition={{ duration: 0.6, delay: 1.2 }}
               className="space-y-2"
             >
-              <h1 className="text-2xl font-bold text-gray-800 font-display">
+              <h1 className="text-2xl font-bold text-[var(--ink)] font-display">
                 Koby AI
               </h1>
               <motion.div

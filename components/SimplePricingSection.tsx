@@ -1,160 +1,139 @@
-"use client";
+'use client'
 
-import { motion } from "framer-motion";
-import { useRef } from "react";
-import Link from "next/link";
-import { Check, MessageCircle, Phone, Crown, Sparkles, ArrowRight } from "lucide-react";
+import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import Link from 'next/link'
+import { Check, MessageCircle, Phone, Crown, Sparkles, ArrowRight } from 'lucide-react'
 
 const plans = [
   {
-    name: "AI Chatbot",
-    price: "50",
-    description: "24/7 customer support & lead generation",
+    name: 'AI Chatbot',
+    price: '50',
+    description: '24/7 customer support and lead capture',
     icon: MessageCircle,
-    color: "from-blue-500 to-blue-600",
-    iconBg: "bg-blue-50",
-    iconColor: "text-blue-600",
     features: [
-      "24/7 AI chatbot availability",
-      "Multi-language support",
-      "Calendar integration",
-      "Lead qualification",
-      "Custom responses",
-      "Analytics dashboard"
+      'Always-on chat support',
+      'Multi-language support',
+      'Calendar integration',
+      'Lead qualification',
+      'Custom responses',
+      'Analytics dashboard',
     ],
-    cta: "Get Started",
-    popular: false
+    cta: 'Get started',
+    popular: false,
   },
   {
-    name: "Bundle Pack",
-    price: "425",
-    description: "AI Chatbot + Phone Service combined",
+    name: 'Bundle Pack',
+    price: '425',
+    description: 'Chatbot + phone service combined',
     icon: Crown,
-    color: "from-accent-500 to-accent-600",
-    iconBg: "bg-accent-50",
-    iconColor: "text-accent-600",
     features: [
-      "Everything in Chatbot",
-      "Everything in Phone Service",
-      "Unified dashboard",
-      "Priority support",
-      "Save $25/month",
-      "Custom integrations"
+      'Everything in Chatbot',
+      'Everything in Phone Service',
+      'Unified reporting',
+      'Priority support',
+      'Save $25 per month',
+      'Custom integrations',
     ],
-    cta: "Get Started",
-    popular: true
+    cta: 'Get started',
+    popular: true,
   },
   {
-    name: "AI Phone Service",
-    price: "400",
-    description: "AI virtual receptionist for your business",
+    name: 'AI Phone Service',
+    price: '400',
+    description: 'Virtual receptionist for your business',
     icon: Phone,
-    color: "from-green-500 to-green-600",
-    iconBg: "bg-green-50",
-    iconColor: "text-green-600",
     features: [
-      "Unlimited calls handled",
-      "24/7 availability",
-      "Custom greeting setup",
-      "Calendar integration",
-      "Call transcriptions",
-      "Voicemail management"
+      'Unlimited calls handled',
+      '24/7 availability',
+      'Custom greeting setup',
+      'Calendar integration',
+      'Call transcriptions',
+      'Voicemail management',
     ],
-    cta: "Get Started",
-    popular: false
-  }
-];
+    cta: 'Get started',
+    popular: false,
+  },
+]
 
 export default function SimplePricingSection() {
-  const ref = useRef(null);
+  const ref = useRef(null)
 
   return (
-    <section ref={ref} className="py-20 lg:py-28 bg-white">
+    <section ref={ref} className="py-24 lg:py-32 bg-[var(--paper-muted)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center max-w-3xl mx-auto"
         >
-          <span className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3">
-            Pricing
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-5 font-display tracking-tight">
-            Simple, Transparent Pricing
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Pricing</p>
+          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-display font-semibold tracking-tight text-[var(--ink)]">
+            Clear pricing, built to scale.
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Choose the perfect plan for your business needs. All plans include setup assistance and ongoing support.
+          <p className="mt-4 text-base sm:text-lg text-[var(--ink-muted)]">
+            Start with a core module or bundle for full coverage. Enterprise plans available for custom deployments.
           </p>
         </motion.div>
 
-        {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={`relative group hover:-translate-y-1.5 transition-transform duration-300 ${plan.popular ? 'md:-mt-4 md:mb-4' : ''}`}
+              className={plan.popular ? 'md:-mt-4' : ''}
             >
-              {/* Popular Badge */}
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                  <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-accent-500 to-accent-600 text-white text-sm font-semibold px-4 py-1.5 rounded-full shadow-lg">
-                    <Sparkles className="w-4 h-4" />
-                    Best Value
-                  </span>
-                </div>
-              )}
-
-              <div className={`bg-white rounded-2xl p-6 lg:p-8 h-full border ${
+              <div className={`relative h-full rounded-3xl border p-6 lg:p-8 shadow-[var(--shadow-soft)] ${
                 plan.popular
-                  ? 'border-accent-200 shadow-glow-orange'
-                  : 'border-gray-100 shadow-soft'
-              } hover:shadow-soft-lg transition-all duration-300`}>
-                {/* Header */}
-                <div className="text-center mb-6">
-                  <div className={`w-14 h-14 ${plan.iconBg} rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <plan.icon className={`w-7 h-7 ${plan.iconColor}`} />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 font-display mb-2">
-                    {plan.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 mb-4">{plan.description}</p>
-                  <div className="flex items-baseline justify-center">
-                    <span className="text-sm text-gray-500">Starting at</span>
-                    <span className="text-4xl font-bold text-gray-900 font-display mx-2">
-                      ${plan.price}
+                  ? 'border-[var(--accent-soft)] bg-[var(--panel)]'
+                  : 'border-[var(--line)] bg-[var(--panel)]'
+              }`}>
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-strong)] px-4 py-1.5 text-xs font-semibold text-white shadow-[var(--shadow-soft)]">
+                      <Sparkles className="w-4 h-4" />
+                      Best value
                     </span>
-                    <span className="text-gray-500">/month</span>
+                  </div>
+                )}
+
+                <div className="text-center">
+                  <div className="mx-auto h-12 w-12 rounded-2xl border border-[var(--line)] bg-[var(--paper-muted)] flex items-center justify-center">
+                    <plan.icon className="w-6 h-6 text-[var(--accent-strong)]" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-[var(--ink)]">{plan.name}</h3>
+                  <p className="mt-2 text-sm text-[var(--ink-muted)]">{plan.description}</p>
+                  <div className="mt-4 flex items-baseline justify-center gap-2">
+                    <span className="text-sm text-[var(--ink-muted)]">Starting at</span>
+                    <span className="text-4xl font-semibold text-[var(--ink)]">${plan.price}</span>
+                    <span className="text-sm text-[var(--ink-muted)]">/month</span>
                   </div>
                 </div>
 
-                {/* Features */}
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start">
-                      <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
-                        <Check className="w-3 h-3 text-green-600" />
-                      </div>
-                      <span className="text-sm text-gray-600">{feature}</span>
+                <ul className="mt-6 space-y-3">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3 text-sm text-[var(--ink-muted)]">
+                      <span className="mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent-soft)]">
+                        <Check className="h-3 w-3 text-[var(--accent-strong)]" />
+                      </span>
+                      {feature}
                     </li>
                   ))}
                 </ul>
 
-                {/* CTA */}
-                <Link href="/contact" className="block">
-                  <button className={`w-full py-3.5 px-6 rounded-full font-semibold text-sm transition-all duration-200 flex items-center justify-center group/btn ${
+                <Link href="/contact" className="mt-6 block">
+                  <button className={`w-full rounded-full py-3 text-sm font-semibold transition-all duration-200 ${
                     plan.popular
-                      ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white hover:shadow-lg'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                      ? 'bg-[var(--accent-strong)] text-white hover:shadow-[var(--shadow-soft)]'
+                      : 'bg-[var(--paper-muted)] text-[var(--ink)] hover:bg-[var(--panel)]'
                   }`}>
                     {plan.cta}
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                    <ArrowRight className="inline-block w-4 h-4 ml-2" />
                   </button>
                 </Link>
               </div>
@@ -162,26 +141,23 @@ export default function SimplePricingSection() {
           ))}
         </div>
 
-        {/* Custom Solution CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-14 text-center"
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-12 text-center"
         >
-          <p className="text-gray-600 mb-4">
-            Need a custom AI solution for your industry?
-          </p>
+          <p className="text-sm text-[var(--ink-muted)]">Need a custom solution?</p>
           <Link
             href="/contact"
-            className="inline-flex items-center text-accent-600 font-semibold hover:text-accent-700 transition-colors group"
+            className="mt-3 inline-flex items-center text-sm font-semibold text-[var(--accent-strong)]"
           >
             Contact us for enterprise pricing
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Link>
         </motion.div>
       </div>
     </section>
-  );
+  )
 }

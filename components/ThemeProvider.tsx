@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'dark' | 'light'
+type Theme = 'light' | 'dark'
 
 type ThemeContextType = {
   theme: Theme
@@ -12,23 +12,26 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
+  const [theme, setTheme] = useState<Theme>('light')
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const savedTheme = localStorage.getItem('theme') as Theme | null
     if (savedTheme) {
       setTheme(savedTheme)
-      document.documentElement.classList.toggle('light', savedTheme === 'light')
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark')
     }
   }, [])
 
   const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark'
+    const newTheme = theme === 'light' ? 'dark' : 'light'
     setTheme(newTheme)
     localStorage.setItem('theme', newTheme)
-    document.documentElement.classList.toggle('light', newTheme === 'light')
+    document.documentElement.classList.toggle('dark', newTheme === 'dark')
   }
 
+  // Always provide context, use default light theme when not mounted
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}

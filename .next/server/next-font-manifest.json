@@ -1,103 +1,148 @@
 {
   "app": {
-    "[project]/app/_not-found/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/_not-found/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/about/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/about/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/ai-suites/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/ai-suites/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/ai-enhanced-cybersecurity/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/ai-enhanced-cybersecurity/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/ai-is-changing-property-management/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/ai-is-changing-property-management/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/ai-is-transforming-healthcare/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/ai-is-transforming-healthcare/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/ai-is-transforming-retail/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/ai-is-transforming-retail/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/ai-ml-business-applications/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/ai-ml-business-applications/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/ai-powered-cloud-computing/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/ai-powered-cloud-computing/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/ai-transforming-automotive/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/ai-transforming-automotive/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/contractors-are-winning-more-jobs/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/contractors-are-winning-more-jobs/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/data-backup-disaster-recovery/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/data-backup-disaster-recovery/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/devops-implementation-guide/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/devops-implementation-guide/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/digital-transformation-roadmap/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/digital-transformation-roadmap/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/how-ai-is-changing-legal-practice/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/how-ai-is-changing-legal-practice/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/how-ai-is-changing-restaurants/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/how-ai-is-changing-restaurants/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/how-ai-is-transforming-travel/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/how-ai-is-transforming-travel/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/it-infrastructure-modernization/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/it-infrastructure-modernization/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/articles/remote-work-technology-solutions/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/articles/remote-work-technology-solutions/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/chadis/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/chadis/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/chatbot/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/chatbot/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/checkout/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/checkout/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/contact/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/contact/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/demo/chat/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/demo/chat/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/demo/voice/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/demo/voice/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/emailagent/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/emailagent/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/get-started/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/get-started/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/legalservices/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/legalservices/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/pannudental/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/pannudental/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/phone-service/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/phone-service/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ],
-    "[project]/app/schedule-meeting/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/Desktop/Projects/new-front-end/app/portal/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
+    ],
+    "[project]/Desktop/Projects/new-front-end/app/schedule-meeting/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
+    ],
+    "[project]/Desktop/Projects/new-front-end/app/sign-in/[[...sign-in]]/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
+    ],
+    "[project]/Desktop/Projects/new-front-end/app/sign-up/[[...sign-up]]/page": [
+      "static/media/a343f882a40d2cc9-s.p.71e1367e.woff2",
+      "static/media/0c89a48fa5027cee-s.p.4564287c.woff2"
     ]
   },
   "appUsingSizeAdjust": true,

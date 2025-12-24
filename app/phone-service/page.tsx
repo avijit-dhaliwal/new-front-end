@@ -95,7 +95,7 @@ export default function PhoneServicePage() {
   const ref = useRef(null)
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white dark:bg-gray-950">
       <NavBar />
 
       {/* Hero Section */}

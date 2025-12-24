@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import LoadingScreen from "@/components/LoadingScreen";
 import NavBar from "@/components/NavBar";
 import LandingHero from "@/components/LandingHero";
+import PlatformDepthSection from "@/components/PlatformDepthSection";
+import DemosSection from "@/components/DemosSection";
 import IntegrationsSection from "@/components/IntegrationsSection";
 import UseCasesSection from "@/components/UseCasesSection";
 import EthicsSection from "@/components/EthicsSection";
@@ -22,7 +24,7 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen bg-white">
+    <main className="relative min-h-screen bg-[var(--paper)]">
       {/* Loading Screen */}
       {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
 
@@ -37,12 +39,14 @@ export default function Home() {
         className="relative"
       >
         <LandingHero />
-        <IntegrationsSection />
         <UseCasesSection />
+        <PlatformDepthSection />
+        <DemosSection />
         <EthicsSection />
+        <TrustedBySection />
+        <IntegrationsSection />
         <NewTestimonialsSection />
         <SimplePricingSection />
-        <TrustedBySection />
         <FAQSection />
         <Footer />
       </motion.div>

@@ -126,13 +126,13 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white dark:bg-gray-950">
       <NavBar />
 
       {/* Hero Section */}
       <section className="pt-28 lg:pt-36 pb-16 lg:pb-20 relative overflow-hidden">
         {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-white dark:from-gray-900/50 dark:to-gray-950 pointer-events-none" />
         <div className="absolute top-20 left-10 w-72 h-72 bg-accent-200/20 rounded-full blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -145,7 +145,7 @@ export default function ContactPage() {
           >
             <Link
               href="/"
-              className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
+              className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors text-sm font-medium"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
@@ -166,7 +166,7 @@ export default function ContactPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 font-display tracking-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-display tracking-tight"
             >
               Get in Touch
             </motion.h1>
@@ -175,7 +175,7 @@ export default function ContactPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-lg text-gray-600 leading-relaxed"
+              className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed"
             >
               Have questions about our AI solutions? Need help getting started?
               We're here to help you succeed. Reach out to our team and let's
@@ -186,7 +186,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Info Cards */}
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,17 +203,17 @@ export default function ContactPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100 flex items-center gap-5 group hover:-translate-y-1 transition-transform duration-300"
+                className="bg-white dark:bg-gray-800 rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100 dark:border-gray-700 flex items-center gap-5 group hover:-translate-y-1 transition-transform duration-300"
               >
-                <div className={`w-14 h-14 ${info.color} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`w-14 h-14 ${info.color} dark:bg-opacity-20 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
                   <info.icon className={`w-7 h-7 ${info.iconColor}`} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-1 font-display">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 font-display">
                     {info.title}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-2">{info.description}</p>
-                  <span className="text-accent-600 font-semibold">{info.contact}</span>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{info.description}</p>
+                  <span className="text-accent-600 dark:text-accent-400 font-semibold">{info.contact}</span>
                 </div>
               </motion.a>
             ))}
@@ -231,9 +231,9 @@ export default function ContactPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="bg-white rounded-3xl p-8 lg:p-10 shadow-soft border border-gray-100"
+              className="bg-white dark:bg-gray-900 rounded-3xl p-8 lg:p-10 shadow-soft border border-gray-100 dark:border-gray-800"
             >
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 font-display">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 font-display">
                 Send us a Message
               </h2>
 
@@ -267,7 +267,7 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Full Name *
                       </label>
                       <input
@@ -278,12 +278,12 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         placeholder="Your full name"
                       />
                     </div>
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Email Address *
                       </label>
                       <input
@@ -294,14 +294,14 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         placeholder="your@email.com"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Company
                     </label>
                     <input
@@ -311,13 +311,13 @@ export default function ContactPage() {
                       value={formData.company}
                       onChange={handleChange}
                       disabled={isSubmitting}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                       placeholder="Your company name"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Subject *
                     </label>
                     <Select
@@ -340,7 +340,7 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Message *
                     </label>
                     <textarea
@@ -351,7 +351,7 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={handleChange}
                       disabled={isSubmitting}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white transition-all duration-200 resize-none disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-700 transition-all duration-200 resize-none disabled:opacity-50 disabled:cursor-not-allowed text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                       placeholder="Tell us how we can help you..."
                     />
                   </div>
@@ -385,40 +385,40 @@ export default function ContactPage() {
               transition={{ duration: 0.6 }}
               className="space-y-6"
             >
-              <div className="bg-gray-50 rounded-2xl p-6 lg:p-8">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 font-display">Business Hours</h3>
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 lg:p-8">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 font-display">Business Hours</h3>
                 <div className="space-y-3">
                   <div className="flex items-center">
                     <Clock className="w-5 h-5 text-accent-500 mr-3" />
-                    <span className="text-gray-600 text-sm">Monday - Friday: 9:00 AM - 6:00 PM PST</span>
+                    <span className="text-gray-600 dark:text-gray-400 text-sm">Monday - Friday: 9:00 AM - 6:00 PM PST</span>
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-5 h-5 text-accent-500 mr-3" />
-                    <span className="text-gray-600 text-sm">Saturday: 10:00 AM - 4:00 PM PST</span>
+                    <span className="text-gray-600 dark:text-gray-400 text-sm">Saturday: 10:00 AM - 4:00 PM PST</span>
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-5 h-5 text-accent-500 mr-3" />
-                    <span className="text-gray-600 text-sm">Sunday: Closed</span>
+                    <span className="text-gray-600 dark:text-gray-400 text-sm">Sunday: Closed</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 font-display">Quick Response</h3>
-                <p className="text-gray-600 text-sm mb-4">
+              <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 lg:p-8 shadow-soft border border-gray-100 dark:border-gray-800">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 font-display">Quick Response</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
                   We typically respond to all inquiries within 24 hours. For urgent matters,
                   please call us directly.
                 </p>
                 <div className="space-y-2">
-                  <div className="flex items-center text-sm text-gray-600">
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
                     <span>24/7 Email Support</span>
                   </div>
-                  <div className="flex items-center text-sm text-gray-600">
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
                     <span>Live Chat During Business Hours</span>
                   </div>
-                  <div className="flex items-center text-sm text-gray-600">
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
                     <span>Priority Support for Enterprise</span>
                   </div>
@@ -430,7 +430,7 @@ export default function ContactPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 lg:py-28 bg-gray-50">
+      <section className="py-20 lg:py-28 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -442,10 +442,10 @@ export default function ContactPage() {
             <span className="inline-block text-accent-600 font-semibold text-sm uppercase tracking-wider mb-3">
               FAQ
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 font-display tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 font-display tracking-tight">
               Frequently Asked Questions
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               Quick answers to common questions about our AI solutions.
             </p>
           </motion.div>
@@ -458,10 +458,10 @@ export default function ContactPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-2xl p-6 shadow-soft border border-gray-100"
+                className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-100 dark:border-gray-700"
               >
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">{faq.question}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">{faq.question}</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{faq.answer}</p>
               </motion.div>
             ))}
           </div>
