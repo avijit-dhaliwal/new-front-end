@@ -58,7 +58,7 @@ export async function getActiveOrgId(searchParams?: { orgId?: string }): Promise
     return searchParams.orgId
   }
   
-  return orgId ?? null
+  return (orgId ?? null) as string | null
 }
 
 /**

@@ -14,17 +14,7 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.next()
     }
     
-    // Check if user is Koby staff (can access without org)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const publicMeta = authData.sessionClaims?.publicMetadata as Record<string, any> | undefined
-    const isStaff = publicMeta?.kobyRole === 'staff'
-    
-    if (isStaff) {
-      // Koby staff can access any route
-      return NextResponse.next()
-    }
-    
-    // For non-staff users, check if they have an organization
+    // Require an organization membership for all portal users
     const orgId = authData.orgId
     
     if (!orgId) {

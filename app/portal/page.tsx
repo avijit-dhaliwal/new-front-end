@@ -6,6 +6,7 @@ import { useOrganization, useUser, useAuth } from '@clerk/nextjs'
 import { AlertTriangle, Loader2, RefreshCw } from 'lucide-react'
 import KobyClientsList from '@/components/portal/KobyClientsList'
 import StatusPill from '@/components/portal/StatusPill'
+import { isKobyInternalOrg } from '@/lib/koby-org'
 import type { 
   PortalClient, 
   MetricCard, 
@@ -206,7 +207,9 @@ function buildPortalData(
   knowledge: KnowledgeOverviewResponse | null,
   flows: FlowListResponse | null,
   integrations?: IntegrationStatus[],
-  outcomeMetrics?: OutcomeMetric[]
+  outcomeMetrics?: OutcomeMetric[],
+  auditLogs?: AuditLog[],
+  retentionPolicies?: RetentionPolicy[]
 ): PortalData {
   return {
     metrics: buildMetrics(overview.stats),
@@ -222,6 +225,8 @@ function buildPortalData(
     events: events?.events || [],
     integrations: integrations || [],
     outcomes: outcomeMetrics || [],
+    auditLogs: auditLogs || [],
+    retentionPolicies: retentionPolicies || [],
   }
 }
 
@@ -305,6 +310,8 @@ function ClientPortalView({ data, outcomes, billing }: { data: PortalData; outco
     data.teamAccess.length > 0 ||
     data.integrations.length > 0 ||
     data.outcomes.length > 0 ||
+    data.auditLogs.length > 0 ||
+    data.retentionPolicies.length > 0 ||
     data.events.length > 0 ||
     outcomes.length > 0 ||
     billing.length > 0
@@ -816,6 +823,329 @@ function ClientPortalView({ data, outcomes, billing }: { data: PortalData; outco
           </div>
         </section>
       )}
+
+      {/* Audit Logs Section */}
+      {data.auditLogs.length > 0 && (
+        <section id="audit-logs">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Audit Logs</p>
+              <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+                System activity trail
+              </h2>
+            </div>
+            <div className="rounded-full border border-[var(--line)] bg-[var(--panel)] px-3 py-1 text-xs text-[var(--ink-muted)]">
+              Last {Math.min(data.auditLogs.length, 10)} events
+            </div>
+          </div>
+          <div className="mt-6 space-y-3">
+            {data.auditLogs.slice(0, 10).map((log) => (
+              <div key={log.id} className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-4 shadow-[var(--shadow-soft)]">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--ink)]">{log.eventType.replace(/_/g, ' ').replace(/\./g, ' › ')}</p>
+                    <p className="text-xs text-[var(--ink-muted)] mt-1">
+                      {log.actorType === 'user' ? 'User' : log.actorType === 'system' ? 'System' : 'Integration'}: {log.actorId || 'N/A'}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-[var(--ink-muted)]">
+                      {new Date(log.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                    {log.targetType && (
+                      <p className="text-xs text-[var(--ink-muted)]">{log.targetType}: {log.targetId?.slice(0, 8)}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Retention Policies Section */}
+      {data.retentionPolicies.length > 0 && (
+        <section id="retention-policies">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Data Retention</p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+              Retention and compliance policies
+            </h2>
+          </div>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {data.retentionPolicies.map((policy) => (
+              <div key={policy.id} className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--ink)]">{policy.dataType.replace(/_/g, ' ')}</p>
+                    <p className="text-xs text-[var(--ink-muted)] mt-1">Retention: {policy.ttlDays} days</p>
+                  </div>
+                  <StatusPill
+                    label={policy.applyAnonymization ? 'Anonymized' : 'Retained'}
+                    tone={policy.applyAnonymization ? 'info' : 'neutral'}
+                  />
+                </div>
+                <p className="mt-3 text-xs text-[var(--ink-muted)]">
+                  {policy.enforcedAt ? `Last enforced: ${new Date(policy.enforcedAt).toLocaleDateString()}` : 'Not yet enforced'}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  )
+}
+
+function InternalPortalView({
+  data,
+  clients,
+  clientsError,
+}: {
+  data: PortalData
+  clients: PortalClient[]
+  clientsError: string | null
+}) {
+  const totalClients = clients.length
+  const activeClients = clients.filter((client) => client.status === 'active').length
+  const atRiskClients = clients.filter((client) => client.status === 'at_risk').length
+  const churnedClients = clients.filter((client) => client.status === 'churned').length
+  const totalSessionsToday = clients.reduce((sum, client) => sum + (client.todaySessions || 0), 0)
+  const totalSites = clients.reduce((sum, client) => sum + (client.siteCount || 0), 0)
+
+  const metricLookup = new Map(data.metrics.map((metric) => [metric.label, metric.value]))
+  const summaryCards = [
+    { label: 'Client orgs', value: formatNumber(totalClients), note: `${activeClients} active` },
+    { label: 'At-risk accounts', value: formatNumber(atRiskClients), note: `${churnedClients} churned` },
+    { label: 'Sessions today', value: formatNumber(totalSessionsToday), note: 'Across all clients' },
+    { label: 'Sites monitored', value: formatNumber(totalSites), note: 'Live domains' },
+    { label: 'Total sessions (30d)', value: metricLookup.get('Total sessions') || '--', note: 'Platform volume' },
+    { label: 'Leads captured', value: metricLookup.get('Leads captured') || '--', note: 'Last 30 days' },
+  ]
+
+  return (
+    <div className="max-w-6xl mx-auto space-y-16">
+      <section id="overview" className="pt-10">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Koby Ops</p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+              Command center for client performance.
+            </h2>
+            <p className="mt-3 text-sm text-[var(--ink-muted)]">
+              Portfolio-level visibility across conversations, outcomes, and system health.
+            </p>
+          </div>
+          <div className="rounded-full border border-[var(--line)] bg-[var(--panel)] px-4 py-2 text-xs text-[var(--ink-muted)]">
+            Reporting window: Last 30 days
+          </div>
+        </div>
+
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {summaryCards.map((card) => (
+            <div key={card.label} className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)]">{card.label}</p>
+              <p className="mt-3 text-2xl font-semibold text-[var(--ink)]">{card.value}</p>
+              <p className="mt-2 text-xs text-[var(--ink-muted)]">{card.note}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="portfolio">
+        <KobyClientsList clients={clients} error={clientsError} />
+      </section>
+
+      {data.engines.length > 0 && (
+        <section id="operations">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Live Ops</p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+              Platform health and routing status
+            </h2>
+          </div>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {data.engines.map((engine) => (
+              <div key={engine.title} className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+                <div className="flex items-center justify-between">
+                  <p className="text-base font-semibold text-[var(--ink)]">{engine.title}</p>
+                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    engine.status === 'Healthy' || engine.status === 'Active' || engine.status === 'Synced'
+                      ? 'bg-green-100 text-green-700'
+                      : engine.status === 'Degraded'
+                      ? 'bg-amber-100 text-amber-700'
+                      : 'bg-red-100 text-red-700'
+                  }`}>
+                    {engine.status}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm text-[var(--ink-muted)]">{engine.detail}</p>
+                <p className="mt-4 text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)]">{engine.metric}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {(data.flows.length > 0 || data.workflows.length > 0) && (
+        <section id="automations">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Automations</p>
+              <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+                Active flows across the client fleet
+              </h2>
+            </div>
+            {data.flowTests.length > 0 && (
+              <div className="rounded-full border border-[var(--line)] bg-[var(--panel)] px-3 py-1 text-xs text-[var(--ink-muted)]">
+                {data.flowTests.filter(test => test.last_result === 'passed').length} / {data.flowTests.length} tests passing
+              </div>
+            )}
+          </div>
+          <div className="mt-6 space-y-3">
+            {(data.flows.length > 0 ? data.flows : data.workflows).map((flow) => {
+              const status = 'status' in flow ? flow.status : 'active'
+              const tone = status === 'active' ? 'success' : status === 'draft' || status === 'paused' ? 'warning' : 'neutral'
+              return (
+                <div key={flow.id || flow.name} className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div className="space-y-1">
+                      <p className="text-sm font-semibold text-[var(--ink)]">{'name' in flow ? flow.name : 'Unnamed flow'}</p>
+                      {'description' in flow && flow.description && (
+                        <p className="text-xs text-[var(--ink-muted)] line-clamp-2">{flow.description}</p>
+                      )}
+                      {'lastRun' in flow && flow.lastRun && (
+                        <p className="text-xs text-[var(--ink-muted)]">Last run: {flow.lastRun}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {'trigger' in flow && flow.trigger?.type && (
+                        <StatusPill label={`Trigger: ${flow.trigger.type}`} tone="info" />
+                      )}
+                      <StatusPill label={`Status: ${status}`} tone={tone} />
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
+      <section id="outcomes">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Outcomes</p>
+          <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+            Portfolio impact and ROI signals
+          </h2>
+        </div>
+        {data.outcomes.length > 0 ? (
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {data.outcomes.map((item) => (
+              <div key={item.id} className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-[var(--ink)]">{item.title}</p>
+                  {item.change && (
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                      item.status === 'down'
+                        ? 'bg-red-100 text-red-700'
+                        : item.status === 'flat'
+                        ? 'bg-[var(--paper-muted)] text-[var(--ink-muted)]'
+                        : 'bg-green-100 text-green-700'
+                    }`}>
+                      {item.change}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-3 text-2xl font-semibold text-[var(--ink)]">{item.value}</p>
+                <p className="mt-2 text-xs text-[var(--ink-muted)]">
+                  {item.note || item.horizon || 'Last 30 days'}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-6 rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[var(--shadow-soft)]">
+            <p className="text-sm font-semibold text-[var(--ink)]">Outcome tracking warming up</p>
+            <p className="mt-2 text-sm text-[var(--ink-muted)]">
+              As soon as workflows are tied to billing and CRM actions, portfolio ROI will appear here.
+            </p>
+          </div>
+        )}
+      </section>
+
+      {data.insights.length > 0 && (
+        <section id="insights">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Insights</p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+              Weekly volume trend across clients
+            </h2>
+          </div>
+          <div className="mt-6 rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[var(--shadow-soft)]">
+            <div className="flex items-end gap-3">
+              {data.insights.map((item) => (
+                <div key={item.label} className="flex flex-col items-center gap-2">
+                  <div className="w-8 rounded-full bg-[var(--accent-soft)]">
+                    <div
+                      className="rounded-full bg-[var(--accent-strong)]"
+                      style={{ height: `${item.value}px` }}
+                    />
+                  </div>
+                  <span className="text-xs text-[var(--ink-muted)]">{item.label}</span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs text-[var(--ink-muted)]">
+              Includes voice, chat, and automation sessions.
+            </p>
+          </div>
+        </section>
+      )}
+
+      {data.integrations.length > 0 && (
+        <section id="integrations">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Integrations</p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+              Systems connected across the portfolio
+            </h2>
+          </div>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {data.integrations.map((integration) => {
+              const status = integration.status || 'pending'
+              return (
+                <div key={integration.id} className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--ink)]">{integration.name}</p>
+                      <p className="text-xs text-[var(--ink-muted)] capitalize">{integration.category} integration</p>
+                    </div>
+                    <StatusPill
+                      label={status.charAt(0).toUpperCase() + status.slice(1)}
+                      tone={
+                        status === 'connected'
+                          ? 'success'
+                          : status === 'pending'
+                          ? 'warning'
+                          : status === 'error'
+                          ? 'critical'
+                          : 'neutral'
+                      }
+                    />
+                  </div>
+                  <p className="mt-3 text-xs text-[var(--ink-muted)]">
+                    {integration.lastSynced ? `Last synced ${integration.lastSynced}` : 'Awaiting first sync'}
+                  </p>
+                  {integration.note && (
+                    <p className="mt-2 text-xs text-[var(--ink-muted)]">{integration.note}</p>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
     </div>
   )
 }
@@ -834,15 +1164,21 @@ function PortalPageContent() {
   
   // Determine which view to show
   const activeOrgId = viewingOrgId || organization?.id || null
-  const showStaffClientsView = isKobyStaff && !activeOrgId
+  const isInternalOrgView = isKobyInternalOrg(activeOrgId)
+  const isKobyTeamMember = isKobyStaff || isKobyInternalOrg(organization?.id)
+  const showStaffClientsView = isKobyTeamMember && !activeOrgId
+  const showInternalOpsView = isInternalOrgView
   
   // Portal data state
   const [loadingState, setLoadingState] = useState<LoadingState>('loading')
   const [error, setError] = useState<string | null>(null)
   const [portalData, setPortalData] = useState<PortalData | null>(null)
   const [clients, setClients] = useState<PortalClient[]>([])
+  const [clientsError, setClientsError] = useState<string | null>(null)
   const [outcomeEvents, setOutcomeEvents] = useState<OutcomeEvent[]>([])
   const [billingRecords, setBillingRecords] = useState<BillingRecord[]>([])
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
+  const [retentionPolicies, setRetentionPolicies] = useState<RetentionPolicy[]>([])
 
   // Fetch data
   const fetchData = async () => {
@@ -919,11 +1255,15 @@ function PortalPageContent() {
 
         let outcomes: OutcomeEvent[] = []
         let billing: BillingRecord[] = []
+        let fetchedAuditLogs: AuditLog[] = []
+        let fetchedRetentionPolicies: RetentionPolicy[] = []
 
         if (PORTAL_WORKER_URL) {
-          const [outcomesResult, billingResult] = await Promise.allSettled([
+          const [outcomesResult, billingResult, auditLogsResult, retentionResult] = await Promise.allSettled([
             authedFetch<OutcomesResponse>(`/outcomes?orgId=${activeOrgId}`),
             authedFetch<BillingUsageResponse>(`/billing/usage?orgId=${activeOrgId}`),
+            authedFetch<{ logs: AuditLog[] }>(`/audit/logs?orgId=${activeOrgId}`),
+            authedFetch<{ policies: RetentionPolicy[] }>(`/retention/policies?orgId=${activeOrgId}`),
           ])
 
           if (outcomesResult.status === 'fulfilled' && outcomesResult.value?.outcomes) {
@@ -932,6 +1272,14 @@ function PortalPageContent() {
 
           if (billingResult.status === 'fulfilled' && billingResult.value?.records) {
             billing = billingResult.value.records
+          }
+
+          if (auditLogsResult.status === 'fulfilled' && auditLogsResult.value?.logs) {
+            fetchedAuditLogs = auditLogsResult.value.logs
+          }
+
+          if (retentionResult.status === 'fulfilled' && retentionResult.value?.policies) {
+            fetchedRetentionPolicies = retentionResult.value.policies
           }
         }
 
@@ -993,9 +1341,13 @@ function PortalPageContent() {
           flows,
           integrations?.integrations || [],
           buildOutcomeMetrics(outcomes),
+          fetchedAuditLogs,
+          fetchedRetentionPolicies,
         ))
         setOutcomeEvents(outcomes)
         setBillingRecords(billing)
+        setAuditLogs(fetchedAuditLogs)
+        setRetentionPolicies(fetchedRetentionPolicies)
         setLoadingState('success')
       } else {
         // No org context
