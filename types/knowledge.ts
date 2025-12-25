@@ -34,6 +34,7 @@ export interface KnowledgeDocument {
   path?: string
   external_id?: string
   status: KnowledgeDocumentStatus
+  live_version_id?: string
   checksum?: string
   mime_type?: string
   size_bytes?: number
@@ -46,6 +47,8 @@ export interface KnowledgeVersion {
   document_id: string
   org_id: string
   version_number: number
+  stage?: 'draft' | 'live' | 'archived'
+  is_live?: boolean
   checksum: string
   chunk_count: number
   token_count: number
@@ -63,6 +66,32 @@ export interface KnowledgeChunk {
   embedding?: number[]
   page_label?: string
   metadata?: Record<string, unknown>
+}
+
+export interface KnowledgeEmbedding {
+  id: string
+  org_id: string
+  version_id: string
+  chunk_id: string
+  model: string
+  vector: number[]
+  created_at: string
+}
+
+export type KnowledgeJobStatus = 'pending' | 'processing' | 'succeeded' | 'failed'
+export type KnowledgeJobType = 'ingest_source' | 'ingest_document' | 'rechunk' | 'embed' | 'sync'
+
+export interface KnowledgeIngestionJob {
+  id: string
+  org_id: string
+  source_id?: string
+  document_id?: string
+  version_id?: string
+  type: KnowledgeJobType
+  status: KnowledgeJobStatus
+  error_message?: string
+  created_at: string
+  updated_at: string
 }
 
 export type KnowledgePolicyEnforcement = 'block' | 'warn' | 'mask' | 'handoff'
@@ -99,6 +128,22 @@ export interface KnowledgeAnswer {
   answer: string
   citations: KnowledgeCitation[]
   policies_triggered?: KnowledgePolicyRule[]
+}
+
+export interface KnowledgeRetrievalResult {
+  chunkId: string
+  documentId: string
+  sourceId: string
+  versionId: string
+  content: string
+  score: number
+  citations: KnowledgeCitation[]
+  policiesTriggered?: KnowledgePolicyRule[]
+}
+
+export interface KnowledgeRetrieveResponse {
+  query: string
+  results: KnowledgeRetrievalResult[]
 }
 
 // =============================================================================
@@ -183,6 +228,23 @@ export interface FlowRunInsight {
   triggered_policy_ids?: string[]
 }
 
+export interface FlowRun {
+  id: string
+  flowId: string
+  orgId: string
+  startedAt: string
+  durationMs?: number
+  outcome?: 'success' | 'failed' | 'handoff' | 'cancelled'
+  triggeredPolicyIds?: string[]
+  metadata?: Record<string, unknown>
+  actionRunId?: string
+  outcomeEventId?: string
+}
+
+export interface FlowRunResponse {
+  run: FlowRun
+}
+
 // =============================================================================
 // API Response Shapes
 // =============================================================================
@@ -191,6 +253,7 @@ export interface KnowledgeOverviewResponse {
   sources: KnowledgeSource[]
   documents: KnowledgeDocument[]
   policies: KnowledgePolicy[]
+  jobs?: KnowledgeIngestionJob[]
   message?: string
 }
 

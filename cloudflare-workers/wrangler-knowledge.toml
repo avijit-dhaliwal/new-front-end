@@ -1,0 +1,16 @@
+name = "koby-knowledge-ingestion"
+main = "knowledge-ingestion-worker.js"
+compatibility_date = "2024-10-15"
+account_id = "4fcec980c07ca7ef02087d9e61f20e42"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "koby-portal-db"
+database_id = "" # Fill after provisioning the same DB used by portal
+
+[vars]
+# No public vars required; uses D1 only
+
+# Usage:
+# wrangler deploy --config cloudflare-workers/wrangler-knowledge.toml
+# Trigger ingestion: curl -X POST https://<worker-url>/ (or wrangler dev --config ...)

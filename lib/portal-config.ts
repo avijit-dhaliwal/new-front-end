@@ -19,9 +19,9 @@ export type { PortalBranding, PortalConfig, PortalModule, CustomCard } from '@/t
  */
 export const CHATBOT_ONLY_PRESET: Omit<PortalConfig, 'orgId' | 'updated_at'> = {
   branding: {
-    logo_url: null,
-    primary_color: null,
-    company_name: null,
+    logo_url: undefined,
+    primary_color: undefined,
+    company_name: undefined,
   },
   enabled_modules: [
     'overview',
@@ -61,9 +61,9 @@ export const CHATBOT_ONLY_PRESET: Omit<PortalConfig, 'orgId' | 'updated_at'> = {
  */
 export const FULL_SUITE_PRESET: Omit<PortalConfig, 'orgId' | 'updated_at'> = {
   branding: {
-    logo_url: null,
-    primary_color: null,
-    company_name: null,
+    logo_url: undefined,
+    primary_color: undefined,
+    company_name: undefined,
   },
   enabled_modules: [
     'overview',

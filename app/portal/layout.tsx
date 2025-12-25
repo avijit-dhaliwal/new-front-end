@@ -31,7 +31,9 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         <PortalSidebar />
       </Suspense>
       <div className="lg:pl-72">
-        <PortalHeader />
+        <Suspense fallback={<div className="h-[73px] border-b border-[var(--line)]" />}>
+          <PortalHeader />
+        </Suspense>
         <main className="px-6 pb-16">
           {children}
         </main>

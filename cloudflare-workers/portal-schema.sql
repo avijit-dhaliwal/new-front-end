@@ -121,6 +121,7 @@ CREATE TABLE IF NOT EXISTS knowledge_documents (
   path TEXT,
   external_id TEXT,
   status TEXT DEFAULT 'processing' CHECK(status IN ('processing', 'ready', 'failed', 'archived')),
+  live_version_id TEXT REFERENCES knowledge_versions(id),
   checksum TEXT,
   mime_type TEXT,
   size_bytes INTEGER,
@@ -133,6 +134,8 @@ CREATE TABLE IF NOT EXISTS knowledge_versions (
   document_id TEXT NOT NULL REFERENCES knowledge_documents(id) ON DELETE CASCADE,
   org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
   version_number INTEGER NOT NULL DEFAULT 1,
+  stage TEXT DEFAULT 'draft' CHECK(stage IN ('draft', 'live', 'archived')),
+  is_live INTEGER DEFAULT 0,
   checksum TEXT,
   chunk_count INTEGER DEFAULT 0,
   token_count INTEGER DEFAULT 0,
@@ -147,8 +150,32 @@ CREATE TABLE IF NOT EXISTS knowledge_chunks (
   org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
   content TEXT NOT NULL,
   token_count INTEGER DEFAULT 0,
+  embedding JSON,
   page_label TEXT,
   metadata JSON DEFAULT '{}'
+);
+
+CREATE TABLE IF NOT EXISTS knowledge_embeddings (
+  id TEXT PRIMARY KEY,
+  org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  version_id TEXT NOT NULL REFERENCES knowledge_versions(id) ON DELETE CASCADE,
+  chunk_id TEXT NOT NULL REFERENCES knowledge_chunks(id) ON DELETE CASCADE,
+  model TEXT NOT NULL,
+  vector JSON NOT NULL,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS knowledge_ingestion_jobs (
+  id TEXT PRIMARY KEY,
+  org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  source_id TEXT REFERENCES knowledge_sources(id) ON DELETE SET NULL,
+  document_id TEXT REFERENCES knowledge_documents(id) ON DELETE SET NULL,
+  version_id TEXT REFERENCES knowledge_versions(id) ON DELETE SET NULL,
+  type TEXT NOT NULL CHECK(type IN ('ingest_source', 'ingest_document', 'rechunk', 'embed', 'sync')),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'processing', 'succeeded', 'failed')),
+  error_message TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS knowledge_policies (
@@ -228,6 +255,8 @@ CREATE INDEX IF NOT EXISTS idx_knowledge_documents_org_source ON knowledge_docum
 CREATE INDEX IF NOT EXISTS idx_knowledge_versions_doc ON knowledge_versions(document_id, version_number);
 CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_version ON knowledge_chunks(version_id);
 CREATE INDEX IF NOT EXISTS idx_knowledge_policies_org ON knowledge_policies(org_id);
+CREATE INDEX IF NOT EXISTS idx_knowledge_embeddings_version ON knowledge_embeddings(version_id);
+CREATE INDEX IF NOT EXISTS idx_knowledge_ingestion_jobs_org_status ON knowledge_ingestion_jobs(org_id, status);
 CREATE INDEX IF NOT EXISTS idx_flows_org_status ON flows(org_id, status);
 CREATE INDEX IF NOT EXISTS idx_flow_steps_flow ON flow_steps(flow_id);
 CREATE INDEX IF NOT EXISTS idx_flow_rules_flow ON flow_rules(flow_id);
@@ -283,6 +312,16 @@ INSERT OR IGNORE INTO knowledge_chunks (id, version_id, org_id, content, token_c
   ('kc_dental_1b', 'kv_dental_1', 'org_dental', 'Insurance accepted: Delta, MetLife. Collect policy number.', 110, 'p1', '{"section":"insurance"}'),
   ('kc_dental_v1_1', 'kv_dental_v1', 'org_dental', 'If balance > $500, offer payment plan before escalating.', 110, 'p1', '{"policy": "payment_plan"}'),
   ('kc_dental_v1_2', 'kv_dental_v1', 'org_dental', 'Route insurance disputes to billing specialist and capture claim number.', 140, 'p2', '{"policy": "handoff"}');
+
+INSERT OR IGNORE INTO knowledge_ingestion_jobs (id, org_id, source_id, document_id, version_id, type, status, error_message, created_at, updated_at) VALUES
+  ('kj_chadis_seed', 'org_chadis', 'ks_chadis_handbook', 'kd_chadis_1', 'kv_chadis_1', 'ingest_document', 'succeeded', NULL, datetime('now','-1 day'), datetime('now','-1 day')),
+  ('kj_dental_seed', 'org_dental', 'ks_dental_faq', 'kd_dental_1', 'kv_dental_1', 'ingest_document', 'succeeded', NULL, datetime('now','-2 hours'), datetime('now','-2 hours'));
+
+UPDATE knowledge_versions SET is_live = 1, stage = 'live' WHERE id IN ('kv_chadis_1', 'kv_chadis_v2', 'kv_dental_1', 'kv_dental_v1');
+UPDATE knowledge_documents SET live_version_id = 'kv_chadis_v2' WHERE id = 'kd_chadis_discharge';
+UPDATE knowledge_documents SET live_version_id = 'kv_dental_1' WHERE id = 'kd_dental_1';
+UPDATE knowledge_documents SET live_version_id = 'kv_dental_v1' WHERE id = 'kd_dental_billing';
+UPDATE knowledge_documents SET live_version_id = 'kv_chadis_1' WHERE id = 'kd_chadis_1';
 
 INSERT OR IGNORE INTO knowledge_policies (id, org_id, name, description, rules) VALUES
   ('kp_chadis_guardrails', 'org_chadis', 'PHI Guardrails', 'Mask PHI and handoff sensitive intents', '[{"id":"rule_phi","type":"redact","match":"phi","applies_to":"responses","enforcement":"mask"},{"id":"rule_handoff","type":"handoff","match":"keyword","pattern":"emergency","applies_to":"responses","enforcement":"handoff"}]'),
@@ -364,6 +403,7 @@ CREATE TABLE IF NOT EXISTS action_runs (
   trigger_source TEXT,
   idempotency_key TEXT,
   flow_id TEXT,
+  flow_run_id TEXT REFERENCES flow_runs(id) ON DELETE SET NULL,
   input JSON DEFAULT '{}',
   output JSON,
   error TEXT,

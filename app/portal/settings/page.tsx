@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, type ComponentType } from 'react'
+import { useEffect, useState, Suspense, type ComponentType } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useAuth, useOrganization, useUser } from '@clerk/nextjs'
@@ -54,7 +54,18 @@ const DEMO_CONFIG: PortalConfig = {
   updated_at: new Date().toISOString(),
 }
 
-export default function PortalSettingsPage() {
+// Loading skeleton component
+function SettingsSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto py-10 space-y-4 animate-pulse">
+      <div className="h-6 w-32 bg-[var(--paper-muted)] rounded" />
+      <div className="h-10 w-48 bg-[var(--paper-muted)] rounded" />
+      <div className="h-64 bg-[var(--paper-muted)] rounded-3xl" />
+    </div>
+  )
+}
+
+function SettingsContent() {
   const searchParams = useSearchParams()
   const { getToken } = useAuth()
   const { organization } = useOrganization()
@@ -273,13 +284,7 @@ export default function PortalSettingsPage() {
   }
 
   if (isLoading || !config) {
-    return (
-      <div className="max-w-4xl mx-auto py-10 space-y-4 animate-pulse">
-        <div className="h-6 w-32 bg-[var(--paper-muted)] rounded" />
-        <div className="h-10 w-48 bg-[var(--paper-muted)] rounded" />
-        <div className="h-64 bg-[var(--paper-muted)] rounded-3xl" />
-      </div>
-    )
+    return <SettingsSkeleton />
   }
 
   return (
@@ -542,5 +547,13 @@ export default function PortalSettingsPage() {
         </button>
       </div>
     </div>
+  )
+}
+
+export default function PortalSettingsPage() {
+  return (
+    <Suspense fallback={<SettingsSkeleton />}>
+      <SettingsContent />
+    </Suspense>
   )
 }

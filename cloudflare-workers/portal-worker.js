@@ -135,6 +135,11 @@ async function getAuthContext(request, env) {
   }
 }
 
+function isOrgAdmin(auth) {
+  const adminRoles = ['org:admin', 'org:client_admin']
+  return auth.isKobyStaff || (auth.orgRole && adminRoles.includes(auth.orgRole))
+}
+
 // Route handlers
 const routes = {
   // GET /portal/overview - Dashboard overview stats
@@ -390,11 +395,15 @@ const routes = {
     const policies = orgId
       ? await db.prepare(`SELECT * FROM knowledge_policies ${orgFilter} ORDER BY datetime(updated_at) DESC`).bind(orgId).all()
       : await db.prepare('SELECT * FROM knowledge_policies ORDER BY datetime(updated_at) DESC').all()
+    const jobs = orgId
+      ? await db.prepare(`SELECT * FROM knowledge_ingestion_jobs ${orgFilter} ORDER BY datetime(updated_at) DESC LIMIT 25`).bind(orgId).all()
+      : await db.prepare('SELECT * FROM knowledge_ingestion_jobs ORDER BY datetime(updated_at) DESC LIMIT 25').all()
 
     return jsonResponse({
       sources: (sources.results || []).map(mapKnowledgeSource),
       documents: (documents.results || []).map(mapKnowledgeDocument),
       policies: (policies.results || []).map(mapKnowledgePolicy),
+      jobs: (jobs.results || []).map(mapKnowledgeJob),
       message: (sources.results || []).length === 0 ? 'No knowledge sources configured' : undefined,
     })
   },
@@ -1001,7 +1010,7 @@ const routes = {
         site_id: message.site_id,
         session_id: message.session_id,
         type: message.role === 'user' ? 'user_message' : 'assistant_message',
-        content: message.content,
+        content: redactPII(message.content),
         created_at: message.created_at,
       })
     }
@@ -1035,7 +1044,7 @@ const routes = {
         site_id: '',
         session_id: '',
         type: 'outcome_recorded',
-        content: outcome.label || outcome.outcome_type,
+        content: redactPII(outcome.label || outcome.outcome_type),
         created_at: outcome.recorded_at,
       })
     }
@@ -1053,6 +1062,10 @@ const routes = {
 
     if (!orgId) {
       return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    if (!isOrgAdmin(auth)) {
+      return jsonResponse({ error: 'Admin access required' }, 403)
     }
 
     const body = await request.json()
@@ -1133,6 +1146,10 @@ const routes = {
       return jsonResponse({ error: 'Organization required' }, 400)
     }
 
+    if (!isOrgAdmin(auth)) {
+      return jsonResponse({ error: 'Admin access required' }, 403)
+    }
+
     const db = env.DB
     const result = await db.prepare('DELETE FROM integration_connections WHERE id = ? AND (org_id = ? OR ? = 1)').bind(integrationId, orgId, isKobyStaff ? 1 : 0).run()
 
@@ -1169,6 +1186,7 @@ const routes = {
         triggerSource: row.trigger_source,
         idempotencyKey: row.idempotency_key,
         flowId: row.flow_id,
+        flowRunId: row.flow_run_id,
         input: row.input ? JSON.parse(row.input) : {},
         output: row.output ? JSON.parse(row.output) : null,
         error: row.error,
@@ -1179,6 +1197,79 @@ const routes = {
         createdAt: row.created_at,
       })),
     })
+  },
+
+  // GET /actions/queue - claim ready action runs (pending or due for retry)
+  async claimActionRuns(request, env, auth) {
+    const { orgId, isKobyStaff } = auth
+
+    if (!orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    const url = new URL(request.url)
+    const limitParam = parseInt(url.searchParams.get('limit') || '10', 10)
+    const limit = Number.isFinite(limitParam) ? Math.max(1, Math.min(limitParam, 25)) : 10
+
+    const db = env.DB
+    const nowIso = new Date().toISOString()
+
+    const rows = await (orgId
+      ? db.prepare(`
+          SELECT * FROM action_runs
+          WHERE (status = 'pending' OR (status = 'failed' AND (next_retry_at IS NULL OR next_retry_at <= ?)))
+            AND attempt < max_retries
+            AND org_id = ?
+          ORDER BY COALESCE(next_retry_at, created_at) ASC
+          LIMIT ?
+        `).bind(nowIso, orgId, limit).all()
+      : db.prepare(`
+          SELECT * FROM action_runs
+          WHERE (status = 'pending' OR (status = 'failed' AND (next_retry_at IS NULL OR next_retry_at <= ?)))
+            AND attempt < max_retries
+          ORDER BY COALESCE(next_retry_at, created_at) ASC
+          LIMIT ?
+        `).bind(nowIso, limit).all())
+
+    const claimed = []
+
+    for (const row of rows.results || []) {
+      const update = await db.prepare(`
+        UPDATE action_runs
+        SET status = 'running',
+            attempt = attempt + 1,
+            started_at = COALESCE(started_at, ?),
+            next_retry_at = NULL
+        WHERE id = ? AND status IN ('pending', 'failed')
+      `).bind(nowIso, row.id).run()
+
+      if (update.success === false) continue
+
+      // Fetch the latest row after update
+      const updated = await db.prepare('SELECT * FROM action_runs WHERE id = ?').bind(row.id).first()
+      claimed.push({
+        id: updated.id,
+        actionId: updated.action_id,
+        orgId: updated.org_id,
+        status: updated.status,
+        attempt: updated.attempt,
+        maxRetries: updated.max_retries,
+        retryPolicy: updated.retry_policy,
+        triggerSource: updated.trigger_source,
+        idempotencyKey: updated.idempotency_key,
+        flowId: updated.flow_id,
+        input: updated.input ? JSON.parse(updated.input) : {},
+        output: updated.output ? JSON.parse(updated.output) : null,
+        error: updated.error,
+        startedAt: updated.started_at,
+        completedAt: updated.completed_at,
+        nextRetryAt: updated.next_retry_at,
+        metadata: updated.metadata ? JSON.parse(updated.metadata) : {},
+        createdAt: updated.created_at,
+      })
+    }
+
+    return jsonResponse({ runs: claimed })
   },
 
   // PATCH /actions/:id/run/:runId - update action run status/output
@@ -1359,6 +1450,10 @@ const routes = {
       return jsonResponse({ error: 'Organization required' }, 400)
     }
 
+    if (!isOrgAdmin(auth)) {
+      return jsonResponse({ error: 'Admin access required' }, 403)
+    }
+
     const body = await request.json()
     const { dataType, ttlDays, applyAnonymization = false, enforcedAt = null } = body
 
@@ -1514,6 +1609,8 @@ const routes = {
         documentId: row.document_id,
         orgId: row.org_id,
         versionNumber: row.version_number,
+        stage: row.stage || 'draft',
+        is_live: row.is_live === 1,
         checksum: row.checksum,
         chunkCount: row.chunk_count,
         tokenCount: row.token_count,
@@ -1564,6 +1661,273 @@ const routes = {
         pageLabel: row.page_label,
         metadata: row.metadata ? JSON.parse(row.metadata) : {},
       })),
+    })
+  },
+
+  // POST /portal/flows/:id/run - trigger flow runtime
+  async runFlow(request, env, auth, flowId) {
+    const { orgId, isKobyStaff } = auth
+
+    if (!orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    const db = env.DB
+    const flow = await db.prepare('SELECT * FROM flows WHERE id = ?').bind(flowId).first()
+    if (!flow) {
+      return jsonResponse({ error: 'Flow not found' }, 404)
+    }
+    if (orgId && flow.org_id !== orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Forbidden' }, 403)
+    }
+
+    const body = await request.json().catch(() => ({}))
+    const now = new Date()
+    const runId = generateId()
+
+    await db.prepare(`
+      INSERT INTO flow_runs (id, flow_id, org_id, started_at, metadata)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(runId, flowId, flow.org_id, now.toISOString(), JSON.stringify(body || {})).run()
+
+    let actionRunId = null
+    let outcomeEventId = null
+
+    const steps = await db.prepare('SELECT * FROM flow_steps WHERE flow_id = ?').bind(flowId).all()
+    const actionStep = (steps.results || []).find(step => step.kind === 'action')
+    if (actionStep) {
+      const stepConfig = actionStep.config ? JSON.parse(actionStep.config) : {}
+      const actionKey = stepConfig.actionKey || stepConfig.key
+      if (actionKey) {
+        const actionDef = await db.prepare('SELECT * FROM action_definitions WHERE org_id = ? AND key = ?').bind(flow.org_id, actionKey).first()
+        if (actionDef) {
+          const actionRun = generateId()
+          await db.prepare(`
+            INSERT INTO action_runs (id, action_id, org_id, status, attempt, max_retries, retry_policy, trigger_source, flow_id, flow_run_id, input, metadata, created_at)
+            VALUES (?, ?, ?, 'pending', 0, ?, ?, 'flow', ?, ?, ?, ?, ?)
+          `).bind(
+            actionRun,
+            actionDef.id,
+            flow.org_id,
+            actionDef.max_retries || 3,
+            actionDef.retry_policy || 'fixed',
+            flowId,
+            runId,
+            JSON.stringify(body || {}),
+            JSON.stringify({ flowName: flow.name, stepId: actionStep.id }),
+            now.toISOString()
+          ).run()
+          actionRunId = actionRun
+        }
+      }
+    }
+
+    if (actionRunId) {
+      outcomeEventId = generateId()
+      await db.prepare(`
+        INSERT INTO outcome_events (id, org_id, action_run_id, outcome_type, label, amount_cents, currency, recorded_at, metadata)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind(
+        outcomeEventId,
+        flow.org_id,
+        actionRunId,
+        'flow_triggered',
+        `Flow ${flow.name} queued action`,
+        null,
+        'USD',
+        now.toISOString(),
+        JSON.stringify({ flowId, actionRunId })
+      ).run()
+    }
+
+    const durationMs = 10
+    const outcome = actionRunId ? 'success' : 'failed'
+
+    await db.prepare(`
+      UPDATE flow_runs
+      SET outcome = ?, duration_ms = ?
+      WHERE id = ?
+    `).bind(outcome, durationMs, runId).run()
+
+    const runRow = await db.prepare('SELECT * FROM flow_runs WHERE id = ?').bind(runId).first()
+
+    return jsonResponse({
+      run: {
+        id: runRow.id,
+        flowId: runRow.flow_id,
+        orgId: runRow.org_id,
+        startedAt: runRow.started_at,
+        durationMs: runRow.duration_ms,
+        outcome: runRow.outcome,
+        triggeredPolicyIds: runRow.triggered_policy_ids ? JSON.parse(runRow.triggered_policy_ids) : [],
+        metadata: runRow.metadata ? JSON.parse(runRow.metadata) : {},
+        actionRunId,
+        outcomeEventId,
+      },
+    }, 201)
+  },
+
+  // POST /portal/knowledge/retrieve - simple retrieval with citations
+  async retrieveKnowledge(request, env, auth) {
+    const { orgId, isKobyStaff } = auth
+    if (!orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    let body = {}
+    try {
+      body = await request.json()
+    } catch (err) {
+      body = {}
+    }
+
+    const url = new URL(request.url)
+    const query = body.query || url.searchParams.get('q')
+    const limitParam = body.limit || url.searchParams.get('limit') || 5
+    const limit = Math.min(parseInt(limitParam, 10) || 5, 20)
+
+    if (!query) {
+      return jsonResponse({ error: 'query is required' }, 400)
+    }
+
+    const db = env.DB
+    const embeddingsRows = orgId
+      ? await db.prepare(`
+          SELECT ke.vector, ke.model, ke.chunk_id, ke.version_id, kv.stage, kv.is_live,
+                 kc.content, kc.page_label, kc.metadata, kc.token_count,
+                 kd.id as document_id, kd.source_id,
+                 ks.name as source_name
+          FROM knowledge_embeddings ke
+          JOIN knowledge_chunks kc ON kc.id = ke.chunk_id
+          JOIN knowledge_versions kv ON kv.id = kc.version_id
+          JOIN knowledge_documents kd ON kd.id = kv.document_id
+          JOIN knowledge_sources ks ON ks.id = kd.source_id
+          WHERE ke.org_id = ?
+          LIMIT 200
+        `).bind(orgId).all()
+      : await db.prepare(`
+          SELECT ke.vector, ke.model, ke.chunk_id, ke.version_id, kv.stage, kv.is_live,
+                 kc.content, kc.page_label, kc.metadata, kc.token_count,
+                 kd.id as document_id, kd.source_id,
+                 ks.name as source_name
+          FROM knowledge_embeddings ke
+          JOIN knowledge_chunks kc ON kc.id = ke.chunk_id
+          JOIN knowledge_versions kv ON kv.id = kc.version_id
+          JOIN knowledge_documents kd ON kd.id = kv.document_id
+          JOIN knowledge_sources ks ON ks.id = kd.source_id
+          LIMIT 200
+        `).all()
+
+    const embedText = (text) => {
+      const tokens = (text || '').toLowerCase().split(/\s+/).filter(Boolean)
+      const vec = Array(8).fill(0)
+      tokens.forEach((tok, idx) => {
+        const code = Array.from(tok).reduce((sum, ch) => sum + ch.charCodeAt(0), 0)
+        vec[idx % vec.length] += code
+      })
+      const norm = Math.sqrt(vec.reduce((sum, v) => sum + v * v, 0)) || 1
+      return vec.map(v => v / norm)
+    }
+
+    const queryVec = embedText(query)
+
+    const cosine = (a, b) => {
+      const len = Math.min(a.length, b.length)
+      let dot = 0
+      let na = 0
+      let nb = 0
+      for (let i = 0; i < len; i++) {
+        dot += a[i] * b[i]
+        na += a[i] * a[i]
+        nb += b[i] * b[i]
+      }
+      if (na === 0 || nb === 0) return 0
+      return dot / Math.sqrt(na * nb)
+    }
+
+    const scored = (embeddingsRows.results || []).map((row) => {
+      const vector = Array.isArray(row.vector) ? row.vector : (() => {
+        try {
+          const parsed = JSON.parse(row.vector || '[]')
+          return Array.isArray(parsed) ? parsed : []
+        } catch {
+          return []
+        }
+      })()
+      const score = cosine(queryVec, vector)
+      return { ...row, score }
+    }).sort((a, b) => b.score - a.score)
+
+    const limited = scored.slice(0, limit)
+
+    // Fallback to LIKE if no embeddings
+    let results = []
+    if (limited.length === 0) {
+      const likeParam = `%${query}%`
+      const rows = orgId
+        ? await db.prepare(`
+            SELECT kc.id as chunk_id, kc.content, kc.token_count, kc.page_label, kc.metadata,
+                   kv.id as version_id, kv.stage, kv.is_live,
+                   kd.id as document_id, kd.source_id,
+                   ks.name as source_name
+            FROM knowledge_chunks kc
+            JOIN knowledge_versions kv ON kc.version_id = kv.id
+            JOIN knowledge_documents kd ON kv.document_id = kd.id
+            JOIN knowledge_sources ks ON kd.source_id = ks.id
+            WHERE kc.content LIKE ? AND kc.org_id = ?
+            ORDER BY datetime(kv.created_at) DESC, kv.version_number DESC, kc.rowid DESC
+            LIMIT ?
+          `).bind(likeParam, orgId, limit).all()
+        : await db.prepare(`
+            SELECT kc.id as chunk_id, kc.content, kc.token_count, kc.page_label, kc.metadata,
+                   kv.id as version_id, kv.stage, kv.is_live,
+                   kd.id as document_id, kd.source_id,
+                   ks.name as source_name
+            FROM knowledge_chunks kc
+            JOIN knowledge_versions kv ON kc.version_id = kv.id
+            JOIN knowledge_documents kd ON kv.document_id = kd.id
+            JOIN knowledge_sources ks ON kd.source_id = ks.id
+            WHERE kc.content LIKE ?
+            ORDER BY datetime(kv.created_at) DESC, kv.version_number DESC, kc.rowid DESC
+            LIMIT ?
+          `).bind(likeParam, limit).all()
+
+      results = (rows.results || []).map((row, index) => ({
+        chunkId: row.chunk_id,
+        documentId: row.document_id,
+        sourceId: row.source_id,
+        versionId: row.version_id,
+        content: row.content,
+        score: Math.max(0, 1 - index * 0.05),
+        citations: [{
+          chunk_id: row.chunk_id,
+          source_id: row.source_id,
+          version_id: row.version_id,
+          pointer: row.page_label || undefined,
+        }],
+        policiesTriggered: [],
+      }))
+    } else {
+      results = limited.map((row) => ({
+        chunkId: row.chunk_id,
+        documentId: row.document_id,
+        sourceId: row.source_id,
+        versionId: row.version_id,
+        content: row.content,
+        score: row.score,
+        citations: [{
+          chunk_id: row.chunk_id,
+          source_id: row.source_id,
+          version_id: row.version_id,
+          pointer: row.page_label || undefined,
+        }],
+        policiesTriggered: [],
+      }))
+    }
+
+    return jsonResponse({
+      query,
+      results,
     })
   },
 
@@ -1926,6 +2290,7 @@ function mapKnowledgeDocument(row) {
     path: row.path || null,
     external_id: row.external_id || null,
     status: row.status,
+    live_version_id: row.live_version_id || null,
     checksum: row.checksum || null,
     mime_type: row.mime_type || null,
     size_bytes: row.size_bytes,
@@ -1942,6 +2307,22 @@ function mapKnowledgePolicy(row) {
     name: row.name,
     description: row.description || null,
     rules: parseJsonField(row.rules, []),
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  }
+}
+
+function mapKnowledgeJob(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    org_id: row.org_id,
+    source_id: row.source_id || null,
+    document_id: row.document_id || null,
+    version_id: row.version_id || null,
+    type: row.type,
+    status: row.status,
+    error_message: row.error_message || null,
     created_at: row.created_at,
     updated_at: row.updated_at,
   }
@@ -2164,6 +2545,9 @@ export default {
       if (path === '/portal/team' && request.method === 'GET') {
         return routes.getTeam(request, env, auth)
       }
+      if (path === '/portal/audit-logs' && request.method === 'GET') {
+        return routes.getAuditLogs(request, env, auth)
+      }
       if (path === '/portal/knowledge' && request.method === 'GET') {
         return routes.getKnowledge(request, env, auth)
       }
@@ -2179,6 +2563,11 @@ export default {
       if (path === '/portal/flows' && request.method === 'POST') {
         return routes.createFlow(request, env, auth)
       }
+      if (path.startsWith('/portal/flows/') && path.endsWith('/run') && request.method === 'POST') {
+        const segments = path.split('/')
+        const flowId = segments[3]
+        return routes.runFlow(request, env, auth, flowId)
+      }
       if (path.startsWith('/portal/flows/') && !path.endsWith('/tests') && request.method === 'GET') {
         const segments = path.split('/')
         const flowId = segments[3]
@@ -2188,6 +2577,12 @@ export default {
         const segments = path.split('/')
         const flowId = segments[3]
         return routes.createFlowTest(request, env, auth, flowId)
+      }
+      if (path === '/portal/retention' && request.method === 'GET') {
+        return routes.getRetentionPolicies(request, env, auth)
+      }
+      if (path === '/portal/retention' && request.method === 'POST') {
+        return routes.upsertRetentionPolicy(request, env, auth)
       }
       if (path === '/portal/clients' && request.method === 'GET') {
         return routes.getClients(request, env, auth)
@@ -2226,6 +2621,9 @@ export default {
       }
       if (path === '/actions/runs' && request.method === 'GET') {
         return routes.listActionRuns(request, env, auth)
+      }
+      if (path === '/actions/queue' && request.method === 'GET') {
+        return routes.claimActionRuns(request, env, auth)
       }
       if (path.startsWith('/actions/') && path.endsWith('/run') && request.method === 'POST') {
         const segments = path.split('/')
@@ -2268,6 +2666,9 @@ export default {
       if (path === '/portal/knowledge/chunks' && request.method === 'GET') {
         return routes.getKnowledgeChunks(request, env, auth)
       }
+      if (path === '/portal/knowledge/retrieve' && request.method === 'POST') {
+        return routes.retrieveKnowledge(request, env, auth)
+      }
       if (path.startsWith('/portal/flows/') && path.endsWith('/steps') && request.method === 'POST') {
         const segments = path.split('/')
         const flowId = segments[3]
@@ -2290,4 +2691,14 @@ export default {
       return jsonResponse({ error: 'Internal server error' }, 500)
     }
   },
+}
+
+// Simple PII redaction for content fields (emails/phone)
+function redactPII(text) {
+  if (!text || typeof text !== 'string') return text
+  const emailPattern = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi
+  const phonePattern = /\+?\d[\d\-\s().]{6,}\d/g
+  return text
+    .replace(emailPattern, '[redacted email]')
+    .replace(phonePattern, '[redacted phone]')
 }

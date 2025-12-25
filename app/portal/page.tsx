@@ -60,6 +60,7 @@ interface PortalData {
   outcomes: OutcomeMetric[]
   auditLogs: AuditLog[]
   retentionPolicies: RetentionPolicy[]
+  actionRuns: ActionRun[]
 }
 
 type LoadingState = 'loading' | 'success' | 'error'
@@ -196,6 +197,7 @@ function getEmptyPortalData(): PortalData {
     outcomes: [],
     auditLogs: [],
     retentionPolicies: [],
+    actionRuns: [],
   }
 }
 
@@ -208,10 +210,11 @@ function buildPortalData(
   team: PortalTeamResponse | null,
   knowledge: KnowledgeOverviewResponse | null,
   flows: FlowListResponse | null,
-  integrations?: IntegrationStatus[],
+  integrations?: IntegrationConnection[],
   outcomeMetrics?: OutcomeMetric[],
   auditLogs?: AuditLog[],
-  retentionPolicies?: RetentionPolicy[]
+  retentionPolicies?: RetentionPolicy[],
+  actionRuns?: ActionRun[]
 ): PortalData {
   return {
     metrics: buildMetrics(overview.stats),
@@ -229,6 +232,7 @@ function buildPortalData(
     outcomes: outcomeMetrics || [],
     auditLogs: auditLogs || [],
     retentionPolicies: retentionPolicies || [],
+    actionRuns: actionRuns || [],
   }
 }
 
@@ -312,6 +316,7 @@ function ClientPortalView({ data, outcomes, billing }: { data: PortalData; outco
     data.teamAccess.length > 0 ||
     data.integrations.length > 0 ||
     data.outcomes.length > 0 ||
+    data.actionRuns.length > 0 ||
     data.auditLogs.length > 0 ||
     data.retentionPolicies.length > 0 ||
     data.events.length > 0 ||
@@ -378,6 +383,64 @@ function ClientPortalView({ data, outcomes, billing }: { data: PortalData; outco
                 </div>
                 <p className="mt-3 text-sm text-[var(--ink-muted)]">{engine.detail}</p>
                 <p className="mt-4 text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)]">{engine.metric}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Audit Logs */}
+      {data.auditLogs.length > 0 && (
+        <section id="audit">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Audit Logs</p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+              Compliance trail
+            </h2>
+          </div>
+          <div className="mt-6 space-y-3">
+            {data.auditLogs.slice(0, 8).map((log) => (
+              <div key={log.id} className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-4 shadow-[var(--shadow-soft)]">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-[var(--ink)]">{log.eventType}</p>
+                  <span className="text-xs text-[var(--ink-muted)]">
+                    {new Date(log.createdAt).toLocaleString()}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-[var(--ink-muted)]">
+                  Actor: {log.actorType || 'system'} {log.actorId ? `(${log.actorId})` : ''}
+                </p>
+                {log.targetType && (
+                  <p className="text-xs text-[var(--ink-muted)]">Target: {log.targetType} {log.targetId || ''}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Retention Policies */}
+      {data.retentionPolicies.length > 0 && (
+        <section id="retention">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Retention</p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+              Data lifecycle controls
+            </h2>
+          </div>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+            {data.retentionPolicies.map((policy) => (
+              <div key={policy.id} className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-4 shadow-[var(--shadow-soft)]">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-[var(--ink)]">{policy.dataType}</p>
+                  <StatusPill label={`${policy.ttlDays} days`} tone="neutral" />
+                </div>
+                <p className="mt-2 text-xs text-[var(--ink-muted)]">
+                  {policy.applyAnonymization ? 'Anonymize before delete' : 'Delete on expiry'}
+                </p>
+                {policy.enforcedAt && (
+                  <p className="text-xs text-[var(--ink-muted)]">Enforced: {new Date(policy.enforcedAt).toLocaleDateString()}</p>
+                )}
               </div>
             ))}
           </div>
@@ -660,12 +723,13 @@ function ClientPortalView({ data, outcomes, billing }: { data: PortalData; outco
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             {data.integrations.map((integration) => {
               const status = integration.status || 'pending'
+              const health = integration.healthStatus || 'healthy'
               return (
                 <div key={integration.id} className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-[var(--ink)]">{integration.name}</p>
-                      <p className="text-xs text-[var(--ink-muted)] capitalize">{integration.category} integration</p>
+                      <p className="text-sm font-semibold text-[var(--ink)]">{integration.connector}</p>
+                      <p className="text-xs text-[var(--ink-muted)]">Status: {status}</p>
                     </div>
                     <StatusPill
                       label={status.charAt(0).toUpperCase() + status.slice(1)}
@@ -681,10 +745,13 @@ function ClientPortalView({ data, outcomes, billing }: { data: PortalData; outco
                     />
                   </div>
                   <p className="mt-3 text-xs text-[var(--ink-muted)]">
-                    {integration.lastSynced ? `Last synced ${integration.lastSynced}` : 'Awaiting first sync'}
+                    {integration.lastRefreshedAt ? `Last refreshed ${integration.lastRefreshedAt}` : 'Awaiting first sync'}
                   </p>
-                  {integration.note && (
-                    <p className="mt-2 text-xs text-[var(--ink-muted)]">{integration.note}</p>
+                  <p className="mt-2 text-xs text-[var(--ink-muted)]">
+                    Health: {health}
+                  </p>
+                  {integration.healthDetail && (
+                    <p className="mt-2 text-xs text-[var(--ink-muted)]">{integration.healthDetail}</p>
                   )}
                 </div>
               )
@@ -745,6 +812,48 @@ function ClientPortalView({ data, outcomes, billing }: { data: PortalData; outco
                 <p className="text-sm font-semibold text-[var(--ink)]">{entry.role}</p>
                 <p className="mt-3 text-2xl font-semibold text-[var(--ink)]">{entry.count}</p>
                 <p className="mt-2 text-xs text-[var(--ink-muted)]">Active seats</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Action Runs */}
+      {data.actionRuns.length > 0 && (
+        <section id="actions">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Action Runs</p>
+              <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+                Recent executions
+              </h2>
+            </div>
+          </div>
+          <div className="mt-6 space-y-3">
+            {data.actionRuns.slice(0, 6).map((run) => (
+              <div key={run.id} className="rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-4 shadow-[var(--shadow-soft)]">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--ink)]">Action {run.actionId.slice(0, 6)}</p>
+                    <p className="text-xs text-[var(--ink-muted)]">Attempt {run.attempt + 1} of {run.maxRetries}</p>
+                  </div>
+                  <StatusPill
+                    label={run.status}
+                    tone={
+                      run.status === 'succeeded'
+                        ? 'success'
+                        : run.status === 'failed'
+                        ? 'critical'
+                        : run.status === 'running'
+                        ? 'info'
+                        : 'neutral'
+                    }
+                  />
+                </div>
+                <p className="mt-2 text-xs text-[var(--ink-muted)]">
+                  Started {run.startedAt ? new Date(run.startedAt).toLocaleString() : 'pending'}{run.completedAt ? ` • Completed ${new Date(run.completedAt).toLocaleString()}` : ''}
+                </p>
+                {run.error && <p className="mt-2 text-xs text-red-500">Error: {run.error}</p>}
               </div>
             ))}
           </div>
@@ -958,14 +1067,14 @@ function InternalPortalView({
         <KobyClientsList clients={clients} error={clientsError} />
       </section>
 
-      {data.engines.length > 0 && (
-        <section id="operations">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Live Ops</p>
-            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
-              Platform health and routing status
-            </h2>
-          </div>
+      <section id="operations">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Live Ops</p>
+          <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+            Platform health and routing status
+          </h2>
+        </div>
+        {data.engines.length > 0 ? (
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             {data.engines.map((engine) => (
               <div key={engine.title} className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
@@ -986,24 +1095,31 @@ function InternalPortalView({
               </div>
             ))}
           </div>
-        </section>
-      )}
-
-      {(data.flows.length > 0 || data.workflows.length > 0) && (
-        <section id="automations">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Automations</p>
-              <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
-                Active flows across the client fleet
-              </h2>
-            </div>
-            {data.flowTests.length > 0 && (
-              <div className="rounded-full border border-[var(--line)] bg-[var(--panel)] px-3 py-1 text-xs text-[var(--ink-muted)]">
-                {data.flowTests.filter(test => test.last_result === 'passed').length} / {data.flowTests.length} tests passing
-              </div>
-            )}
+        ) : (
+          <div className="mt-6 rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[var(--shadow-soft)]">
+            <p className="text-sm font-semibold text-[var(--ink)]">No engines reporting yet</p>
+            <p className="mt-2 text-sm text-[var(--ink-muted)]">
+              Connect your voice, chat, and automation stacks to surface live operational status.
+            </p>
           </div>
+        )}
+      </section>
+
+      <section id="automations">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Automations</p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+              Active flows across the client fleet
+            </h2>
+          </div>
+          {data.flowTests.length > 0 && (
+            <div className="rounded-full border border-[var(--line)] bg-[var(--panel)] px-3 py-1 text-xs text-[var(--ink-muted)]">
+              {data.flowTests.filter(test => test.last_result === 'passed').length} / {data.flowTests.length} tests passing
+            </div>
+          )}
+        </div>
+        {(data.flows.length > 0 || data.workflows.length > 0) ? (
           <div className="mt-6 space-y-3">
             {(data.flows.length > 0 ? data.flows : data.workflows).map((flow) => {
               const status = 'status' in flow ? flow.status : 'active'
@@ -1031,8 +1147,15 @@ function InternalPortalView({
               )
             })}
           </div>
-        </section>
-      )}
+        ) : (
+          <div className="mt-6 rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[var(--shadow-soft)]">
+            <p className="text-sm font-semibold text-[var(--ink)]">No automations configured yet</p>
+            <p className="mt-2 text-sm text-[var(--ink-muted)]">
+              Publish your first workflows to track execution health and outcomes.
+            </p>
+          </div>
+        )}
+      </section>
 
       <section id="outcomes">
         <div>
@@ -1076,14 +1199,14 @@ function InternalPortalView({
         )}
       </section>
 
-      {data.insights.length > 0 && (
-        <section id="insights">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Insights</p>
-            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
-              Weekly volume trend across clients
-            </h2>
-          </div>
+      <section id="insights">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Insights</p>
+          <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+            Weekly volume trend across clients
+          </h2>
+        </div>
+        {data.insights.length > 0 ? (
           <div className="mt-6 rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[var(--shadow-soft)]">
             <div className="flex items-end gap-3">
               {data.insights.map((item) => (
@@ -1102,17 +1225,24 @@ function InternalPortalView({
               Includes voice, chat, and automation sessions.
             </p>
           </div>
-        </section>
-      )}
-
-      {data.integrations.length > 0 && (
-        <section id="integrations">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Integrations</p>
-            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
-              Systems connected across the portfolio
-            </h2>
+        ) : (
+          <div className="mt-6 rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[var(--shadow-soft)]">
+            <p className="text-sm font-semibold text-[var(--ink)]">Insights will appear once traffic flows</p>
+            <p className="mt-2 text-sm text-[var(--ink-muted)]">
+              As soon as client traffic ramps up, we will show weekly volume trends here.
+            </p>
           </div>
+        )}
+      </section>
+
+      <section id="integrations">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Integrations</p>
+          <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+            Systems connected across the portfolio
+          </h2>
+        </div>
+        {data.integrations.length > 0 ? (
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             {data.integrations.map((integration) => {
               const status = integration.status || 'pending'
@@ -1120,8 +1250,7 @@ function InternalPortalView({
                 <div key={integration.id} className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-[var(--ink)]">{integration.name}</p>
-                      <p className="text-xs text-[var(--ink-muted)] capitalize">{integration.category} integration</p>
+                      <p className="text-sm font-semibold text-[var(--ink)] capitalize">{integration.connector}</p>
                     </div>
                     <StatusPill
                       label={status.charAt(0).toUpperCase() + status.slice(1)}
@@ -1137,17 +1266,24 @@ function InternalPortalView({
                     />
                   </div>
                   <p className="mt-3 text-xs text-[var(--ink-muted)]">
-                    {integration.lastSynced ? `Last synced ${integration.lastSynced}` : 'Awaiting first sync'}
+                    {integration.lastRefreshedAt ? `Last synced ${integration.lastRefreshedAt}` : 'Awaiting first sync'}
                   </p>
-                  {integration.note && (
-                    <p className="mt-2 text-xs text-[var(--ink-muted)]">{integration.note}</p>
+                  {integration.healthDetail && (
+                    <p className="mt-2 text-xs text-[var(--ink-muted)]">{integration.healthDetail}</p>
                   )}
                 </div>
               )
             })}
           </div>
-        </section>
-      )}
+        ) : (
+          <div className="mt-6 rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[var(--shadow-soft)]">
+            <p className="text-sm font-semibold text-[var(--ink)]">No integrations connected yet</p>
+            <p className="mt-2 text-sm text-[var(--ink-muted)]">
+              Connect CRMs, calendars, and telephony to consolidate portfolio reporting.
+            </p>
+          </div>
+        )}
+      </section>
     </div>
   )
 }
@@ -1181,6 +1317,7 @@ function PortalPageContent() {
   const [billingRecords, setBillingRecords] = useState<BillingRecord[]>([])
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
   const [retentionPolicies, setRetentionPolicies] = useState<RetentionPolicy[]>([])
+  const [actionRuns, setActionRuns] = useState<ActionRun[]>([])
 
   // Fetch data
   const fetchData = async () => {
@@ -1269,13 +1406,15 @@ function PortalPageContent() {
         let billing: BillingRecord[] = []
         let fetchedAuditLogs: AuditLog[] = []
         let fetchedRetentionPolicies: RetentionPolicy[] = []
+        let runs: ActionRun[] = []
 
         if (PORTAL_WORKER_URL) {
-          const [outcomesResult, billingResult, auditLogsResult, retentionResult] = await Promise.allSettled([
+          const [outcomesResult, billingResult, auditLogsResult, retentionResult, runsResult] = await Promise.allSettled([
             authedFetch<OutcomesResponse>(`/outcomes?orgId=${activeOrgId}`),
             authedFetch<BillingUsageResponse>(`/billing/usage?orgId=${activeOrgId}`),
             authedFetch<{ logs: AuditLog[] }>(`/audit/logs?orgId=${activeOrgId}`),
             authedFetch<{ policies: RetentionPolicy[] }>(`/retention/policies?orgId=${activeOrgId}`),
+            authedFetch<ActionRunsResponse>(`/actions/runs?orgId=${activeOrgId}`),
           ])
 
           if (outcomesResult.status === 'fulfilled' && outcomesResult.value?.outcomes) {
@@ -1292,6 +1431,10 @@ function PortalPageContent() {
 
           if (retentionResult.status === 'fulfilled' && retentionResult.value?.policies) {
             fetchedRetentionPolicies = retentionResult.value.policies
+          }
+
+          if (runsResult.status === 'fulfilled' && runsResult.value?.runs) {
+            runs = runsResult.value.runs
           }
         }
 
@@ -1326,6 +1469,28 @@ function PortalPageContent() {
               updatedAt: sampleTimestamp,
             },
           ]
+          runs = [
+            {
+              id: 'sample_run',
+              actionId: 'sample_action',
+              orgId: activeOrgId,
+              status: 'pending',
+              attempt: 0,
+              maxRetries: 3,
+              retryPolicy: 'fixed',
+              triggerSource: 'demo',
+              idempotencyKey: 'demo',
+              flowId: undefined,
+              input: {},
+              output: undefined,
+              error: undefined,
+              startedAt: sampleTimestamp,
+              completedAt: undefined,
+              nextRetryAt: undefined,
+              metadata: {},
+              createdAt: sampleTimestamp,
+            },
+          ]
         }
 
         const overviewData: PortalOverviewResponse = overview || {
@@ -1355,11 +1520,13 @@ function PortalPageContent() {
           buildOutcomeMetrics(outcomes),
           fetchedAuditLogs,
           fetchedRetentionPolicies,
+          runs,
         ))
         setOutcomeEvents(outcomes)
         setBillingRecords(billing)
         setAuditLogs(fetchedAuditLogs)
         setRetentionPolicies(fetchedRetentionPolicies)
+        setActionRuns(runs)
         setLoadingState('success')
       } else {
         // No org context

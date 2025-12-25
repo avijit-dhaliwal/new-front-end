@@ -57,12 +57,13 @@ export default function PortalSidebar() {
   const activeOrgId = viewingOrgId || organization?.id || null
   const isInternalOrgView = isKobyInternalOrg(activeOrgId)
   const isKobyTeamMember = isKobyStaff || isKobyInternalOrg(organization?.id)
+  const viewingClientOrg = Boolean(viewingOrgId && !isKobyInternalOrg(viewingOrgId))
   
   // Koby staff viewing all clients (no specific org)
   const isStaffAllClientsView = isKobyTeamMember && !organization && !viewingOrgId
   const navItems = isInternalOrgView ? internalNavItems : clientNavItems
-  const orgLabel = viewingOrgId ? 'Client org' : 'Organization'
-  const orgName = viewingOrgId
+  const orgLabel = viewingClientOrg ? 'Client org' : 'Organization'
+  const orgName = viewingClientOrg && viewingOrgId
     ? `Client ${viewingOrgId.slice(0, 8)}`
     : organization?.name || 'Loading...'
 
@@ -120,13 +121,13 @@ export default function PortalSidebar() {
         {/* Current Organization Display */}
         {(organization || viewingOrgId) && (
           <div className="mt-6">
-            {isKobyTeamMember && viewingOrgId && (
+            {isKobyTeamMember && viewingClientOrg && (
               <Link
                 href="/portal"
                 className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors mb-2"
               >
                 <span>&larr;</span>
-                <span>Back to all clients</span>
+                <span>Back to portfolio</span>
               </Link>
             )}
             <div className="rounded-xl border border-[var(--line)] bg-[var(--panel)] p-3">

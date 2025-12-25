@@ -64,9 +64,12 @@ This is a Next.js-based landing page for Koby AI, featuring a modern, responsive
 ## 🗄️ Platform Contract (Agent 1)
 
 - **Core tables (D1)**: `orgs`, `portal_sites`, `chat_sessions`, `chat_messages`, `metrics_daily`, `portal_config`, plus Actions/Integrations (`action_definitions`, `action_runs`, `integration_connections`, `webhook_events`, `outcome_events`, `billing_records`, `audit_logs`, `retention_policies`).
-- **Knowledge + Flow**: `knowledge_sources`, `knowledge_documents`, `knowledge_versions`, `knowledge_chunks`, `knowledge_policies`, `flows`, `flow_steps`, `flow_rules`, `flow_tests`, `flow_runs` (see `cloudflare-workers/portal-schema.sql` for schema + demo seeds).
+- **Knowledge + Flow**: `knowledge_sources`, `knowledge_documents` (with `live_version_id`), `knowledge_versions` (stage/is_live), `knowledge_chunks`, `knowledge_embeddings`, `knowledge_ingestion_jobs`, `knowledge_policies`, `flows`, `flow_steps`, `flow_rules`, `flow_tests`, `flow_runs` (see `cloudflare-workers/portal-schema.sql` for schema + demo seeds).
 - **Shared types**: `types/portal.ts` (portal contract, events, integrations), `types/knowledge.ts` (knowledge + flow entities) — camelCase in API payloads, snake_case in storage.
-- **Portal worker endpoints**: `/portal/overview|engines|insights|team|config|clients|events|integrations`, `/outcomes`, `/billing/usage` returning the above shapes, auth-scoped by org with Clerk JWT.
+- **Portal worker endpoints**: `/portal/overview|engines|insights|team|config|clients|events|integrations`, `/outcomes`, `/billing/usage`, knowledge endpoints `/portal/knowledge|knowledge/versions|knowledge/chunks|knowledge/retrieve`, flow runtime `/portal/flows/:id/run` returning the above shapes, auth-scoped by org with Clerk JWT.
+- **Actions queue endpoint**: `/actions/queue` claims pending/failed-due action runs (status transitions to `running`, increments attempt) for executors to process; responses use the `ActionRun` shape from `types/portal.ts`.
+- **Knowledge ingestion**: `cloudflare-workers/knowledge-ingestion-worker.js` (config `cloudflare-workers/wrangler-knowledge.toml`) consumes pending `knowledge_ingestion_jobs`, creates versions/chunks/embeddings, updates `knowledge_documents.live_version_id`, and marks jobs succeeded/failed.
+- **Knowledge retrieval**: `/portal/knowledge/retrieve` ranks chunks using stored embeddings (`knowledge_embeddings.vector` cosine similarity) with LIKE fallback if no vectors; responses return citations + scores.
 
 ## 📁 Project Structure
 

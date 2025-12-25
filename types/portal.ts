@@ -200,11 +200,13 @@ export interface ActionRun {
   triggerSource?: string
   idempotencyKey?: string
   flowId?: string
+  flowRunId?: string
   input?: Record<string, unknown>
   output?: Record<string, unknown>
   error?: string
   startedAt?: string
   completedAt?: string
+  lastErrorAt?: string
   nextRetryAt?: string
   metadata?: Record<string, unknown>
   createdAt: string
@@ -464,28 +466,7 @@ export interface TeamAccess {
 // Compliance + Observability
 // =============================================================================
 
-export interface RetentionPolicy {
-  id: string
-  orgId: string
-  dataType: string
-  ttlDays: number
-  applyAnonymization: boolean
-  enforcedAt?: string
-  createdAt: string
-  updatedAt: string
-}
 
-export interface AuditLog {
-  id: string
-  orgId: string
-  actorType: 'user' | 'system' | 'integration'
-  actorId?: string
-  eventType: string
-  targetType?: string
-  targetId?: string
-  metadata?: Record<string, unknown>
-  createdAt: string
-}
 
 export interface AuditLogsResponse {
   logs: AuditLog[]
