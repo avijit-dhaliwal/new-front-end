@@ -95,28 +95,13 @@ Payment due within 30 days.`
     setError('')
 
     try {
-      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyDEMNvjgZmfx3I1c-UmbJv7rM_xJm7QZKY', {
+      // Call server-side API proxy (no API keys exposed to browser)
+      const response = await fetch('/api/demo-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Extract the following information from this invoice and return ONLY a valid JSON object with no additional text or markdown:
-
-Invoice text:
-${invoiceText.substring(0, 30000)}
-
-Return JSON with these exact fields:
-{
-  "supplier": "company name",
-  "invoiceNumber": "invoice number",
-  "project": "project name or address",
-  "materialCost": total cost as number
-}
-
-If any field cannot be found, use "Not found" for strings or 0 for materialCost.`
-            }]
-          }]
+          message: invoiceText,
+          mode: 'invoice'
         })
       })
 
@@ -125,7 +110,7 @@ If any field cannot be found, use "Not found" for strings or 0 for materialCost.
       }
 
       const result = await response.json()
-      const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text || ''
+      const textResponse = result.response || ''
 
       const jsonMatch = textResponse.match(/\{[\s\S]*?\}/)
       if (!jsonMatch) {

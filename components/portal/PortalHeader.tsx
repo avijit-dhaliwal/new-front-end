@@ -71,7 +71,7 @@ export default function PortalHeader() {
             </p>
           )}
           
-          {/* Organization Switcher */}
+          {/* Organization Switcher - Hide create org for non-staff */}
           <OrganizationSwitcher
             hidePersonal
             afterSelectOrganizationUrl="/portal"
@@ -83,6 +83,8 @@ export default function PortalHeader() {
                 organizationSwitcherTriggerIcon: 'text-[var(--ink-muted)]',
                 organizationPreviewMainIdentifier: 'text-[var(--ink)]',
                 organizationPreviewSecondaryIdentifier: 'text-[var(--ink-muted)]',
+                // Hide create organization for non-staff
+                organizationSwitcherPopoverActionButton__createOrganization: isKobyStaff ? '' : 'hidden',
               },
             }}
           />

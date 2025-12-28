@@ -9,5 +9,13 @@ binding = "DB"
 database_name = "koby-portal-db"
 database_id = "" # Fill in after running: wrangler d1 create koby-portal-db
 
-# To set secrets after deployment:
-# wrangler secret put GEMINI_API_KEY --name chadis-chat
+# ============================================================
+# SECRETS CONFIGURATION - NEVER PUT REAL KEYS IN THIS FILE!
+# ============================================================
+# All secrets MUST be set via wrangler CLI, not in config files.
+#
+# Required secrets (set after deployment):
+#   wrangler secret put GEMINI_API_KEY --name chadis-chat
+
+# [vars]
+# Only non-secret configuration values go here

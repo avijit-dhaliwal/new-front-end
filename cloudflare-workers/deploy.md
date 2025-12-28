@@ -8,6 +8,15 @@ This directory contains Cloudflare Workers for the Koby AI platform:
 - **chadis-chat-worker.js** - Chat API with site_key auth and D1 logging
 - **chadis-voice-worker.js** - Voice synthesis API
 
+## ⚠️ Security Notice
+
+**NEVER commit API keys or secrets to this repository!**
+
+All secrets must be configured via `wrangler secret put` command, not in config files.
+See the [Secrets Management](#secrets-management) section below.
+
+---
+
 ## Prerequisites
 
 1. Install Wrangler CLI:
@@ -236,3 +245,130 @@ View database metrics and run queries:
 - Check Gemini API response times
 - Consider caching common responses
 - Review D1 query efficiency
+
+---
+
+## Secrets Management
+
+### Required Secrets by Worker
+
+| Worker | Secret | Description |
+|--------|--------|-------------|
+| koby-portal | CLERK_DOMAIN | Clerk domain for JWT verification |
+| koby-portal | CLERK_SECRET_KEY | Clerk secret key (optional) |
+| koby-portal | STRIPE_SECRET_KEY | Stripe API secret key |
+| koby-portal | STRIPE_WEBHOOK_SECRET | Stripe webhook signing secret |
+| chadis-chat | GEMINI_API_KEY | Google Gemini API key |
+| chadis-voice | ELEVENLABS_API_KEY | ElevenLabs API key |
+| chadis-voice-conversation | ELEVENLABS_API_KEY | ElevenLabs API key |
+
+### Setting Secrets
+
+```bash
+# Portal worker secrets
+wrangler secret put CLERK_DOMAIN --name koby-portal
+wrangler secret put STRIPE_SECRET_KEY --name koby-portal
+wrangler secret put STRIPE_WEBHOOK_SECRET --name koby-portal
+
+# Chat worker secrets
+wrangler secret put GEMINI_API_KEY --name chadis-chat
+
+# Voice worker secrets
+wrangler secret put ELEVENLABS_API_KEY --name chadis-voice
+```
+
+### Key Rotation Procedures
+
+#### Gemini API Key Rotation
+
+1. **Generate new key**: Go to [Google AI Studio](https://aistudio.google.com/app/apikey) → Create API key
+2. **Update workers**: 
+   ```bash
+   wrangler secret put GEMINI_API_KEY --name chadis-chat
+   # Enter the new key when prompted
+   ```
+3. **Verify**: Test the chat endpoint to confirm it's working
+4. **Revoke old key**: Delete the old key in Google AI Studio
+
+#### ElevenLabs API Key Rotation
+
+1. **Generate new key**: Go to [ElevenLabs](https://elevenlabs.io/speech-synthesis) → Profile → API Keys → Create
+2. **Update workers**:
+   ```bash
+   wrangler secret put ELEVENLABS_API_KEY --name chadis-voice
+   wrangler secret put ELEVENLABS_API_KEY --name chadis-voice-conversation
+   ```
+3. **Verify**: Test voice synthesis endpoint
+4. **Revoke old key**: Delete the old key in ElevenLabs dashboard
+
+#### Stripe Key Rotation
+
+1. **Generate new keys**: Go to [Stripe Dashboard](https://dashboard.stripe.com/apikeys) → Developers → API keys → Roll keys
+2. **Update portal worker**:
+   ```bash
+   wrangler secret put STRIPE_SECRET_KEY --name koby-portal
+   # Enter sk_live_xxx or sk_test_xxx
+   ```
+3. **Update webhook secret** (if webhook endpoint changes):
+   - Go to Stripe Dashboard → Developers → Webhooks → Your endpoint
+   - Click "Reveal" to see the signing secret
+   ```bash
+   wrangler secret put STRIPE_WEBHOOK_SECRET --name koby-portal
+   ```
+4. **Verify**: Test a webhook event using Stripe CLI
+5. **Complete rollover**: Finish the key rollover in Stripe dashboard
+
+#### Clerk Key Rotation
+
+1. **Get new credentials**: Go to [Clerk Dashboard](https://dashboard.clerk.com) → API Keys
+2. **Update portal worker**:
+   ```bash
+   wrangler secret put CLERK_DOMAIN --name koby-portal
+   wrangler secret put CLERK_SECRET_KEY --name koby-portal
+   ```
+3. **Verify**: Test portal authentication
+
+### Environment Separation
+
+| Environment | Stripe Keys | Webhook Endpoint |
+|-------------|-------------|------------------|
+| Development | sk_test_xxx | Local (Stripe CLI forwarding) |
+| Staging | sk_test_xxx | staging.portal-worker.koby.ai |
+| Production | sk_live_xxx | portal-worker.koby.ai |
+
+**Never use live Stripe keys in development or staging!**
+
+---
+
+## Production Deployment Checklist
+
+Before deploying to production:
+
+- [ ] All secrets set via `wrangler secret put` (not in config files)
+- [ ] D1 database created and schema applied
+- [ ] Stripe webhook endpoint configured in dashboard
+- [ ] Clerk application configured with correct domains
+- [ ] No API keys in repository (run: `rg "AIzaSy|sk_|whsec_" --type-not binary`)
+- [ ] .next directory not tracked in git
+- [ ] Rate limiting enabled on public endpoints
+- [ ] CORS configured for production domains only
+
+### Deployment Order
+
+1. **D1 Database**: Create and apply schema first
+2. **Portal Worker**: Deploy with all secrets configured
+3. **Chat Worker**: Deploy with GEMINI_API_KEY
+4. **Voice Worker**: Deploy with ELEVENLABS_API_KEY
+5. **Frontend (Cloudflare Pages)**: Deploy last, pointing to worker URLs
+
+### Rollback Procedure
+
+If a deployment causes issues:
+
+```bash
+# List recent deployments
+wrangler deployments list --name koby-portal
+
+# Rollback to previous version
+wrangler rollback --name koby-portal
+```

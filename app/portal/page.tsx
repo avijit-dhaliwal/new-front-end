@@ -33,6 +33,8 @@ import type {
   ActionRun,
   ActionRunsResponse,
   PortalIntegrationsResponse,
+  BillingOverviewResponse,
+  StripeSubscriptionStatus,
 } from '@/types/portal'
 import type {
   KnowledgeOverviewResponse,
@@ -276,6 +278,64 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
   )
 }
 
+// Billing status banner for past_due/unpaid subscriptions
+function BillingStatusBanner({ 
+  status, 
+  onManageBilling 
+}: { 
+  status: StripeSubscriptionStatus | null
+  onManageBilling: () => void 
+}) {
+  if (!status || (status !== 'past_due' && status !== 'unpaid')) {
+    return null
+  }
+
+  const isPastDue = status === 'past_due'
+  
+  return (
+    <div className={`rounded-2xl border p-4 mb-6 ${
+      isPastDue 
+        ? 'border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-900/20' 
+        : 'border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/20'
+    }`}>
+      <div className="flex items-start gap-3">
+        <AlertTriangle className={`h-5 w-5 mt-0.5 ${
+          isPastDue ? 'text-amber-500' : 'text-red-500'
+        }`} />
+        <div className="flex-1">
+          <h3 className={`text-sm font-semibold ${
+            isPastDue 
+              ? 'text-amber-800 dark:text-amber-300' 
+              : 'text-red-800 dark:text-red-300'
+          }`}>
+            {isPastDue ? 'Payment Past Due' : 'Payment Required'}
+          </h3>
+          <p className={`text-sm mt-1 ${
+            isPastDue 
+              ? 'text-amber-700 dark:text-amber-400' 
+              : 'text-red-700 dark:text-red-400'
+          }`}>
+            {isPastDue 
+              ? 'Your subscription payment is past due. Please update your payment method to avoid service interruption.'
+              : 'Your subscription is unpaid. Please update your payment method to restore full access to your AI services.'
+            }
+          </p>
+          <button
+            onClick={onManageBilling}
+            className={`mt-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              isPastDue
+                ? 'border border-amber-300 dark:border-amber-700 bg-white dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/50'
+                : 'border border-red-300 dark:border-red-700 bg-white dark:bg-red-900/30 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/50'
+            }`}
+          >
+            Manage Billing
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Empty state component
 function EmptyState() {
   return (
@@ -297,7 +357,19 @@ function EmptyState() {
 }
 
 // Client Portal View (when viewing a specific organization)
-function ClientPortalView({ data, outcomes, billing }: { data: PortalData; outcomes: OutcomeEvent[]; billing: BillingRecord[] }) {
+function ClientPortalView({ 
+  data, 
+  outcomes, 
+  billing, 
+  subscriptionStatus,
+  onManageBilling 
+}: { 
+  data: PortalData
+  outcomes: OutcomeEvent[]
+  billing: BillingRecord[]
+  subscriptionStatus: StripeSubscriptionStatus | null
+  onManageBilling: () => void
+}) {
   const metricHasValue = data.metrics.some(metric => {
     const numericValue = Number(metric.value.replace(/[^0-9.]/g, ''))
     return Number.isFinite(numericValue) && numericValue > 0
@@ -329,8 +401,13 @@ function ClientPortalView({ data, outcomes, billing }: { data: PortalData; outco
 
   return (
     <div className="max-w-6xl mx-auto space-y-16">
+      {/* Billing Status Banner for past_due/unpaid subscriptions */}
+      <div className="pt-10">
+        <BillingStatusBanner status={subscriptionStatus} onManageBilling={onManageBilling} />
+      </div>
+      
       {/* Overview Section */}
-      <section id="overview" className="pt-10">
+      <section id="overview" className={subscriptionStatus && (subscriptionStatus === 'past_due' || subscriptionStatus === 'unpaid') ? '' : 'pt-10'}>
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Overview</p>
@@ -1318,6 +1395,7 @@ function PortalPageContent() {
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
   const [retentionPolicies, setRetentionPolicies] = useState<RetentionPolicy[]>([])
   const [actionRuns, setActionRuns] = useState<ActionRun[]>([])
+  const [subscriptionStatus, setSubscriptionStatus] = useState<StripeSubscriptionStatus | null>(null)
 
   // Fetch data
   const fetchData = async () => {
@@ -1409,12 +1487,13 @@ function PortalPageContent() {
         let runs: ActionRun[] = []
 
         if (PORTAL_WORKER_URL) {
-          const [outcomesResult, billingResult, auditLogsResult, retentionResult, runsResult] = await Promise.allSettled([
+          const [outcomesResult, billingResult, auditLogsResult, retentionResult, runsResult, billingOverviewResult] = await Promise.allSettled([
             authedFetch<OutcomesResponse>(`/outcomes?orgId=${activeOrgId}`),
             authedFetch<BillingUsageResponse>(`/billing/usage?orgId=${activeOrgId}`),
             authedFetch<{ logs: AuditLog[] }>(`/audit/logs?orgId=${activeOrgId}`),
             authedFetch<{ policies: RetentionPolicy[] }>(`/retention/policies?orgId=${activeOrgId}`),
             authedFetch<ActionRunsResponse>(`/actions/runs?orgId=${activeOrgId}`),
+            authedFetch<BillingOverviewResponse>(`/billing/overview?orgId=${activeOrgId}`),
           ])
 
           if (outcomesResult.status === 'fulfilled' && outcomesResult.value?.outcomes) {
@@ -1435,6 +1514,11 @@ function PortalPageContent() {
 
           if (runsResult.status === 'fulfilled' && runsResult.value?.runs) {
             runs = runsResult.value.runs
+          }
+
+          // Extract subscription status for billing alerts
+          if (billingOverviewResult.status === 'fulfilled' && billingOverviewResult.value?.currentPlan) {
+            setSubscriptionStatus(billingOverviewResult.value.currentPlan.status)
           }
         }
 
@@ -1578,7 +1662,34 @@ function PortalPageContent() {
 
   // Client/Org view: Show portal dashboard
   if (portalData) {
-    return <ClientPortalView data={portalData} outcomes={outcomeEvents} billing={billingRecords} />
+    return (
+      <ClientPortalView 
+        data={portalData} 
+        outcomes={outcomeEvents} 
+        billing={billingRecords}
+        subscriptionStatus={subscriptionStatus}
+        onManageBilling={async () => {
+          try {
+            const token = await getToken()
+            if (!token || !PORTAL_WORKER_URL) return
+            const response = await fetch(`${PORTAL_WORKER_URL}/billing/portal-session`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ returnUrl: window.location.href }),
+            })
+            if (response.ok) {
+              const { url } = await response.json()
+              if (url) window.location.href = url
+            }
+          } catch (error) {
+            console.error('Failed to open billing portal:', error)
+          }
+        }}
+      />
+    )
   }
 
   // Fallback empty state

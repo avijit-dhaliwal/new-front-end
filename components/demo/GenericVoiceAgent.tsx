@@ -138,60 +138,25 @@ export default function GenericVoiceAgent() {
     }
 
     try {
-      const context = `You are a professional, friendly dental office receptionist speaking with a patient over the phone. Keep your responses conversational, natural, and concise (1-3 sentences max for most responses).
-
-      PRACTICE INFORMATION
-      - We are a modern dental practice offering comprehensive dental care
-      - We provide general dentistry, cosmetic procedures, orthodontics, and emergency care
-      - We accept most insurance plans and offer flexible payment options
-      - New patients are welcome, and we offer same-day emergency appointments
-
-      SERVICES
-      - Routine cleanings, exams, and preventive care
-      - Fillings, crowns, bridges, and root canals
-      - Teeth whitening, veneers, and cosmetic dentistry
-      - Braces and clear aligners
-      - Dental implants and dentures
-      - Emergency dental care
-
-      SCHEDULING
-      - We have morning, afternoon, and evening appointments available
-      - New patient exams typically take about an hour
-      - We send reminders via text and email
-      - Emergency patients can often be seen the same day
-
-      IMPORTANT
-      - This is a demonstration of AI voice assistant capabilities
-      - Speak naturally and conversationally as if on a phone call
-      - Be helpful and professional but keep responses brief
-      - For actual appointments, direct patients to contact their real dental office
-      - This system can be fully customized for any dental practice
-
-      Patient said: ${text}
-
-      Respond naturally and conversationally:`;
-
-      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyCkOO-3BM2UHyjAIMS9oYMhPOx8xzGGoIQ', {
+      // Call server-side API proxy (no API keys exposed to browser)
+      const response = await fetch('/api/demo-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: context
-            }]
-          }]
+          message: text,
+          mode: 'voice'
         }),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error?.message || 'Failed to get response')
+        throw new Error(data.error || 'Failed to get response')
       }
 
-      const agentText = data.candidates[0].content.parts[0].text
+      const agentText = data.response
 
       const agentMessage: Message = {
         id: (Date.now() + 1).toString(),

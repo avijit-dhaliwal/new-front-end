@@ -9,13 +9,80 @@ binding = "DB"
 database_name = "koby-portal-db"
 database_id = "" # Fill in after running: wrangler d1 create koby-portal-db
 
-# Environment variables (non-secret)
+# ============================================================
+# SECRETS CONFIGURATION - NEVER PUT REAL KEYS IN THIS FILE!
+# ============================================================
+# All secrets MUST be set via wrangler CLI, not in config files.
+#
+# Required secrets (set after deployment):
+#   wrangler secret put CLERK_SECRET_KEY --name koby-portal
+#   wrangler secret put STRIPE_SECRET_KEY --name koby-portal
+#   wrangler secret put STRIPE_WEBHOOK_SECRET --name koby-portal
+#
+# Optional secrets:
+#   wrangler secret put GEMINI_API_KEY --name koby-portal
+
+# ============================================================
+# STRIPE TEST vs LIVE KEY SEPARATION (Agent 3)
+# ============================================================
+# IMPORTANT: Never mix test and live Stripe keys!
+#
+# TEST MODE (development/staging):
+#   - STRIPE_SECRET_KEY: sk_test_xxxxxxxx
+#   - STRIPE_WEBHOOK_SECRET: whsec_xxxxxxxx (from test webhook config)
+#   - Uses test Stripe dashboard
+#   - Charges are simulated, no real money
+#
+# LIVE MODE (production):
+#   - STRIPE_SECRET_KEY: sk_live_xxxxxxxx
+#   - STRIPE_WEBHOOK_SECRET: whsec_xxxxxxxx (from live webhook config)
+#   - Uses live Stripe dashboard
+#   - Processes real payments
+#
+# Webhook Endpoint Configuration (Stripe Dashboard):
+#   URL: https://portal-worker.koby.ai/webhooks/stripe
+#   Events to enable:
+#     - customer.created, customer.updated
+#     - customer.subscription.created, updated, deleted
+#     - invoice.created, updated, finalized, paid, payment_failed
+#     - checkout.session.completed, expired
+#
+# Local Testing with Stripe CLI:
+#   1. stripe listen --forward-to localhost:8787/webhooks/stripe
+#   2. Copy whsec_xxx signing secret to STRIPE_WEBHOOK_SECRET
+#   3. Test: stripe trigger checkout.session.completed
+#
+# ============================================================
+
+# Environment variables (non-secret only)
 [vars]
 CLERK_DOMAIN = "your-clerk-domain.clerk.accounts.dev"
+ENVIRONMENT = "production"  # or "development" for local testing
+LOG_LEVEL = "info"  # debug, info, warn, error
 
-# To set secrets after deployment:
-# wrangler secret put CLERK_SECRET_KEY --name koby-portal
-# wrangler secret put GEMINI_API_KEY --name koby-portal
+# CORS Configuration (comma-separated list of allowed origins)
+# Leave empty to use defaults: https://koby.ai, https://www.koby.ai, https://portal.koby.ai, https://app.koby.ai
+# ALLOWED_ORIGINS = "https://koby.ai,https://www.koby.ai,https://portal.koby.ai"
+
+# For development only - set to "true" to allow all origins (NOT for production!)
+# CORS_ALLOW_ALL = "false"
+
+# Rate limiting (defaults: 120 req/min per IP)
+# PORTAL_RATE_LIMIT_MAX = "120"
+# SKIP_PORTAL_RATE_LIMIT = "false"  # Only for testing!
+
+# ============================================================
+# MONITORING & OBSERVABILITY
+# ============================================================
+# Logs are emitted as structured JSON for Cloudflare Logpush
+# Configure Logpush in Cloudflare Dashboard:
+#   Workers & Pages > Select Worker > Settings > Logpush
+#
+# Key log events to monitor:
+#   - auth_failed: Failed authentication attempts
+#   - rate_limit_exceeded: Rate limiting triggered
+#   - stripe_webhook_received: Incoming Stripe webhooks
+#   - internal_error: Unhandled exceptions
 
 # D1 Commands:
 # 1. Create database:

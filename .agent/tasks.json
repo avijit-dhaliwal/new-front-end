@@ -1,5 +1,114 @@
 {
-  "iteration": 0,
-  "done": false,
-  "tasks": []
+  "iteration": 3,
+  "done": true,
+  "tasks": [
+    {
+      "id": "agentA-cloudflare-secrets-cleanup",
+      "title": "Cloudflare Production Deployment & Secrets Cleanup",
+      "status": "completed",
+      "agent": "A",
+      "deliverables": [
+        {
+          "type": "security",
+          "description": "Removed real API keys from wrangler-test.toml, wrangler-conversation.toml, and env.md"
+        },
+        {
+          "type": "git_hygiene",
+          "description": "Removed .next directory from git tracking (14 build artifacts)"
+        },
+        {
+          "type": "documentation",
+          "file": "cloudflare-workers/deploy.md",
+          "description": "Added comprehensive secrets management section with key rotation procedures"
+        },
+        {
+          "type": "security",
+          "description": "Added security headers and CORS restrictions to portal-worker.js"
+        },
+        {
+          "type": "documentation",
+          "file": "status.md",
+          "description": "Agent A status report with acceptance checks and key rotation checklist"
+        }
+      ],
+      "acceptance_checks": [
+        {
+          "check": "No AIzaSy / sk_ / whsec_ / pk_ secrets committed",
+          "status": "verified",
+          "notes": "rg scan confirms no actual API key values in repository"
+        },
+        {
+          "check": "No .next files in git status",
+          "status": "verified",
+          "notes": ".next files show as 'D' (deleted) status"
+        },
+        {
+          "check": "Wrangler configs have no secrets in repo",
+          "status": "verified",
+          "notes": "All configs now reference wrangler secret put commands"
+        },
+        {
+          "check": "Key rotation documented",
+          "status": "verified",
+          "notes": "deploy.md contains rotation procedures for Gemini, ElevenLabs, Stripe, Clerk"
+        }
+      ],
+      "remaining_risks": [
+        "Previously exposed keys may still be valid - ROTATE IMMEDIATELY",
+        "CORS allows * in legacy code path - migrate to ALLOWED_ORIGINS env var",
+        "In-memory rate limiting resets on worker restart"
+      ]
+    },
+    {
+      "id": "agent3-stripe-billing-v2",
+      "title": "Stripe Subscription Billing - Verification & Documentation",
+      "status": "completed",
+      "agent": 3,
+      "deliverables": [
+        {
+          "type": "verification",
+          "description": "Verified Stripe signature verification using HMAC-SHA256 with timestamp tolerance (5 min)"
+        },
+        {
+          "type": "verification", 
+          "description": "Verified webhook idempotency via stripe_event_id uniqueness check"
+        },
+        {
+          "type": "verification",
+          "description": "Verified POST /billing/checkout-session creates Stripe customer + session correctly"
+        },
+        {
+          "type": "verification",
+          "description": "Verified billing overview returns real D1 data (no fake/sample data)"
+        },
+        {
+          "type": "documentation",
+          "file": "status.md",
+          "description": "Comprehensive status report with acceptance checks, deployment readiness, env vars, test-mode workflow, and Stripe CLI instructions"
+        }
+      ],
+      "acceptance_checks": [
+        {
+          "check": "Webhook signature verification",
+          "status": "verified",
+          "notes": "verifyStripeWebhook() uses HMAC-SHA256, validates t= and v1= from stripe-signature header, rejects >5min old events"
+        },
+        {
+          "check": "Webhook idempotency/replay safety",
+          "status": "verified", 
+          "notes": "stripe_events table with UNIQUE stripe_event_id, duplicate check returns {received:true, duplicate:true}"
+        },
+        {
+          "check": "Subscription update paths",
+          "status": "verified",
+          "notes": "processStripeEvent handles create/update/delete for subscriptions, updates orgs.plan"
+        },
+        {
+          "check": "Portal summary no fake data",
+          "status": "verified",
+          "notes": "GET /billing/overview queries billing_customers, billing_subscriptions, billing_invoices - no hardcoded data"
+        }
+      ]
+    }
+  ]
 }

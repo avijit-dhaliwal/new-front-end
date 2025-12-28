@@ -1,11 +1,24 @@
 'use client'
 
-import { OrganizationList } from '@clerk/nextjs'
+import { OrganizationList, useUser } from '@clerk/nextjs'
 import Link from 'next/link'
-import { ArrowLeft, Building2, Users } from 'lucide-react'
+import { ArrowLeft, Building2, Users, Shield } from 'lucide-react'
 import KobyLogo from '@/components/KobyLogo'
 
+/**
+ * Organization Selection Page
+ * 
+ * Access control:
+ * - All authenticated users can select from orgs they belong to
+ * - Only Koby staff (publicMetadata.kobyRole === 'staff') can create new orgs
+ * - Regular clients cannot create orgs - they must be invited
+ */
 export default function SelectOrgPage() {
+  const { user } = useUser()
+  
+  // Check if user is Koby staff - only staff can create organizations
+  const isKobyStaff = user?.publicMetadata?.kobyRole === 'staff'
+  
   return (
     <div className="min-h-screen bg-[var(--paper)] flex items-center justify-center p-6">
       <div className="w-full max-w-lg">
@@ -19,6 +32,21 @@ export default function SelectOrgPage() {
             </div>
           </Link>
         </div>
+        
+        {/* Koby Staff Badge */}
+        {isKobyStaff && (
+          <div className="mb-4 rounded-2xl border border-[var(--accent-soft)] bg-[var(--accent-soft)] p-4">
+            <div className="flex items-center gap-3">
+              <Shield className="w-5 h-5 text-[var(--accent-strong)]" />
+              <div>
+                <p className="text-sm font-semibold text-[var(--accent-strong)]">Koby Staff Access</p>
+                <p className="text-xs text-[var(--ink-muted)]">
+                  You can create new organizations and access any client portal.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* Main Card */}
         <div className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-8 shadow-[var(--shadow-soft)]">
@@ -34,7 +62,7 @@ export default function SelectOrgPage() {
             </p>
           </div>
           
-          {/* Organization List */}
+          {/* Organization List - hideSlug to simplify, only show create for staff */}
           <OrganizationList
             hidePersonal
             afterSelectOrganizationUrl="/portal"
@@ -48,6 +76,8 @@ export default function SelectOrgPage() {
                 organizationListCardSubtitle: 'text-[var(--ink-muted)]',
                 organizationListPreviewButton: 'text-[var(--ink)] hover:bg-[var(--paper-muted)]',
                 organizationListPreviewMainIdentifier: 'text-[var(--ink)]',
+                // Hide the "Create organization" button for non-staff users
+                organizationListCreateOrganizationActionButton: isKobyStaff ? '' : 'hidden',
               },
             }}
           />
@@ -59,7 +89,9 @@ export default function SelectOrgPage() {
               <div>
                 <p className="text-sm font-medium text-[var(--ink)]">Need access?</p>
                 <p className="mt-1 text-xs text-[var(--ink-muted)]">
-                  Ask your organization admin to invite you, or contact Koby support if you need a new organization set up.
+                  {isKobyStaff
+                    ? 'Create a new organization above, or select an existing one to access.'
+                    : 'Ask your organization admin to invite you, or contact Koby support if you need a new organization set up.'}
                 </p>
               </div>
             </div>

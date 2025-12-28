@@ -4,16 +4,99 @@
  * Now with site_key authentication and D1 logging
  */
 
+// =============================================================================
+// Configuration
+// =============================================================================
+
+// Rate limiting (per IP, sliding window)
+const RATE_LIMIT_WINDOW_MS = 60 * 1000 // 1 minute
+const RATE_LIMIT_MAX = 30 // 30 requests per minute per IP for chat
+const rateLimitBuckets = new Map()
+
+// Request size limit
+const MAX_REQUEST_SIZE = 50 * 1024 // 50KB max for chat requests
+const MAX_MESSAGE_LENGTH = 5000 // 5000 chars max per message
+
 // Generate UUID
 function generateId() {
   return crypto.randomUUID()
 }
 
-// CORS headers
+// CORS headers - use origin validation when possible
+function getCorsHeaders(request, env) {
+  const origin = request.headers.get('Origin') || ''
+  
+  // In production, validate origin against allowed domains
+  // For now, allow all but log suspicious origins
+  const suspiciousPatterns = [/localhost/i, /127\.0\.0\.1/, /0\.0\.0\.0/]
+  const isSuspicious = env?.ENVIRONMENT === 'production' && 
+    suspiciousPatterns.some(p => p.test(origin))
+  
+  if (isSuspicious) {
+    console.warn('Suspicious origin:', origin)
+  }
+  
+  return {
+    'Access-Control-Allow-Origin': origin || '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Site-Key',
+    'Access-Control-Max-Age': '86400',
+  }
+}
+
+// Legacy corsHeaders for backward compatibility
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, X-Site-Key',
+}
+
+// =============================================================================
+// Rate Limiting
+// =============================================================================
+
+function getClientIp(request) {
+  return request.headers.get('cf-connecting-ip') || 
+         request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+         'unknown'
+}
+
+function isRateLimited(request, env) {
+  if (env?.SKIP_RATE_LIMIT === 'true') return false
+  
+  const ip = getClientIp(request)
+  const now = Date.now()
+  const windowStart = now - RATE_LIMIT_WINDOW_MS
+  
+  const bucket = rateLimitBuckets.get(ip) || []
+  const recent = bucket.filter(ts => ts > windowStart)
+  
+  const maxRequests = env?.RATE_LIMIT_MAX 
+    ? parseInt(env.RATE_LIMIT_MAX, 10) 
+    : RATE_LIMIT_MAX
+  
+  if (recent.length >= maxRequests) {
+    rateLimitBuckets.set(ip, recent)
+    return true
+  }
+  
+  recent.push(now)
+  rateLimitBuckets.set(ip, recent)
+  return false
+}
+
+// =============================================================================
+// Request Validation
+// =============================================================================
+
+async function validateRequest(request, env) {
+  // Check content length
+  const contentLength = parseInt(request.headers.get('content-length') || '0', 10)
+  if (contentLength > MAX_REQUEST_SIZE) {
+    return { valid: false, error: 'Request too large', status: 413 }
+  }
+  
+  return { valid: true }
 }
 
 // Lookup site by site_key and get config
@@ -96,15 +179,40 @@ async function updateDailyMetrics(db, orgId, siteId, latencyMs) {
 
 export default {
   async fetch(request, env) {
-    // Handle CORS
+    const headers = getCorsHeaders(request, env)
+    
+    // Handle CORS preflight
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders })
+      return new Response(null, { headers })
     }
 
     if (request.method !== 'POST') {
       return new Response('Method not allowed', {
         status: 405,
-        headers: corsHeaders
+        headers
+      })
+    }
+
+    // Rate limiting check
+    if (isRateLimited(request, env)) {
+      return new Response(JSON.stringify({ 
+        error: 'Rate limit exceeded. Please try again later.' 
+      }), {
+        status: 429,
+        headers: { 
+          ...headers, 
+          'Content-Type': 'application/json',
+          'Retry-After': '60'
+        }
+      })
+    }
+
+    // Request size validation
+    const validation = await validateRequest(request, env)
+    if (!validation.valid) {
+      return new Response(JSON.stringify({ error: validation.error }), {
+        status: validation.status,
+        headers: { ...headers, 'Content-Type': 'application/json' }
       })
     }
 
@@ -117,7 +225,17 @@ export default {
       if (!message) {
         return new Response(JSON.stringify({ error: 'Message is required' }), {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          headers: { ...headers, 'Content-Type': 'application/json' }
+        })
+      }
+
+      // Message length validation
+      if (message.length > MAX_MESSAGE_LENGTH) {
+        return new Response(JSON.stringify({ 
+          error: `Message too long. Maximum ${MAX_MESSAGE_LENGTH} characters.` 
+        }), {
+          status: 400,
+          headers: { ...headers, 'Content-Type': 'application/json' }
         })
       }
 

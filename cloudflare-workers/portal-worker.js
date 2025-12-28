@@ -4,11 +4,128 @@
  * Scopes data by org unless user is Koby staff
  */
 
-// CORS headers
-const corsHeaders = {
+// =============================================================================
+// Configuration & Constants
+// =============================================================================
+
+// Request size limits (in bytes)
+const MAX_REQUEST_SIZE = 1024 * 1024 // 1MB default
+const MAX_WEBHOOK_SIZE = 5 * 1024 * 1024 // 5MB for webhooks
+
+// Default allowed origins (can be overridden via env)
+const DEFAULT_ALLOWED_ORIGINS = [
+  'https://koby.ai',
+  'https://www.koby.ai',
+  'https://portal.koby.ai',
+  'https://app.koby.ai',
+]
+
+// =============================================================================
+// Structured Logging
+// =============================================================================
+
+/**
+ * Create a structured log entry with consistent format
+ * Logs are emitted via console.log for Cloudflare Logpush integration
+ */
+function createLogger(requestId, env) {
+  const logLevel = env?.LOG_LEVEL || 'info'
+  const levels = { debug: 0, info: 1, warn: 2, error: 3 }
+  const currentLevel = levels[logLevel] || 1
+
+  const emit = (level, message, data = {}) => {
+    if (levels[level] < currentLevel) return
+
+    const entry = {
+      timestamp: new Date().toISOString(),
+      level,
+      requestId,
+      message,
+      ...data,
+    }
+    console.log(JSON.stringify(entry))
+  }
+
+  return {
+    debug: (msg, data) => emit('debug', msg, data),
+    info: (msg, data) => emit('info', msg, data),
+    warn: (msg, data) => emit('warn', msg, data),
+    error: (msg, data) => emit('error', msg, data),
+  }
+}
+
+/**
+ * Generate unique request ID for tracing
+ */
+function generateRequestId() {
+  return `req_${crypto.randomUUID().split('-')[0]}`
+}
+
+// =============================================================================
+// CORS Configuration
+// =============================================================================
+
+/**
+ * Build CORS headers based on request origin and allowed origins config
+ */
+function getCorsHeaders(request, env) {
+  const origin = request.headers.get('Origin') || ''
+  
+  // Get allowed origins from env or use defaults
+  const allowedOriginsStr = env?.ALLOWED_ORIGINS || ''
+  const allowedOrigins = allowedOriginsStr
+    ? allowedOriginsStr.split(',').map(o => o.trim())
+    : DEFAULT_ALLOWED_ORIGINS
+
+  // In development or if CORS_ALLOW_ALL is set, allow any origin
+  if (env?.CORS_ALLOW_ALL === 'true' || env?.ENVIRONMENT === 'development') {
+    return {
+      'Access-Control-Allow-Origin': origin || '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-ID',
+      'Access-Control-Max-Age': '86400',
+    }
+  }
+
+  // Check if origin is in allowed list
+  const isAllowed = allowedOrigins.some(allowed => {
+    if (allowed.startsWith('*.')) {
+      // Wildcard subdomain matching
+      const domain = allowed.slice(2)
+      return origin.endsWith(domain) || origin === `https://${domain}`
+    }
+    return origin === allowed
+  })
+
+  return {
+    'Access-Control-Allow-Origin': isAllowed ? origin : allowedOrigins[0],
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-ID',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin',
+  }
+}
+
+// Legacy corsHeaders for backward compatibility (used in jsonResponse)
+let corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
+// =============================================================================
+// Request Validation
+// =============================================================================
+
+/**
+ * Check if request body exceeds size limit
+ */
+async function checkRequestSize(request, maxSize = MAX_REQUEST_SIZE) {
+  const contentLength = request.headers.get('Content-Length')
+  if (contentLength && parseInt(contentLength, 10) > maxSize) {
+    return { valid: false, error: 'Request body too large' }
+  }
+  return { valid: true }
 }
 
 // Generate UUID
@@ -2243,6 +2360,533 @@ const routes = {
 
     return jsonResponse({ received: true, eventId }, 202)
   },
+
+  // =============================================================================
+  // Stripe Billing Endpoints (Agent 3: Subscription Architecture)
+  // =============================================================================
+
+  // GET /billing/overview - Get billing overview for org (customer, subscriptions, invoices)
+  async getBillingOverview(request, env, auth) {
+    const { orgId, isKobyStaff } = auth
+
+    if (!orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    const db = env.DB
+
+    // Get billing customer
+    const customer = await db.prepare(
+      'SELECT * FROM billing_customers WHERE org_id = ?'
+    ).bind(orgId).first()
+
+    // Get active subscriptions
+    const subscriptions = await db.prepare(`
+      SELECT * FROM billing_subscriptions 
+      WHERE org_id = ? AND status NOT IN ('canceled', 'incomplete_expired')
+      ORDER BY created_at DESC
+    `).bind(orgId).all()
+
+    // Get recent invoices (last 10)
+    const invoices = await db.prepare(`
+      SELECT * FROM billing_invoices 
+      WHERE org_id = ?
+      ORDER BY created_at DESC
+      LIMIT 10
+    `).bind(orgId).all()
+
+    // Determine current plan from active subscription
+    const activeSubscription = (subscriptions.results || []).find(
+      s => s.status === 'active' || s.status === 'trialing'
+    )
+
+    return jsonResponse({
+      customer: customer ? mapBillingCustomer(customer) : null,
+      subscriptions: (subscriptions.results || []).map(mapBillingSubscription),
+      currentPlan: activeSubscription ? {
+        name: activeSubscription.plan_nickname || 'Standard Plan',
+        status: activeSubscription.status,
+        currentPeriodEnd: activeSubscription.current_period_end,
+        cancelAtPeriodEnd: !!activeSubscription.cancel_at_period_end,
+      } : null,
+      upcomingInvoice: null, // Would require Stripe API call for upcoming invoice
+      recentInvoices: (invoices.results || []).map(mapBillingInvoice),
+    })
+  },
+
+  // GET /billing/subscriptions - List all subscriptions for org
+  async getBillingSubscriptions(request, env, auth) {
+    const { orgId, isKobyStaff } = auth
+
+    if (!orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    const db = env.DB
+    const subscriptions = await db.prepare(`
+      SELECT * FROM billing_subscriptions 
+      WHERE org_id = ?
+      ORDER BY created_at DESC
+    `).bind(orgId).all()
+
+    return jsonResponse({
+      subscriptions: (subscriptions.results || []).map(mapBillingSubscription),
+    })
+  },
+
+  // GET /billing/invoices - List invoices for org
+  async getBillingInvoices(request, env, auth) {
+    const { orgId, isKobyStaff } = auth
+
+    if (!orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    const url = new URL(request.url)
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '25', 10), 100)
+    const offset = parseInt(url.searchParams.get('offset') || '0', 10)
+    const status = url.searchParams.get('status')
+
+    const db = env.DB
+    let query = 'SELECT * FROM billing_invoices WHERE org_id = ?'
+    const params = [orgId]
+
+    if (status) {
+      query += ' AND status = ?'
+      params.push(status)
+    }
+
+    query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?'
+    params.push(limit, offset)
+
+    const invoices = await db.prepare(query).bind(...params).all()
+
+    // Count total for pagination
+    const countQuery = status
+      ? db.prepare('SELECT COUNT(*) as count FROM billing_invoices WHERE org_id = ? AND status = ?').bind(orgId, status)
+      : db.prepare('SELECT COUNT(*) as count FROM billing_invoices WHERE org_id = ?').bind(orgId)
+    const countResult = await countQuery.first()
+
+    return jsonResponse({
+      invoices: (invoices.results || []).map(mapBillingInvoice),
+      total: countResult?.count || 0,
+      hasMore: offset + limit < (countResult?.count || 0),
+    })
+  },
+
+  // GET /billing/invoices/:id - Get invoice detail with line items
+  async getBillingInvoiceDetail(request, env, auth, invoiceId) {
+    const { orgId, isKobyStaff } = auth
+
+    if (!orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    const db = env.DB
+    const invoice = await db.prepare(
+      'SELECT * FROM billing_invoices WHERE id = ?'
+    ).bind(invoiceId).first()
+
+    if (!invoice) {
+      return jsonResponse({ error: 'Invoice not found' }, 404)
+    }
+
+    if (orgId && invoice.org_id !== orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Forbidden' }, 403)
+    }
+
+    const lines = await db.prepare(`
+      SELECT * FROM billing_invoice_lines 
+      WHERE billing_invoice_id = ?
+      ORDER BY created_at ASC
+    `).bind(invoiceId).all()
+
+    return jsonResponse({
+      invoice: mapBillingInvoice(invoice),
+      lines: (lines.results || []).map(mapBillingInvoiceLine),
+    })
+  },
+
+  // POST /billing/checkout-session - Create Stripe Checkout Session for subscription
+  async createCheckoutSession(request, env, auth) {
+    const { orgId } = auth
+
+    if (!orgId) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    if (!env.STRIPE_SECRET_KEY) {
+      return jsonResponse({ error: 'Stripe not configured' }, 500)
+    }
+
+    const body = await request.json()
+    const { priceId, successUrl, cancelUrl, quantity = 1, trialPeriodDays, metadata = {} } = body
+
+    if (!priceId || !successUrl || !cancelUrl) {
+      return jsonResponse({ error: 'priceId, successUrl, and cancelUrl are required' }, 400)
+    }
+
+    const db = env.DB
+
+    // Get or create billing customer
+    let customer = await db.prepare(
+      'SELECT * FROM billing_customers WHERE org_id = ?'
+    ).bind(orgId).first()
+
+    if (!customer) {
+      // Get org details for Stripe customer creation
+      const org = await db.prepare('SELECT * FROM orgs WHERE id = ?').bind(orgId).first()
+
+      // Create Stripe customer
+      const stripeCustomer = await createStripeCustomer(env.STRIPE_SECRET_KEY, {
+        metadata: { org_id: orgId, org_name: org?.name || '' },
+        name: org?.name,
+      })
+
+      // Save billing customer
+      const customerId = generateId()
+      await db.prepare(`
+        INSERT INTO billing_customers (id, org_id, stripe_customer_id, name, metadata)
+        VALUES (?, ?, ?, ?, ?)
+      `).bind(
+        customerId,
+        orgId,
+        stripeCustomer.id,
+        org?.name || null,
+        JSON.stringify({ org_name: org?.name })
+      ).run()
+
+      customer = await db.prepare('SELECT * FROM billing_customers WHERE id = ?').bind(customerId).first()
+    }
+
+    // Create Stripe Checkout Session
+    const sessionParams = {
+      customer: customer.stripe_customer_id,
+      mode: 'subscription',
+      line_items: [{ price: priceId, quantity }],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      subscription_data: {
+        metadata: { org_id: orgId, ...metadata },
+      },
+      metadata: { org_id: orgId },
+    }
+
+    if (trialPeriodDays) {
+      sessionParams.subscription_data.trial_period_days = trialPeriodDays
+    }
+
+    const session = await createStripeCheckoutSession(env.STRIPE_SECRET_KEY, sessionParams)
+
+    // Save checkout session for tracking
+    const sessionId = generateId()
+    await db.prepare(`
+      INSERT INTO billing_checkout_sessions (
+        id, org_id, stripe_session_id, stripe_customer_id, mode, success_url, cancel_url, expires_at, metadata
+      ) VALUES (?, ?, ?, ?, 'subscription', ?, ?, ?, ?)
+    `).bind(
+      sessionId,
+      orgId,
+      session.id,
+      customer.stripe_customer_id,
+      successUrl,
+      cancelUrl,
+      session.expires_at ? new Date(session.expires_at * 1000).toISOString() : null,
+      JSON.stringify(metadata)
+    ).run()
+
+    return jsonResponse({
+      sessionId: session.id,
+      url: session.url,
+    }, 201)
+  },
+
+  // POST /billing/portal-session - Create Stripe Billing Portal session
+  async createBillingPortalSession(request, env, auth) {
+    const { orgId, userId } = auth
+
+    if (!orgId) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    if (!env.STRIPE_SECRET_KEY) {
+      return jsonResponse({ error: 'Stripe not configured' }, 500)
+    }
+
+    const body = await request.json()
+    const { returnUrl } = body
+
+    if (!returnUrl) {
+      return jsonResponse({ error: 'returnUrl is required' }, 400)
+    }
+
+    const db = env.DB
+
+    // Get billing customer
+    const customer = await db.prepare(
+      'SELECT * FROM billing_customers WHERE org_id = ?'
+    ).bind(orgId).first()
+
+    if (!customer) {
+      return jsonResponse({ error: 'No billing customer found. Please set up a subscription first.' }, 404)
+    }
+
+    // Create Stripe Billing Portal session
+    const session = await createStripeBillingPortalSession(env.STRIPE_SECRET_KEY, {
+      customer: customer.stripe_customer_id,
+      return_url: returnUrl,
+    })
+
+    // Save portal session for audit
+    const sessionId = generateId()
+    await db.prepare(`
+      INSERT INTO billing_portal_sessions (
+        id, org_id, billing_customer_id, stripe_session_id, stripe_session_url, return_url, created_by
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      sessionId,
+      orgId,
+      customer.id,
+      session.id,
+      session.url,
+      returnUrl,
+      userId || null
+    ).run()
+
+    return jsonResponse({
+      url: session.url,
+    }, 201)
+  },
+
+  // =============================================================================
+  // Membership Caps Endpoints (Agent 1: Auth + Invite + Membership Caps)
+  // =============================================================================
+
+  // GET /portal/membership-caps - Get membership cap info for org
+  async getMembershipCaps(request, env, auth) {
+    const { orgId, isKobyStaff } = auth
+
+    if (!orgId && !isKobyStaff) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    const db = env.DB
+
+    // Get org with max_members
+    const org = await db.prepare('SELECT id, name, max_members FROM orgs WHERE id = ?').bind(orgId).first()
+
+    if (!org) {
+      return jsonResponse({ error: 'Organization not found' }, 404)
+    }
+
+    // max_members defaults to 10 if not set
+    const maxMembers = org.max_members ?? 10
+
+    return jsonResponse({
+      orgId: org.id,
+      orgName: org.name,
+      maxMembers,
+      // Note: actual member count comes from Clerk
+      // This endpoint provides the cap - UI should compare against Clerk member count
+    })
+  },
+
+  // PATCH /portal/membership-caps - Update membership cap (staff only)
+  async updateMembershipCaps(request, env, auth) {
+    const { orgId, isKobyStaff } = auth
+
+    // Only Koby staff can update membership caps
+    if (!isKobyStaff) {
+      return jsonResponse({ error: 'Staff access required' }, 403)
+    }
+
+    if (!orgId) {
+      return jsonResponse({ error: 'Organization required. Use ?orgId= parameter.' }, 400)
+    }
+
+    const body = await request.json()
+    const { maxMembers } = body
+
+    if (typeof maxMembers !== 'number' || maxMembers < 1 || maxMembers > 1000) {
+      return jsonResponse({ error: 'maxMembers must be a number between 1 and 1000' }, 400)
+    }
+
+    const db = env.DB
+
+    // Verify org exists
+    const org = await db.prepare('SELECT id, name FROM orgs WHERE id = ?').bind(orgId).first()
+    if (!org) {
+      return jsonResponse({ error: 'Organization not found' }, 404)
+    }
+
+    // Update max_members
+    await db.prepare(`
+      UPDATE orgs SET max_members = ?, updated_at = datetime('now')
+      WHERE id = ?
+    `).bind(maxMembers, orgId).run()
+
+    // Write audit log
+    await db.prepare(`
+      INSERT INTO audit_logs (id, org_id, actor_type, actor_id, event_type, target_type, target_id, metadata)
+      VALUES (?, ?, 'user', ?, 'org.membership_cap_updated', 'org', ?, ?)
+    `).bind(
+      generateId(),
+      orgId,
+      auth.userId || 'staff',
+      orgId,
+      JSON.stringify({ maxMembers, previousValue: org.max_members ?? 10 })
+    ).run()
+
+    return jsonResponse({
+      orgId,
+      orgName: org.name,
+      maxMembers,
+      updated: true,
+    })
+  },
+
+  // POST /portal/check-invite-allowed - Check if invite is allowed (cap enforcement)
+  async checkInviteAllowed(request, env, auth) {
+    const { orgId, isKobyStaff, orgRole } = auth
+
+    if (!orgId) {
+      return jsonResponse({ error: 'Organization required' }, 400)
+    }
+
+    // Only admins or staff can check invite permissions
+    const adminRoles = ['org:admin', 'org:client_admin']
+    if (!isKobyStaff && !adminRoles.includes(orgRole)) {
+      return jsonResponse({ error: 'Admin access required' }, 403)
+    }
+
+    const body = await request.json()
+    const { currentMemberCount } = body
+
+    if (typeof currentMemberCount !== 'number' || currentMemberCount < 0) {
+      return jsonResponse({ error: 'currentMemberCount is required' }, 400)
+    }
+
+    const db = env.DB
+
+    // Get org with max_members
+    const org = await db.prepare('SELECT id, max_members FROM orgs WHERE id = ?').bind(orgId).first()
+
+    if (!org) {
+      return jsonResponse({ error: 'Organization not found' }, 404)
+    }
+
+    const maxMembers = org.max_members ?? 10
+
+    // Staff can always bypass caps
+    if (isKobyStaff) {
+      return jsonResponse({
+        allowed: true,
+        reason: 'staff_override',
+        currentMemberCount,
+        maxMembers,
+        remainingSlots: maxMembers - currentMemberCount,
+      })
+    }
+
+    // Check if under cap
+    const allowed = currentMemberCount < maxMembers
+    const remainingSlots = Math.max(0, maxMembers - currentMemberCount)
+
+    return jsonResponse({
+      allowed,
+      reason: allowed ? 'under_cap' : 'cap_reached',
+      currentMemberCount,
+      maxMembers,
+      remainingSlots,
+      message: allowed
+        ? `You can invite up to ${remainingSlots} more member${remainingSlots === 1 ? '' : 's'}.`
+        : `Your organization has reached the maximum of ${maxMembers} members. Contact Koby support to increase your limit.`,
+    })
+  },
+
+  // POST /webhooks/stripe - Stripe webhook receiver with signature verification
+  async handleStripeWebhook(request, env) {
+    const signature = request.headers.get('stripe-signature')
+    const webhookSecret = env.STRIPE_WEBHOOK_SECRET
+
+    if (!webhookSecret) {
+      console.error('STRIPE_WEBHOOK_SECRET not configured')
+      return jsonResponse({ error: 'Webhook not configured' }, 500)
+    }
+
+    const rawBody = await request.text()
+
+    // Verify Stripe signature
+    let event
+    try {
+      event = await verifyStripeWebhook(rawBody, signature, webhookSecret)
+    } catch (err) {
+      console.error('Stripe webhook signature verification failed:', err.message)
+      return jsonResponse({ error: 'Invalid signature' }, 400)
+    }
+
+    const db = env.DB
+    const now = new Date().toISOString()
+    const eventId = generateId()
+
+    // Check for duplicate event (idempotency)
+    const existing = await db.prepare(
+      'SELECT id FROM stripe_events WHERE stripe_event_id = ?'
+    ).bind(event.id).first()
+
+    if (existing) {
+      return jsonResponse({ received: true, duplicate: true })
+    }
+
+    // Extract org_id from event metadata if present
+    let orgId = null
+    const eventObject = event.data?.object
+    if (eventObject?.metadata?.org_id) {
+      orgId = eventObject.metadata.org_id
+    } else if (eventObject?.customer) {
+      // Look up org by Stripe customer ID
+      const customer = await db.prepare(
+        'SELECT org_id FROM billing_customers WHERE stripe_customer_id = ?'
+      ).bind(eventObject.customer).first()
+      orgId = customer?.org_id || null
+    }
+
+    // Insert event record
+    await db.prepare(`
+      INSERT INTO stripe_events (
+        id, stripe_event_id, event_type, api_version, livemode, org_id, 
+        object_type, object_id, status, payload, received_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
+    `).bind(
+      eventId,
+      event.id,
+      event.type,
+      event.api_version || null,
+      event.livemode ? 1 : 0,
+      orgId,
+      eventObject?.object || null,
+      eventObject?.id || null,
+      JSON.stringify(event),
+      now
+    ).run()
+
+    // Process event based on type
+    let processingError = null
+    try {
+      await processStripeEvent(db, event, orgId)
+      await db.prepare(
+        'UPDATE stripe_events SET status = ?, processed_at = ? WHERE id = ?'
+      ).bind('processed', new Date().toISOString(), eventId).run()
+    } catch (err) {
+      processingError = err.message
+      await db.prepare(
+        'UPDATE stripe_events SET status = ?, processing_error = ?, processed_at = ? WHERE id = ?'
+      ).bind('failed', processingError, new Date().toISOString(), eventId).run()
+      console.error('Error processing Stripe event:', err)
+    }
+
+    return jsonResponse({ received: true, eventId })
+  },
 }
 
 // JSON response helper
@@ -2504,33 +3148,82 @@ function mapIntegrationConnection(row) {
 // Main handler
 export default {
   async fetch(request, env) {
-    // Handle CORS preflight
-    if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders })
-    }
+    // Generate request ID for tracing
+    const requestId = request.headers.get('X-Request-ID') || generateRequestId()
+    const log = createLogger(requestId, env)
+    
+    // Build dynamic CORS headers
+    const dynamicCorsHeaders = getCorsHeaders(request, env)
+    // Update global corsHeaders for this request (used in jsonResponse)
+    corsHeaders = dynamicCorsHeaders
 
     const url = new URL(request.url)
     const path = url.pathname
+    const method = request.method
+    const clientIp = getClientIp(request)
+
+    // Log request start
+    log.info('request_start', {
+      method,
+      path,
+      clientIp,
+      userAgent: request.headers.get('User-Agent'),
+    })
+
+    // Handle CORS preflight
+    if (method === 'OPTIONS') {
+      log.debug('cors_preflight', { origin: request.headers.get('Origin') })
+      return new Response(null, { headers: dynamicCorsHeaders })
+    }
 
     // Health check
     if (path === '/health') {
-      return jsonResponse({ status: 'ok', timestamp: new Date().toISOString() })
+      return jsonResponse({ status: 'ok', timestamp: new Date().toISOString(), requestId })
+    }
+
+    // Request size check for POST/PATCH/PUT
+    if (['POST', 'PATCH', 'PUT'].includes(method)) {
+      const maxSize = path === '/webhooks/stripe' ? MAX_WEBHOOK_SIZE : MAX_REQUEST_SIZE
+      const sizeCheck = await checkRequestSize(request, maxSize)
+      if (!sizeCheck.valid) {
+        log.warn('request_too_large', { 
+          contentLength: request.headers.get('Content-Length'),
+          maxSize,
+        })
+        return jsonResponse({ error: sizeCheck.error, requestId }, 413)
+      }
+    }
+
+    // Stripe webhook - no auth required (uses signature verification)
+    if (path === '/webhooks/stripe' && method === 'POST') {
+      log.info('stripe_webhook_received')
+      return routes.handleStripeWebhook(request, env, log)
     }
 
     // Basic rate limiting
     if (isRateLimited(request, env)) {
-      return jsonResponse({ error: 'Rate limit exceeded' }, 429)
+      log.warn('rate_limit_exceeded', { clientIp })
+      return jsonResponse({ error: 'Rate limit exceeded', requestId }, 429)
     }
 
     // All portal routes require auth
     const auth = await getAuthContext(request, env)
     if (!auth) {
-      return jsonResponse({ error: 'Unauthorized' }, 401)
+      log.warn('auth_failed', { path })
+      return jsonResponse({ error: 'Unauthorized', requestId }, 401)
     }
+
+    // Enrich logs with auth context
+    log.info('auth_success', {
+      userId: auth.userId,
+      orgId: auth.orgId,
+      isKobyStaff: auth.isKobyStaff,
+      orgRole: auth.orgRole,
+    })
 
     try {
       // Route matching
-      if (path === '/portal/overview' && request.method === 'GET') {
+      if (path === '/portal/overview' && method === 'GET') {
         return routes.getOverview(request, env, auth)
       }
       if (path === '/portal/engines' && request.method === 'GET') {
@@ -2586,6 +3279,16 @@ export default {
       }
       if (path === '/portal/clients' && request.method === 'GET') {
         return routes.getClients(request, env, auth)
+      }
+      // Membership cap endpoints (Agent 1: Auth + Invite + Membership Caps)
+      if (path === '/portal/membership-caps' && request.method === 'GET') {
+        return routes.getMembershipCaps(request, env, auth)
+      }
+      if (path === '/portal/membership-caps' && request.method === 'PATCH') {
+        return routes.updateMembershipCaps(request, env, auth)
+      }
+      if (path === '/portal/check-invite-allowed' && request.method === 'POST') {
+        return routes.checkInviteAllowed(request, env, auth)
       }
       if (path === '/portal/config' && request.method === 'GET') {
         return routes.getConfig(request, env, auth)
@@ -2685,10 +3388,38 @@ export default {
         return routes.updateFlow(request, env, auth, flowId)
       }
 
-      return jsonResponse({ error: 'Not found' }, 404)
+      // Stripe Billing endpoints (Agent 3: Subscription Architecture)
+      if (path === '/billing/overview' && request.method === 'GET') {
+        return routes.getBillingOverview(request, env, auth)
+      }
+      if (path === '/billing/subscriptions' && request.method === 'GET') {
+        return routes.getBillingSubscriptions(request, env, auth)
+      }
+      if (path === '/billing/invoices' && request.method === 'GET') {
+        return routes.getBillingInvoices(request, env, auth)
+      }
+      if (path.startsWith('/billing/invoices/') && request.method === 'GET') {
+        const segments = path.split('/')
+        const invoiceId = segments[3]
+        return routes.getBillingInvoiceDetail(request, env, auth, invoiceId)
+      }
+      if (path === '/billing/checkout-session' && request.method === 'POST') {
+        return routes.createCheckoutSession(request, env, auth)
+      }
+      if (path === '/billing/portal-session' && request.method === 'POST') {
+        return routes.createBillingPortalSession(request, env, auth)
+      }
+
+      log.warn('route_not_found', { path, method })
+      return jsonResponse({ error: 'Not found', requestId }, 404)
     } catch (error) {
-      console.error('Portal worker error:', error)
-      return jsonResponse({ error: 'Internal server error' }, 500)
+      log.error('internal_error', { 
+        error: error.message,
+        stack: error.stack,
+        path,
+        method,
+      })
+      return jsonResponse({ error: 'Internal server error', requestId }, 500)
     }
   },
 }
@@ -2701,4 +3432,576 @@ function redactPII(text) {
   return text
     .replace(emailPattern, '[redacted email]')
     .replace(phonePattern, '[redacted phone]')
+}
+
+// =============================================================================
+// Stripe Billing Helpers (Agent 3: Subscription Architecture)
+// =============================================================================
+
+// Map billing_customers row to API shape
+function mapBillingCustomer(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    orgId: row.org_id,
+    stripeCustomerId: row.stripe_customer_id,
+    email: row.email,
+    name: row.name,
+    currency: row.currency || 'usd',
+    balanceCents: row.balance_cents || 0,
+    delinquent: !!row.delinquent,
+    defaultPaymentMethodId: row.default_payment_method_id,
+    invoiceSettings: parseJsonField(row.invoice_settings, {}),
+    metadata: parseJsonField(row.metadata, {}),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
+// Map billing_subscriptions row to API shape
+function mapBillingSubscription(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    orgId: row.org_id,
+    billingCustomerId: row.billing_customer_id,
+    stripeSubscriptionId: row.stripe_subscription_id,
+    stripePriceId: row.stripe_price_id,
+    status: row.status,
+    planNickname: row.plan_nickname,
+    quantity: row.quantity || 1,
+    cancelAtPeriodEnd: !!row.cancel_at_period_end,
+    currentPeriodStart: row.current_period_start,
+    currentPeriodEnd: row.current_period_end,
+    canceledAt: row.canceled_at,
+    endedAt: row.ended_at,
+    trialStart: row.trial_start,
+    trialEnd: row.trial_end,
+    metadata: parseJsonField(row.metadata, {}),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
+// Map billing_invoices row to API shape
+function mapBillingInvoice(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    orgId: row.org_id,
+    billingCustomerId: row.billing_customer_id,
+    billingSubscriptionId: row.billing_subscription_id,
+    stripeInvoiceId: row.stripe_invoice_id,
+    stripeInvoiceNumber: row.stripe_invoice_number,
+    status: row.status,
+    currency: row.currency || 'usd',
+    subtotalCents: row.subtotal_cents || 0,
+    taxCents: row.tax_cents || 0,
+    totalCents: row.total_cents || 0,
+    amountDueCents: row.amount_due_cents || 0,
+    amountPaidCents: row.amount_paid_cents || 0,
+    amountRemainingCents: row.amount_remaining_cents || 0,
+    hostedInvoiceUrl: row.hosted_invoice_url,
+    invoicePdf: row.invoice_pdf,
+    periodStart: row.period_start,
+    periodEnd: row.period_end,
+    dueDate: row.due_date,
+    paidAt: row.paid_at,
+    finalizedAt: row.finalized_at,
+    metadata: parseJsonField(row.metadata, {}),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
+// Map billing_invoice_lines row to API shape
+function mapBillingInvoiceLine(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    billingInvoiceId: row.billing_invoice_id,
+    orgId: row.org_id,
+    stripeLineItemId: row.stripe_line_item_id,
+    description: row.description,
+    quantity: row.quantity || 1,
+    unitAmountCents: row.unit_amount_cents || 0,
+    amountCents: row.amount_cents || 0,
+    currency: row.currency || 'usd',
+    priceId: row.price_id,
+    productId: row.product_id,
+    periodStart: row.period_start,
+    periodEnd: row.period_end,
+    proration: !!row.proration,
+    metadata: parseJsonField(row.metadata, {}),
+    createdAt: row.created_at,
+  }
+}
+
+// Stripe API: Create customer
+async function createStripeCustomer(secretKey, params) {
+  const response = await fetch('https://api.stripe.com/v1/customers', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${secretKey}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(flattenParams(params)).toString(),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(`Stripe error: ${error.error?.message || 'Unknown error'}`)
+  }
+
+  return response.json()
+}
+
+// Stripe API: Create Checkout Session
+async function createStripeCheckoutSession(secretKey, params) {
+  const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${secretKey}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(flattenParams(params)).toString(),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(`Stripe error: ${error.error?.message || 'Unknown error'}`)
+  }
+
+  return response.json()
+}
+
+// Stripe API: Create Billing Portal Session
+async function createStripeBillingPortalSession(secretKey, params) {
+  const response = await fetch('https://api.stripe.com/v1/billing_portal/sessions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${secretKey}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(flattenParams(params)).toString(),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(`Stripe error: ${error.error?.message || 'Unknown error'}`)
+  }
+
+  return response.json()
+}
+
+// Flatten nested params for Stripe API (handles arrays and objects)
+function flattenParams(params, prefix = '') {
+  const result = {}
+  for (const [key, value] of Object.entries(params)) {
+    const fullKey = prefix ? `${prefix}[${key}]` : key
+    if (value === null || value === undefined) {
+      continue
+    } else if (Array.isArray(value)) {
+      value.forEach((item, index) => {
+        if (typeof item === 'object') {
+          Object.assign(result, flattenParams(item, `${fullKey}[${index}]`))
+        } else {
+          result[`${fullKey}[${index}]`] = item
+        }
+      })
+    } else if (typeof value === 'object') {
+      Object.assign(result, flattenParams(value, fullKey))
+    } else {
+      result[fullKey] = value
+    }
+  }
+  return result
+}
+
+// Verify Stripe webhook signature
+async function verifyStripeWebhook(rawBody, signature, secret) {
+  if (!signature) {
+    throw new Error('No signature provided')
+  }
+
+  const parts = signature.split(',').reduce((acc, part) => {
+    const [key, value] = part.split('=')
+    acc[key] = value
+    return acc
+  }, {})
+
+  const timestamp = parts.t
+  const signatureHash = parts.v1
+
+  if (!timestamp || !signatureHash) {
+    throw new Error('Invalid signature format')
+  }
+
+  // Check timestamp (reject events older than 5 minutes)
+  const timestampSeconds = parseInt(timestamp, 10)
+  const now = Math.floor(Date.now() / 1000)
+  if (Math.abs(now - timestampSeconds) > 300) {
+    throw new Error('Timestamp too old')
+  }
+
+  // Compute expected signature
+  const payload = `${timestamp}.${rawBody}`
+  const encoder = new TextEncoder()
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  )
+  const signatureBytes = await crypto.subtle.sign('HMAC', key, encoder.encode(payload))
+  const expectedSignature = Array.from(new Uint8Array(signatureBytes))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+
+  if (expectedSignature !== signatureHash) {
+    throw new Error('Signature mismatch')
+  }
+
+  return JSON.parse(rawBody)
+}
+
+// Process Stripe webhook events
+async function processStripeEvent(db, event, orgId) {
+  const eventObject = event.data?.object
+  const now = new Date().toISOString()
+
+  switch (event.type) {
+    // Customer events
+    case 'customer.created':
+    case 'customer.updated': {
+      if (!orgId) break
+
+      const existing = await db.prepare(
+        'SELECT id FROM billing_customers WHERE stripe_customer_id = ?'
+      ).bind(eventObject.id).first()
+
+      if (existing) {
+        await db.prepare(`
+          UPDATE billing_customers SET
+            email = ?, name = ?, currency = ?, balance_cents = ?, 
+            delinquent = ?, default_payment_method_id = ?, 
+            invoice_settings = ?, metadata = ?, updated_at = ?
+          WHERE stripe_customer_id = ?
+        `).bind(
+          eventObject.email || null,
+          eventObject.name || null,
+          eventObject.currency || 'usd',
+          eventObject.balance || 0,
+          eventObject.delinquent ? 1 : 0,
+          eventObject.invoice_settings?.default_payment_method || null,
+          JSON.stringify(eventObject.invoice_settings || {}),
+          JSON.stringify(eventObject.metadata || {}),
+          now,
+          eventObject.id
+        ).run()
+      }
+      break
+    }
+
+    // Subscription events
+    case 'customer.subscription.created':
+    case 'customer.subscription.updated': {
+      if (!orgId) break
+
+      const customer = await db.prepare(
+        'SELECT id FROM billing_customers WHERE stripe_customer_id = ?'
+      ).bind(eventObject.customer).first()
+
+      if (!customer) break
+
+      const priceId = eventObject.items?.data?.[0]?.price?.id || ''
+      const planNickname = eventObject.items?.data?.[0]?.price?.nickname || eventObject.plan?.nickname || null
+
+      const existing = await db.prepare(
+        'SELECT id FROM billing_subscriptions WHERE stripe_subscription_id = ?'
+      ).bind(eventObject.id).first()
+
+      if (existing) {
+        await db.prepare(`
+          UPDATE billing_subscriptions SET
+            stripe_price_id = ?, status = ?, plan_nickname = ?, quantity = ?,
+            cancel_at_period_end = ?, current_period_start = ?, current_period_end = ?,
+            canceled_at = ?, ended_at = ?, trial_start = ?, trial_end = ?,
+            metadata = ?, updated_at = ?
+          WHERE stripe_subscription_id = ?
+        `).bind(
+          priceId,
+          eventObject.status,
+          planNickname,
+          eventObject.quantity || 1,
+          eventObject.cancel_at_period_end ? 1 : 0,
+          eventObject.current_period_start ? new Date(eventObject.current_period_start * 1000).toISOString() : null,
+          eventObject.current_period_end ? new Date(eventObject.current_period_end * 1000).toISOString() : null,
+          eventObject.canceled_at ? new Date(eventObject.canceled_at * 1000).toISOString() : null,
+          eventObject.ended_at ? new Date(eventObject.ended_at * 1000).toISOString() : null,
+          eventObject.trial_start ? new Date(eventObject.trial_start * 1000).toISOString() : null,
+          eventObject.trial_end ? new Date(eventObject.trial_end * 1000).toISOString() : null,
+          JSON.stringify(eventObject.metadata || {}),
+          now,
+          eventObject.id
+        ).run()
+      } else {
+        await db.prepare(`
+          INSERT INTO billing_subscriptions (
+            id, org_id, billing_customer_id, stripe_subscription_id, stripe_price_id,
+            status, plan_nickname, quantity, cancel_at_period_end,
+            current_period_start, current_period_end, canceled_at, ended_at,
+            trial_start, trial_end, metadata, created_at, updated_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          generateId(),
+          orgId,
+          customer.id,
+          eventObject.id,
+          priceId,
+          eventObject.status,
+          planNickname,
+          eventObject.quantity || 1,
+          eventObject.cancel_at_period_end ? 1 : 0,
+          eventObject.current_period_start ? new Date(eventObject.current_period_start * 1000).toISOString() : null,
+          eventObject.current_period_end ? new Date(eventObject.current_period_end * 1000).toISOString() : null,
+          eventObject.canceled_at ? new Date(eventObject.canceled_at * 1000).toISOString() : null,
+          eventObject.ended_at ? new Date(eventObject.ended_at * 1000).toISOString() : null,
+          eventObject.trial_start ? new Date(eventObject.trial_start * 1000).toISOString() : null,
+          eventObject.trial_end ? new Date(eventObject.trial_end * 1000).toISOString() : null,
+          JSON.stringify(eventObject.metadata || {}),
+          now,
+          now
+        ).run()
+      }
+
+      // Update org plan based on subscription
+      if (eventObject.status === 'active' || eventObject.status === 'trialing') {
+        const planMapping = {
+          'chatbot': 'chatbot',
+          'phone': 'phone',
+          'bundle': 'bundle',
+          'enterprise': 'enterprise',
+        }
+        const plan = planMapping[planNickname?.toLowerCase()] || 'chatbot'
+        await db.prepare('UPDATE orgs SET plan = ?, updated_at = ? WHERE id = ?')
+          .bind(plan, now, orgId).run()
+      }
+
+      // Write audit log for subscription event
+      await db.prepare(`
+        INSERT INTO audit_logs (id, org_id, actor_type, actor_id, event_type, target_type, target_id, metadata)
+        VALUES (?, ?, 'integration', 'stripe', ?, 'subscription', ?, ?)
+      `).bind(
+        generateId(),
+        orgId,
+        `billing.subscription.${event.type.split('.').pop()}`,
+        eventObject.id,
+        JSON.stringify({
+          status: eventObject.status,
+          plan: planNickname,
+          stripe_event_id: event.id,
+        })
+      ).run()
+      break
+    }
+
+    case 'customer.subscription.deleted': {
+      if (!orgId) break
+
+      await db.prepare(`
+        UPDATE billing_subscriptions SET
+          status = 'canceled', ended_at = ?, updated_at = ?
+        WHERE stripe_subscription_id = ?
+      `).bind(now, now, eventObject.id).run()
+
+      // Write audit log for subscription cancellation
+      await db.prepare(`
+        INSERT INTO audit_logs (id, org_id, actor_type, actor_id, event_type, target_type, target_id, metadata)
+        VALUES (?, ?, 'integration', 'stripe', 'billing.subscription.canceled', 'subscription', ?, ?)
+      `).bind(
+        generateId(),
+        orgId,
+        eventObject.id,
+        JSON.stringify({ stripe_event_id: event.id, ended_at: now })
+      ).run()
+      break
+    }
+
+    // Invoice events
+    case 'invoice.created':
+    case 'invoice.updated':
+    case 'invoice.finalized':
+    case 'invoice.paid':
+    case 'invoice.payment_failed': {
+      if (!orgId) break
+
+      const customer = await db.prepare(
+        'SELECT id FROM billing_customers WHERE stripe_customer_id = ?'
+      ).bind(eventObject.customer).first()
+
+      if (!customer) break
+
+      let subscriptionId = null
+      if (eventObject.subscription) {
+        const sub = await db.prepare(
+          'SELECT id FROM billing_subscriptions WHERE stripe_subscription_id = ?'
+        ).bind(eventObject.subscription).first()
+        subscriptionId = sub?.id || null
+      }
+
+      const existing = await db.prepare(
+        'SELECT id FROM billing_invoices WHERE stripe_invoice_id = ?'
+      ).bind(eventObject.id).first()
+
+      if (existing) {
+        await db.prepare(`
+          UPDATE billing_invoices SET
+            billing_subscription_id = ?, stripe_invoice_number = ?, status = ?,
+            currency = ?, subtotal_cents = ?, tax_cents = ?, total_cents = ?,
+            amount_due_cents = ?, amount_paid_cents = ?, amount_remaining_cents = ?,
+            hosted_invoice_url = ?, invoice_pdf = ?, period_start = ?, period_end = ?,
+            due_date = ?, paid_at = ?, finalized_at = ?, metadata = ?, updated_at = ?
+          WHERE stripe_invoice_id = ?
+        `).bind(
+          subscriptionId,
+          eventObject.number || null,
+          eventObject.status,
+          eventObject.currency || 'usd',
+          eventObject.subtotal || 0,
+          eventObject.tax || 0,
+          eventObject.total || 0,
+          eventObject.amount_due || 0,
+          eventObject.amount_paid || 0,
+          eventObject.amount_remaining || 0,
+          eventObject.hosted_invoice_url || null,
+          eventObject.invoice_pdf || null,
+          eventObject.period_start ? new Date(eventObject.period_start * 1000).toISOString() : null,
+          eventObject.period_end ? new Date(eventObject.period_end * 1000).toISOString() : null,
+          eventObject.due_date ? new Date(eventObject.due_date * 1000).toISOString() : null,
+          event.type === 'invoice.paid' ? now : null,
+          eventObject.status_transitions?.finalized_at 
+            ? new Date(eventObject.status_transitions.finalized_at * 1000).toISOString() 
+            : null,
+          JSON.stringify(eventObject.metadata || {}),
+          now,
+          eventObject.id
+        ).run()
+      } else {
+        const invoiceId = generateId()
+        await db.prepare(`
+          INSERT INTO billing_invoices (
+            id, org_id, billing_customer_id, billing_subscription_id, stripe_invoice_id,
+            stripe_invoice_number, status, currency, subtotal_cents, tax_cents, total_cents,
+            amount_due_cents, amount_paid_cents, amount_remaining_cents,
+            hosted_invoice_url, invoice_pdf, period_start, period_end,
+            due_date, paid_at, finalized_at, metadata, created_at, updated_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          invoiceId,
+          orgId,
+          customer.id,
+          subscriptionId,
+          eventObject.id,
+          eventObject.number || null,
+          eventObject.status,
+          eventObject.currency || 'usd',
+          eventObject.subtotal || 0,
+          eventObject.tax || 0,
+          eventObject.total || 0,
+          eventObject.amount_due || 0,
+          eventObject.amount_paid || 0,
+          eventObject.amount_remaining || 0,
+          eventObject.hosted_invoice_url || null,
+          eventObject.invoice_pdf || null,
+          eventObject.period_start ? new Date(eventObject.period_start * 1000).toISOString() : null,
+          eventObject.period_end ? new Date(eventObject.period_end * 1000).toISOString() : null,
+          eventObject.due_date ? new Date(eventObject.due_date * 1000).toISOString() : null,
+          event.type === 'invoice.paid' ? now : null,
+          eventObject.status_transitions?.finalized_at 
+            ? new Date(eventObject.status_transitions.finalized_at * 1000).toISOString() 
+            : null,
+          JSON.stringify(eventObject.metadata || {}),
+          now,
+          now
+        ).run()
+
+        // Process line items
+        for (const lineItem of (eventObject.lines?.data || [])) {
+          await db.prepare(`
+            INSERT OR IGNORE INTO billing_invoice_lines (
+              id, billing_invoice_id, org_id, stripe_line_item_id, description,
+              quantity, unit_amount_cents, amount_cents, currency,
+              price_id, product_id, period_start, period_end, proration, metadata, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `).bind(
+            generateId(),
+            invoiceId,
+            orgId,
+            lineItem.id,
+            lineItem.description || null,
+            lineItem.quantity || 1,
+            lineItem.unit_amount || 0,
+            lineItem.amount || 0,
+            lineItem.currency || 'usd',
+            lineItem.price?.id || null,
+            lineItem.price?.product || null,
+            lineItem.period?.start ? new Date(lineItem.period.start * 1000).toISOString() : null,
+            lineItem.period?.end ? new Date(lineItem.period.end * 1000).toISOString() : null,
+            lineItem.proration ? 1 : 0,
+            JSON.stringify(lineItem.metadata || {}),
+            now
+          ).run()
+        }
+      }
+
+      // Write audit log for invoice events (paid and payment_failed are most critical)
+      if (event.type === 'invoice.paid' || event.type === 'invoice.payment_failed') {
+        await db.prepare(`
+          INSERT INTO audit_logs (id, org_id, actor_type, actor_id, event_type, target_type, target_id, metadata)
+          VALUES (?, ?, 'integration', 'stripe', ?, 'invoice', ?, ?)
+        `).bind(
+          generateId(),
+          orgId,
+          `billing.${event.type.replace('.', '_')}`,
+          eventObject.id,
+          JSON.stringify({
+            status: eventObject.status,
+            total_cents: eventObject.total || 0,
+            amount_paid_cents: eventObject.amount_paid || 0,
+            stripe_event_id: event.id,
+          })
+        ).run()
+      }
+      break
+    }
+
+    // Checkout session completed
+    case 'checkout.session.completed': {
+      await db.prepare(`
+        UPDATE billing_checkout_sessions SET
+          status = 'complete', stripe_subscription_id = ?, completed_at = ?, updated_at = ?
+        WHERE stripe_session_id = ?
+      `).bind(
+        eventObject.subscription || null,
+        now,
+        now,
+        eventObject.id
+      ).run()
+      break
+    }
+
+    case 'checkout.session.expired': {
+      await db.prepare(`
+        UPDATE billing_checkout_sessions SET status = 'expired', updated_at = ?
+        WHERE stripe_session_id = ?
+      `).bind(now, eventObject.id).run()
+      break
+    }
+
+    default:
+      // Unknown event type - mark as skipped
+      break
+  }
 }

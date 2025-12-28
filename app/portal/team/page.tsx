@@ -1,12 +1,27 @@
 'use client'
 
 import { OrganizationProfile, useOrganization, useUser } from '@clerk/nextjs'
-import { Shield, Users, ArrowLeft } from 'lucide-react'
+import { Shield, Users, ArrowLeft, AlertTriangle, UserPlus } from 'lucide-react'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
+
+// Membership cap info from API
+interface MembershipCapInfo {
+  allowed: boolean
+  reason: string
+  currentMemberCount: number
+  maxMembers: number
+  remainingSlots: number
+  message?: string
+}
 
 export default function TeamPage() {
   const { organization, membership } = useOrganization()
   const { user } = useUser()
+  
+  // Membership cap state
+  const [capInfo, setCapInfo] = useState<MembershipCapInfo | null>(null)
+  const [capLoading, setCapLoading] = useState(false)
   
   // Check if user is Koby staff
   const isKobyStaff = user?.publicMetadata?.kobyRole === 'staff'
@@ -15,6 +30,34 @@ export default function TeamPage() {
   const isClientAdmin = membership?.role === 'org:admin' || 
                         membership?.role === 'org:client_admin' ||
                         isKobyStaff
+  
+  // Fetch membership cap info when org changes
+  useEffect(() => {
+    const checkMembershipCap = async () => {
+      if (!organization?.id) return
+      
+      setCapLoading(true)
+      try {
+        // Member count will be fetched server-side
+        const response = await fetch('/api/portal/check-invite-allowed', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentMemberCount: 0 }) // Server will get actual count
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          setCapInfo(data)
+        }
+      } catch (error) {
+        console.error('Failed to check membership cap:', error)
+      } finally {
+        setCapLoading(false)
+      }
+    }
+    
+    checkMembershipCap()
+  }, [organization?.id])
   
   return (
     <div className="max-w-6xl mx-auto py-10">
@@ -46,6 +89,50 @@ export default function TeamPage() {
         )}
       </div>
       
+      {/* Membership Cap Status */}
+      {capInfo && isClientAdmin && (
+        <div className={`mb-8 rounded-2xl border p-4 ${
+          !capInfo.allowed 
+            ? 'border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950' 
+            : capInfo.remainingSlots <= 2 
+              ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950'
+              : 'border-[var(--line)] bg-[var(--panel)]'
+        }`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {!capInfo.allowed ? (
+                <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              ) : (
+                <UserPlus className="w-5 h-5 text-[var(--ink-muted)]" />
+              )}
+              <div>
+                <p className="text-sm font-semibold text-[var(--ink)]">
+                  {capInfo.currentMemberCount} / {capInfo.maxMembers} members
+                </p>
+                <p className="text-xs text-[var(--ink-muted)]">
+                  {capInfo.message}
+                </p>
+              </div>
+            </div>
+            {/* Progress bar */}
+            <div className="hidden sm:block w-32">
+              <div className="h-2 bg-[var(--paper-muted)] rounded-full overflow-hidden">
+                <div 
+                  className={`h-full transition-all ${
+                    !capInfo.allowed 
+                      ? 'bg-red-500' 
+                      : capInfo.remainingSlots <= 2 
+                        ? 'bg-yellow-500'
+                        : 'bg-green-500'
+                  }`}
+                  style={{ width: `${Math.min(100, (capInfo.currentMemberCount / capInfo.maxMembers) * 100)}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Koby Staff Notice */}
       {isKobyStaff && (
         <div className="mb-8 rounded-2xl border border-[var(--accent-soft)] bg-[var(--accent-soft)] p-4">
@@ -55,6 +142,7 @@ export default function TeamPage() {
               <p className="text-sm font-semibold text-[var(--ink)]">Koby Staff Access</p>
               <p className="text-xs text-[var(--ink-muted)]">
                 You have full access to manage this organization as a Koby team member.
+                {capInfo && ` (Staff override: can invite beyond ${capInfo.maxMembers} member cap)`}
               </p>
             </div>
           </div>

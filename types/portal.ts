@@ -287,6 +287,269 @@ export interface BillingRecord {
   updatedAt: string
 }
 
+// =============================================================================
+// Stripe Billing Types (Agent 3: Subscription Architecture)
+// =============================================================================
+
+/**
+ * Stripe subscription status values
+ * @see https://stripe.com/docs/api/subscriptions/object#subscription_object-status
+ */
+export type StripeSubscriptionStatus =
+  | 'incomplete'
+  | 'incomplete_expired'
+  | 'trialing'
+  | 'active'
+  | 'past_due'
+  | 'canceled'
+  | 'unpaid'
+  | 'paused'
+
+/**
+ * Stripe invoice status values
+ * @see https://stripe.com/docs/api/invoices/object#invoice_object-status
+ */
+export type StripeInvoiceStatus =
+  | 'draft'
+  | 'open'
+  | 'paid'
+  | 'uncollectible'
+  | 'void'
+
+/**
+ * Stripe checkout session mode
+ */
+export type StripeCheckoutMode = 'payment' | 'setup' | 'subscription'
+
+/**
+ * Stripe event processing status
+ */
+export type StripeEventStatus = 'pending' | 'processed' | 'failed' | 'skipped'
+
+/**
+ * Billing customer - links org to Stripe customer
+ * 1:1 relationship between org and Stripe customer
+ */
+export interface BillingCustomer {
+  id: string
+  orgId: string
+  stripeCustomerId: string
+  email?: string
+  name?: string
+  currency: string
+  balanceCents: number
+  delinquent: boolean
+  defaultPaymentMethodId?: string
+  invoiceSettings?: Record<string, unknown>
+  metadata?: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Billing subscription - Stripe subscription per org
+ * Supports multiple subscriptions per org (e.g., chatbot + phone)
+ */
+export interface BillingSubscription {
+  id: string
+  orgId: string
+  billingCustomerId: string
+  stripeSubscriptionId: string
+  stripePriceId: string
+  status: StripeSubscriptionStatus
+  planNickname?: string
+  quantity: number
+  cancelAtPeriodEnd: boolean
+  currentPeriodStart?: string
+  currentPeriodEnd?: string
+  canceledAt?: string
+  endedAt?: string
+  trialStart?: string
+  trialEnd?: string
+  metadata?: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Billing invoice - synced from Stripe webhooks
+ */
+export interface BillingInvoice {
+  id: string
+  orgId: string
+  billingCustomerId: string
+  billingSubscriptionId?: string
+  stripeInvoiceId: string
+  stripeInvoiceNumber?: string
+  status: StripeInvoiceStatus
+  currency: string
+  subtotalCents: number
+  taxCents: number
+  totalCents: number
+  amountDueCents: number
+  amountPaidCents: number
+  amountRemainingCents: number
+  hostedInvoiceUrl?: string
+  invoicePdf?: string
+  periodStart?: string
+  periodEnd?: string
+  dueDate?: string
+  paidAt?: string
+  finalizedAt?: string
+  metadata?: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Invoice line item - individual charge on an invoice
+ */
+export interface BillingInvoiceLine {
+  id: string
+  billingInvoiceId: string
+  orgId: string
+  stripeLineItemId: string
+  description?: string
+  quantity: number
+  unitAmountCents: number
+  amountCents: number
+  currency: string
+  priceId?: string
+  productId?: string
+  periodStart?: string
+  periodEnd?: string
+  proration: boolean
+  metadata?: Record<string, unknown>
+  createdAt: string
+}
+
+/**
+ * Stripe webhook event - for idempotent processing + audit
+ */
+export interface StripeEvent {
+  id: string
+  stripeEventId: string
+  eventType: string
+  apiVersion?: string
+  livemode: boolean
+  orgId?: string
+  objectType?: string
+  objectId?: string
+  status: StripeEventStatus
+  processingError?: string
+  payload: Record<string, unknown>
+  receivedAt: string
+  processedAt?: string
+}
+
+/**
+ * Checkout session - tracks pending purchases
+ */
+export interface BillingCheckoutSession {
+  id: string
+  orgId: string
+  stripeSessionId: string
+  stripeCustomerId?: string
+  stripeSubscriptionId?: string
+  status: 'open' | 'complete' | 'expired'
+  mode: StripeCheckoutMode
+  successUrl?: string
+  cancelUrl?: string
+  expiresAt?: string
+  completedAt?: string
+  metadata?: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Billing portal session - Stripe Customer Portal access
+ */
+export interface BillingPortalSession {
+  id: string
+  orgId: string
+  billingCustomerId: string
+  stripeSessionId: string
+  stripeSessionUrl: string
+  returnUrl?: string
+  createdBy?: string
+  createdAt: string
+}
+
+// =============================================================================
+// Stripe Billing API Response Types
+// =============================================================================
+
+export interface BillingCustomerResponse {
+  customer: BillingCustomer
+}
+
+export interface BillingSubscriptionResponse {
+  subscription: BillingSubscription
+}
+
+export interface BillingSubscriptionsResponse {
+  subscriptions: BillingSubscription[]
+}
+
+export interface BillingInvoicesResponse {
+  invoices: BillingInvoice[]
+  hasMore?: boolean
+}
+
+export interface BillingInvoiceDetailResponse {
+  invoice: BillingInvoice
+  lines: BillingInvoiceLine[]
+}
+
+export interface CreateCheckoutSessionRequest {
+  priceId: string
+  successUrl: string
+  cancelUrl: string
+  quantity?: number
+  trialPeriodDays?: number
+  metadata?: Record<string, unknown>
+}
+
+export interface CreateCheckoutSessionResponse {
+  sessionId: string
+  url: string
+}
+
+export interface CreateBillingPortalSessionRequest {
+  returnUrl: string
+}
+
+export interface CreateBillingPortalSessionResponse {
+  url: string
+}
+
+export interface BillingOverviewResponse {
+  customer: BillingCustomer | null
+  subscriptions: BillingSubscription[]
+  currentPlan: {
+    name: string
+    status: StripeSubscriptionStatus
+    currentPeriodEnd?: string
+    cancelAtPeriodEnd: boolean
+  } | null
+  upcomingInvoice: {
+    amountDueCents: number
+    dueDate?: string
+  } | null
+  recentInvoices: BillingInvoice[]
+}
+
+export interface StripeWebhookPayload {
+  id: string
+  type: string
+  api_version: string
+  livemode: boolean
+  data: {
+    object: Record<string, unknown>
+  }
+}
+
 export interface RetentionPolicy {
   id: string
   orgId: string
@@ -493,4 +756,157 @@ export interface ClientsState {
   error: string | null
   clients: PortalClient[]
   filter: 'all' | 'active' | 'at-risk'
+}
+
+// =============================================================================
+// Widget/Embed Types (Agent 4)
+// =============================================================================
+
+export type DeploymentEnvironment = 'development' | 'staging' | 'production'
+export type DeploymentStatus = 'active' | 'paused' | 'disabled'
+export type WidgetVersionStatus = 'canary' | 'beta' | 'stable' | 'deprecated'
+export type VersionPinType = 'specific' | 'channel'
+export type VersionChannel = 'stable' | 'beta' | 'canary'
+
+export interface WidgetTheme {
+  position: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
+  primaryColor: string
+  fontFamily: string
+  borderRadius: string
+  headerText: string
+  placeholderText: string
+  sendButtonIcon: string
+  showBranding: boolean
+  darkMode: 'auto' | 'light' | 'dark'
+}
+
+export interface WidgetBehavior {
+  autoOpen: boolean
+  autoOpenDelay: number
+  triggerMessages: string[]
+  persistSession: boolean
+  sessionTimeout: number
+  showTypingIndicator: boolean
+  enableSounds: boolean
+  enableAttachments: boolean
+  maxMessageLength: number
+}
+
+export interface WidgetLocale {
+  greeting: string
+  offlineMessage: string
+  errorMessage: string
+  sendLabel: string
+  minimizeLabel: string
+}
+
+export interface WidgetAnalytics {
+  trackEvents: boolean
+  trackConversions: boolean
+  customEvents: string[]
+}
+
+export interface WidgetProfile {
+  id: string
+  orgId: string
+  name: string
+  description?: string
+  theme: WidgetTheme
+  behavior: WidgetBehavior
+  locale: WidgetLocale
+  analytics: WidgetAnalytics
+  createdAt: string
+  updatedAt: string
+}
+
+export interface SiteDeployment {
+  id: string
+  siteId: string
+  orgId: string
+  environment: DeploymentEnvironment
+  deployKey: string
+  widgetProfileId?: string
+  allowedOrigins: string[]
+  rateLimitRpm: number
+  rateLimitDaily: number
+  previousKey?: string
+  keyRotatedAt?: string
+  keyExpiresAt?: string
+  status: DeploymentStatus
+  createdAt: string
+  updatedAt: string
+  deployedAt?: string
+}
+
+export interface WidgetVersion {
+  id: string
+  version: string
+  changelog?: string
+  releaseNotes?: string
+  scriptUrl: string
+  stylesUrl?: string
+  integrityHash?: string
+  minProfileVersion: number
+  status: WidgetVersionStatus
+  releasedAt: string
+  deprecatedAt?: string
+}
+
+export interface DeploymentVersionPin {
+  id: string
+  deploymentId: string
+  widgetVersionId: string
+  pinType: VersionPinType
+  channel?: VersionChannel
+  rolloutPercentage: number
+  createdAt: string
+  updatedAt: string
+}
+
+// Public config returned by GET /widget/config/:deploy_key
+export interface PublicWidgetConfig {
+  deployKey: string
+  orgSlug: string
+  siteName: string
+  theme: WidgetTheme
+  behavior: WidgetBehavior
+  locale: WidgetLocale
+  analytics: Pick<WidgetAnalytics, 'trackEvents' | 'trackConversions'>
+  endpoints: {
+    chat: string
+    session: string
+  }
+  widgetVersion: string
+  widgetIntegrity?: string
+}
+
+export interface PublicWidgetConfigResponse {
+  config: PublicWidgetConfig
+}
+
+// API responses for widget management
+export interface WidgetProfilesResponse {
+  profiles: WidgetProfile[]
+}
+
+export interface WidgetProfileResponse {
+  profile: WidgetProfile
+}
+
+export interface SiteDeploymentsResponse {
+  deployments: SiteDeployment[]
+}
+
+export interface SiteDeploymentResponse {
+  deployment: SiteDeployment
+}
+
+export interface WidgetVersionsResponse {
+  versions: WidgetVersion[]
+}
+
+export interface RotateKeyResponse {
+  deployment: SiteDeployment
+  previousKey: string
+  expiresAt: string
 }

@@ -52,79 +52,27 @@ export default function ChatBot({ onClose }: ChatBotProps) {
     setIsLoading(true)
 
     try {
-      const context = `You are a professional receptionist and assistant for Pannu Dental Group. You help with:
-
-      PRACTICE OVERVIEW
-      Name: Pannu Dental Group
-      Website: https://www.pannudental.com
-      Description: A full-service Bay Area dental group providing advanced general, cosmetic, and implant dentistry.
-      Tagline: San Jose's first and only robot-assisted implant surgery center.
-      Technology: Uses the YOMI robotic system, the first and only FDA-cleared robotic device for dental implant surgery.
-      Core Values: Precision, comfort, quality care, and advanced technology.
-
-      LOCATIONS AND CONTACT INFORMATION
-      Main Offices:
-      - San Jose – Jackson Ave: 145 N Jackson Ave, Suite 101, San Jose, CA 95116 | Phone: (408) 272-3330
-      - Sunnyvale: 1117 Tasman Dr, Sunnyvale, CA 94089 | Phone: (408) 752-0684
-      - Fremont: 40880 Fremont Blvd, Fremont, CA 94538 | Phone: (510) 573-6083
-      - Cupertino: Available via scheduling form on the website
-
-      SERVICES OFFERED
-      - General Dentistry: Exams, cleanings, fillings, X-rays
-      - Restorative Dentistry: Crowns, bridges, re-implantation, inlays, and onlays
-      - Cosmetic Dentistry: Veneers, Lumineers, whitening, bonding, CEREC crowns
-      - Orthodontics: Invisalign and traditional braces
-      - Dental Implants: Robotic implant placement using the YOMI system, including All-on-4 and full mouth restoration
-      - Dentures: Immediate, partial, and implant-retained dentures
-      - Periodontics and Endodontics: Root canals, laser gum therapy, treatment for bleeding gums and bad breath
-      - Sleep Apnea: Evaluation and oral appliance therapy
-      - Sedation Dentistry: For anxious patients and long procedures
-      - Pediatric Dentistry: Gentle care for children
-
-      ROBOT-ASSISTED IMPLANT SURGERY (YOMI)
-      YOMI is the first FDA-cleared robotic dental surgery system. It allows minimally invasive, precise implant placement.
-      Benefits include faster recovery, less pain, and greater accuracy.
-
-      KEY SELLING POINTS
-      - First and only robot-assisted implant center in San Jose
-      - Comprehensive dental care under one roof
-      - Multiple Bay Area locations for convenience
-      - Sedation options and advanced technology
-      - Trusted by thousands of Bay Area patients
-
-      Respond in a professional, conversational tone. Keep responses concise but informative, typically 2-4 sentences unless more detail is specifically requested.
-
-      Format your responses clearly:
-      - Use proper paragraph breaks for readability
-      - If listing items, use clear bullet points with "•"
-      - Avoid asterisks (*) - use bullet points (•) instead
-      - Keep formatting clean and professional
-
-      User question: ${userMessage.content}`;
-
-      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=AIzaSyCkOO-3BM2UHyjAIMS9oYMhPOx8xzGGoIQ', {
+      // Call server-side API proxy (no API keys exposed to browser)
+      const response = await fetch('/api/demo-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: context
-            }]
-          }]
+          message: userMessage.content,
+          mode: 'pannudental'
         }),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error?.message || 'Failed to get response')
+        throw new Error(data.error || 'Failed to get response')
       }
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: data.candidates[0].content.parts[0].text,
+        content: data.response,
         sender: 'bot',
         timestamp: new Date()
       }
@@ -145,7 +93,7 @@ export default function ChatBot({ onClose }: ChatBotProps) {
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       sendMessage()
@@ -239,7 +187,7 @@ export default function ChatBot({ onClose }: ChatBotProps) {
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               placeholder="Ask about dental services, appointments, oral health, or Pannu Dental..."
               className="w-full px-4 py-3 border border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows={2}

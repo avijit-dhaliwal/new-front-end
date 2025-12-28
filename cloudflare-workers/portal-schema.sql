@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS orgs (
   slug TEXT UNIQUE,
   status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive', 'at_risk', 'churned')),
   plan TEXT DEFAULT 'chatbot' CHECK(plan IN ('chatbot', 'phone', 'bundle', 'enterprise')),
+  max_members INTEGER DEFAULT 10,  -- Membership cap per org, Koby staff can override
   created_at TEXT DEFAULT (datetime('now')),
   updated_at TEXT DEFAULT (datetime('now'))
 );
@@ -595,6 +596,171 @@ INSERT OR IGNORE INTO audit_logs (id, org_id, actor_type, actor_id, event_type, 
   ('aud_5', 'org_dental', 'user', 'user_admin_dental', 'flow.created', 'flow', 'flow_dental_payments', '{"name":"Payment Recovery"}'),
   ('aud_6', 'org_dental', 'system', 'system', 'action_run.failed', 'action_run', 'arun_dental_3', '{"error":"SMS gateway timeout","attempts":2}'),
   ('aud_7', 'org_dental', 'system', 'system', 'integration.health_check', 'integration', 'int_dental_gcal', '{"status":"error","detail":"OAuth token expired"}');
+
+-- =============================================================================
+-- Stripe Billing Tables (Agent 3: Subscription Architecture)
+-- =============================================================================
+
+-- Stripe Customer per org (1:1 relationship)
+-- Links Clerk org to Stripe customer for billing
+CREATE TABLE IF NOT EXISTS billing_customers (
+  id TEXT PRIMARY KEY,
+  org_id TEXT UNIQUE NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  stripe_customer_id TEXT UNIQUE NOT NULL,
+  email TEXT,
+  name TEXT,
+  currency TEXT DEFAULT 'usd',
+  balance_cents INTEGER DEFAULT 0,
+  delinquent INTEGER DEFAULT 0,
+  default_payment_method_id TEXT,
+  invoice_settings JSON DEFAULT '{}',
+  metadata JSON DEFAULT '{}',
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Stripe Subscription per org (supports multiple subscriptions per org)
+-- Tracks subscription lifecycle and billing periods
+CREATE TABLE IF NOT EXISTS billing_subscriptions (
+  id TEXT PRIMARY KEY,
+  org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  billing_customer_id TEXT NOT NULL REFERENCES billing_customers(id) ON DELETE CASCADE,
+  stripe_subscription_id TEXT UNIQUE NOT NULL,
+  stripe_price_id TEXT NOT NULL,
+  status TEXT NOT NULL CHECK(status IN (
+    'incomplete', 'incomplete_expired', 'trialing', 'active', 
+    'past_due', 'canceled', 'unpaid', 'paused'
+  )),
+  plan_nickname TEXT,
+  quantity INTEGER DEFAULT 1,
+  cancel_at_period_end INTEGER DEFAULT 0,
+  current_period_start TEXT,
+  current_period_end TEXT,
+  canceled_at TEXT,
+  ended_at TEXT,
+  trial_start TEXT,
+  trial_end TEXT,
+  metadata JSON DEFAULT '{}',
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Stripe Invoices (synced from webhook events)
+-- Full invoice data for display and reconciliation
+CREATE TABLE IF NOT EXISTS billing_invoices (
+  id TEXT PRIMARY KEY,
+  org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  billing_customer_id TEXT NOT NULL REFERENCES billing_customers(id) ON DELETE CASCADE,
+  billing_subscription_id TEXT REFERENCES billing_subscriptions(id) ON DELETE SET NULL,
+  stripe_invoice_id TEXT UNIQUE NOT NULL,
+  stripe_invoice_number TEXT,
+  status TEXT NOT NULL CHECK(status IN (
+    'draft', 'open', 'paid', 'uncollectible', 'void'
+  )),
+  currency TEXT DEFAULT 'usd',
+  subtotal_cents INTEGER DEFAULT 0,
+  tax_cents INTEGER DEFAULT 0,
+  total_cents INTEGER DEFAULT 0,
+  amount_due_cents INTEGER DEFAULT 0,
+  amount_paid_cents INTEGER DEFAULT 0,
+  amount_remaining_cents INTEGER DEFAULT 0,
+  hosted_invoice_url TEXT,
+  invoice_pdf TEXT,
+  period_start TEXT,
+  period_end TEXT,
+  due_date TEXT,
+  paid_at TEXT,
+  finalized_at TEXT,
+  metadata JSON DEFAULT '{}',
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Invoice line items (individual charges on an invoice)
+CREATE TABLE IF NOT EXISTS billing_invoice_lines (
+  id TEXT PRIMARY KEY,
+  billing_invoice_id TEXT NOT NULL REFERENCES billing_invoices(id) ON DELETE CASCADE,
+  org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  stripe_line_item_id TEXT UNIQUE NOT NULL,
+  description TEXT,
+  quantity INTEGER DEFAULT 1,
+  unit_amount_cents INTEGER DEFAULT 0,
+  amount_cents INTEGER DEFAULT 0,
+  currency TEXT DEFAULT 'usd',
+  price_id TEXT,
+  product_id TEXT,
+  period_start TEXT,
+  period_end TEXT,
+  proration INTEGER DEFAULT 0,
+  metadata JSON DEFAULT '{}',
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Stripe webhook events (idempotent processing + audit trail)
+-- Stores raw Stripe events for replay and debugging
+CREATE TABLE IF NOT EXISTS stripe_events (
+  id TEXT PRIMARY KEY,
+  stripe_event_id TEXT UNIQUE NOT NULL,
+  event_type TEXT NOT NULL,
+  api_version TEXT,
+  livemode INTEGER DEFAULT 0,
+  org_id TEXT REFERENCES orgs(id) ON DELETE SET NULL,
+  object_type TEXT,
+  object_id TEXT,
+  status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'processed', 'failed', 'skipped')),
+  processing_error TEXT,
+  payload JSON NOT NULL,
+  received_at TEXT DEFAULT (datetime('now')),
+  processed_at TEXT
+);
+
+-- Checkout sessions (tracks pending purchases before subscription creation)
+CREATE TABLE IF NOT EXISTS billing_checkout_sessions (
+  id TEXT PRIMARY KEY,
+  org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  stripe_session_id TEXT UNIQUE NOT NULL,
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  status TEXT DEFAULT 'open' CHECK(status IN ('open', 'complete', 'expired')),
+  mode TEXT DEFAULT 'subscription' CHECK(mode IN ('payment', 'setup', 'subscription')),
+  success_url TEXT,
+  cancel_url TEXT,
+  expires_at TEXT,
+  completed_at TEXT,
+  metadata JSON DEFAULT '{}',
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Billing portal sessions (tracks Stripe Billing Portal access)
+CREATE TABLE IF NOT EXISTS billing_portal_sessions (
+  id TEXT PRIMARY KEY,
+  org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  billing_customer_id TEXT NOT NULL REFERENCES billing_customers(id) ON DELETE CASCADE,
+  stripe_session_id TEXT UNIQUE NOT NULL,
+  stripe_session_url TEXT NOT NULL,
+  return_url TEXT,
+  created_by TEXT,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Indexes for billing tables
+CREATE INDEX IF NOT EXISTS idx_billing_customers_org ON billing_customers(org_id);
+CREATE INDEX IF NOT EXISTS idx_billing_customers_stripe ON billing_customers(stripe_customer_id);
+CREATE INDEX IF NOT EXISTS idx_billing_subscriptions_org ON billing_subscriptions(org_id);
+CREATE INDEX IF NOT EXISTS idx_billing_subscriptions_stripe ON billing_subscriptions(stripe_subscription_id);
+CREATE INDEX IF NOT EXISTS idx_billing_subscriptions_status ON billing_subscriptions(status);
+CREATE INDEX IF NOT EXISTS idx_billing_invoices_org ON billing_invoices(org_id);
+CREATE INDEX IF NOT EXISTS idx_billing_invoices_stripe ON billing_invoices(stripe_invoice_id);
+CREATE INDEX IF NOT EXISTS idx_billing_invoices_status ON billing_invoices(status);
+CREATE INDEX IF NOT EXISTS idx_billing_invoice_lines_invoice ON billing_invoice_lines(billing_invoice_id);
+CREATE INDEX IF NOT EXISTS idx_stripe_events_stripe_id ON stripe_events(stripe_event_id);
+CREATE INDEX IF NOT EXISTS idx_stripe_events_type ON stripe_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_stripe_events_status ON stripe_events(status);
+CREATE INDEX IF NOT EXISTS idx_stripe_events_org ON stripe_events(org_id);
+CREATE INDEX IF NOT EXISTS idx_billing_checkout_sessions_org ON billing_checkout_sessions(org_id);
+CREATE INDEX IF NOT EXISTS idx_billing_checkout_sessions_stripe ON billing_checkout_sessions(stripe_session_id);
+CREATE INDEX IF NOT EXISTS idx_billing_portal_sessions_org ON billing_portal_sessions(org_id);
 
 -- =============================================================================
 -- Seed Data: Retention Policies
