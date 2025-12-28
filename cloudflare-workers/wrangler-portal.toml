@@ -7,7 +7,7 @@ account_id = "4fcec980c07ca7ef02087d9e61f20e42"
 [[d1_databases]]
 binding = "DB"
 database_name = "koby-portal-db"
-database_id = "" # Fill in after running: wrangler d1 create koby-portal-db
+database_id = "587b97f4-105a-45d6-b8b3-75e0c89c6979"
 
 # ============================================================
 # SECRETS CONFIGURATION - NEVER PUT REAL KEYS IN THIS FILE!
@@ -63,7 +63,7 @@ LOG_LEVEL = "info"  # debug, info, warn, error
 
 # Cloudflare Analytics (for internal dashboard)
 # Zone ID can be found in Cloudflare Dashboard > kobyai.com > Overview (right sidebar)
-CLOUDFLARE_ZONE_ID = ""  # Fill in your kobyai.com zone ID
+CLOUDFLARE_ZONE_ID = "b75a1071c5e53b9445afd87e83e43f0e"
 
 # CORS Configuration (comma-separated list of allowed origins)
 # Leave empty to use defaults: https://koby.ai, https://www.koby.ai, https://portal.koby.ai, https://app.koby.ai

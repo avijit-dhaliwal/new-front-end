@@ -1,10 +1,10 @@
 -- Portal Database Schema for Koby AI
 -- D1 SQLite Database
 
--- Organizations (synced from Clerk, or created for external clients)
+-- Organizations (managed in D1, not Clerk)
 CREATE TABLE IF NOT EXISTS orgs (
   id TEXT PRIMARY KEY,
-  clerk_org_id TEXT UNIQUE,
+  clerk_org_id TEXT UNIQUE,  -- Optional: for backwards compatibility
   name TEXT NOT NULL,
   slug TEXT UNIQUE,
   status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive', 'at_risk', 'churned')),
@@ -13,6 +13,36 @@ CREATE TABLE IF NOT EXISTS orgs (
   created_at TEXT DEFAULT (datetime('now')),
   updated_at TEXT DEFAULT (datetime('now'))
 );
+
+-- Users (linked to Clerk user IDs)
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  clerk_user_id TEXT UNIQUE NOT NULL,
+  email TEXT,
+  name TEXT,
+  avatar_url TEXT,
+  is_koby_staff INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive', 'suspended')),
+  last_login_at TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+-- User memberships (links users to orgs with roles)
+CREATE TABLE IF NOT EXISTS user_memberships (
+  id TEXT PRIMARY KEY,
+  clerk_user_id TEXT NOT NULL,
+  org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  role TEXT DEFAULT 'member' CHECK(role IN ('owner', 'admin', 'member', 'viewer')),
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now')),
+  UNIQUE(clerk_user_id, org_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_clerk_id ON users(clerk_user_id);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_user_memberships_clerk_user ON user_memberships(clerk_user_id);
+CREATE INDEX IF NOT EXISTS idx_user_memberships_org ON user_memberships(org_id);
 
 -- Portal sites (each org can have multiple chatbot/voice deployments)
 CREATE TABLE IF NOT EXISTS portal_sites (

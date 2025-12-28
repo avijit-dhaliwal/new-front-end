@@ -220,7 +220,7 @@ async function verifyClerkJWT(token, env) {
   }
 }
 
-// Extract auth context from request
+// Extract auth context from request using D1 user/membership tables
 async function getAuthContext(request, env) {
   const authHeader = request.headers.get('Authorization')
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -233,22 +233,75 @@ async function getAuthContext(request, env) {
     return null
   }
 
-  // Check for Koby staff role in public metadata
-  const isKobyStaff = claims.public_metadata?.kobyRole === 'staff'
-
-  // Get org ID from claims or query param (staff can override)
+  const db = env.DB
+  const clerkUserId = claims.sub
   const url = new URL(request.url)
-  let orgId = claims.org_id
 
-  if (isKobyStaff && url.searchParams.has('orgId')) {
-    orgId = url.searchParams.get('orgId')
+  // Look up user in D1
+  let user = await db.prepare('SELECT * FROM users WHERE clerk_user_id = ?').bind(clerkUserId).first()
+
+  // Auto-create user if not exists (first login)
+  if (!user) {
+    const userId = generateId()
+    const email = claims.email || claims.primary_email_address || null
+    const name = claims.name || [claims.first_name, claims.last_name].filter(Boolean).join(' ') || null
+    const avatarUrl = claims.image_url || claims.profile_image_url || null
+
+    await db.prepare(`
+      INSERT INTO users (id, clerk_user_id, email, name, avatar_url, is_koby_staff, last_login_at)
+      VALUES (?, ?, ?, ?, ?, 0, datetime('now'))
+    `).bind(userId, clerkUserId, email, name, avatarUrl).run()
+
+    user = { id: userId, clerk_user_id: clerkUserId, email, name, avatar_url: avatarUrl, is_koby_staff: 0 }
+  } else {
+    // Update last login
+    await db.prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").bind(user.id).run()
+  }
+
+  const isKobyStaff = !!user.is_koby_staff
+
+  // Get user's org memberships from D1
+  const memberships = await db.prepare(`
+    SELECT um.*, o.name as org_name, o.slug as org_slug, o.status as org_status, o.plan as org_plan
+    FROM user_memberships um
+    JOIN orgs o ON um.org_id = o.id
+    WHERE um.clerk_user_id = ?
+    ORDER BY um.created_at ASC
+  `).bind(clerkUserId).all()
+
+  const userMemberships = memberships.results || []
+
+  // Determine active org:
+  // 1. From query param (if staff or user is member of that org)
+  // 2. From user's first membership
+  // 3. null (no org)
+  let orgId = null
+  let orgRole = null
+
+  const requestedOrgId = url.searchParams.get('orgId')
+
+  if (requestedOrgId) {
+    // Check if user has access to this org (is member or is staff)
+    const membership = userMemberships.find(m => m.org_id === requestedOrgId)
+    if (membership || isKobyStaff) {
+      orgId = requestedOrgId
+      orgRole = membership?.role || (isKobyStaff ? 'admin' : null)
+    }
+  } else if (userMemberships.length > 0) {
+    // Default to first org membership
+    orgId = userMemberships[0].org_id
+    orgRole = userMemberships[0].role
   }
 
   return {
-    userId: claims.sub,
+    userId: user.id,
+    clerkUserId,
+    email: user.email,
+    name: user.name,
     orgId,
     isKobyStaff,
-    orgRole: claims.org_role,
+    orgRole,
+    memberships: userMemberships,
   }
 }
 
@@ -2804,6 +2857,285 @@ const routes = {
     })
   },
 
+  // GET /portal/me - Get current user info and memberships
+  async getMe(request, env, auth) {
+    const db = env.DB
+
+    // Get full user record
+    const user = await db.prepare('SELECT * FROM users WHERE id = ?').bind(auth.userId).first()
+
+    // Get all memberships with org details
+    const memberships = await db.prepare(`
+      SELECT um.*, o.name as org_name, o.slug as org_slug, o.status as org_status, o.plan as org_plan
+      FROM user_memberships um
+      JOIN orgs o ON um.org_id = o.id
+      WHERE um.clerk_user_id = ?
+      ORDER BY um.created_at ASC
+    `).bind(auth.clerkUserId).all()
+
+    return jsonResponse({
+      user: {
+        id: user.id,
+        clerkUserId: user.clerk_user_id,
+        email: user.email,
+        name: user.name,
+        avatarUrl: user.avatar_url,
+        isKobyStaff: !!user.is_koby_staff,
+        status: user.status,
+        lastLoginAt: user.last_login_at,
+        createdAt: user.created_at,
+      },
+      memberships: (memberships.results || []).map(m => ({
+        id: m.id,
+        orgId: m.org_id,
+        orgName: m.org_name,
+        orgSlug: m.org_slug,
+        orgStatus: m.org_status,
+        orgPlan: m.org_plan,
+        role: m.role,
+        createdAt: m.created_at,
+      })),
+      currentOrgId: auth.orgId,
+      currentOrgRole: auth.orgRole,
+    })
+  },
+
+  // GET /portal/users - List all users (staff only)
+  async getUsers(request, env, auth) {
+    if (!auth.isKobyStaff) {
+      return jsonResponse({ error: 'Staff access required' }, 403)
+    }
+
+    const db = env.DB
+    const url = new URL(request.url)
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 100)
+    const offset = parseInt(url.searchParams.get('offset') || '0', 10)
+
+    const users = await db.prepare(`
+      SELECT u.*, 
+        (SELECT COUNT(*) FROM user_memberships WHERE clerk_user_id = u.clerk_user_id) as org_count
+      FROM users u
+      ORDER BY u.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(limit, offset).all()
+
+    const countResult = await db.prepare('SELECT COUNT(*) as count FROM users').first()
+
+    return jsonResponse({
+      users: (users.results || []).map(u => ({
+        id: u.id,
+        clerkUserId: u.clerk_user_id,
+        email: u.email,
+        name: u.name,
+        avatarUrl: u.avatar_url,
+        isKobyStaff: !!u.is_koby_staff,
+        status: u.status,
+        orgCount: u.org_count,
+        lastLoginAt: u.last_login_at,
+        createdAt: u.created_at,
+      })),
+      total: countResult?.count || 0,
+    })
+  },
+
+  // PATCH /portal/users/:id - Update user (staff only)
+  async updateUser(request, env, auth, userId) {
+    if (!auth.isKobyStaff) {
+      return jsonResponse({ error: 'Staff access required' }, 403)
+    }
+
+    const db = env.DB
+    const body = await request.json()
+    const { isKobyStaff, status, name, email } = body
+
+    const updates = []
+    const params = []
+
+    if (isKobyStaff !== undefined) {
+      updates.push('is_koby_staff = ?')
+      params.push(isKobyStaff ? 1 : 0)
+    }
+    if (status !== undefined) {
+      updates.push('status = ?')
+      params.push(status)
+    }
+    if (name !== undefined) {
+      updates.push('name = ?')
+      params.push(name)
+    }
+    if (email !== undefined) {
+      updates.push('email = ?')
+      params.push(email)
+    }
+
+    if (updates.length === 0) {
+      return jsonResponse({ error: 'No fields to update' }, 400)
+    }
+
+    updates.push("updated_at = datetime('now')")
+    params.push(userId)
+
+    await db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).bind(...params).run()
+
+    const user = await db.prepare('SELECT * FROM users WHERE id = ?').bind(userId).first()
+
+    return jsonResponse({
+      user: {
+        id: user.id,
+        clerkUserId: user.clerk_user_id,
+        email: user.email,
+        name: user.name,
+        isKobyStaff: !!user.is_koby_staff,
+        status: user.status,
+        updatedAt: user.updated_at,
+      },
+    })
+  },
+
+  // POST /portal/memberships - Add user to org (staff only or org admin)
+  async createMembership(request, env, auth) {
+    const db = env.DB
+    const body = await request.json()
+    const { clerkUserId, orgId, role = 'member' } = body
+
+    if (!clerkUserId || !orgId) {
+      return jsonResponse({ error: 'clerkUserId and orgId are required' }, 400)
+    }
+
+    // Check permissions: must be staff or admin of target org
+    if (!auth.isKobyStaff) {
+      const isOrgAdmin = auth.memberships?.some(m => m.org_id === orgId && ['owner', 'admin'].includes(m.role))
+      if (!isOrgAdmin) {
+        return jsonResponse({ error: 'Admin access required' }, 403)
+      }
+    }
+
+    // Verify org exists
+    const org = await db.prepare('SELECT id, name FROM orgs WHERE id = ?').bind(orgId).first()
+    if (!org) {
+      return jsonResponse({ error: 'Organization not found' }, 404)
+    }
+
+    // Check if membership already exists
+    const existing = await db.prepare(
+      'SELECT id FROM user_memberships WHERE clerk_user_id = ? AND org_id = ?'
+    ).bind(clerkUserId, orgId).first()
+
+    if (existing) {
+      return jsonResponse({ error: 'User is already a member of this organization' }, 409)
+    }
+
+    const id = generateId()
+    await db.prepare(`
+      INSERT INTO user_memberships (id, clerk_user_id, org_id, role)
+      VALUES (?, ?, ?, ?)
+    `).bind(id, clerkUserId, orgId, role).run()
+
+    return jsonResponse({
+      membership: {
+        id,
+        clerkUserId,
+        orgId,
+        orgName: org.name,
+        role,
+      },
+    }, 201)
+  },
+
+  // DELETE /portal/memberships/:id - Remove membership (staff only or org admin)
+  async deleteMembership(request, env, auth, membershipId) {
+    const db = env.DB
+
+    const membership = await db.prepare('SELECT * FROM user_memberships WHERE id = ?').bind(membershipId).first()
+    if (!membership) {
+      return jsonResponse({ error: 'Membership not found' }, 404)
+    }
+
+    // Check permissions
+    if (!auth.isKobyStaff) {
+      const isOrgAdmin = auth.memberships?.some(m => m.org_id === membership.org_id && ['owner', 'admin'].includes(m.role))
+      if (!isOrgAdmin) {
+        return jsonResponse({ error: 'Admin access required' }, 403)
+      }
+    }
+
+    await db.prepare('DELETE FROM user_memberships WHERE id = ?').bind(membershipId).run()
+
+    return jsonResponse({ deleted: true })
+  },
+
+  // GET /portal/orgs - List all orgs (staff sees all, users see their orgs)
+  async getOrgs(request, env, auth) {
+    const db = env.DB
+
+    let orgs
+    if (auth.isKobyStaff) {
+      // Staff sees all orgs
+      orgs = await db.prepare(`
+        SELECT o.*, 
+          (SELECT COUNT(*) FROM user_memberships WHERE org_id = o.id) as member_count,
+          (SELECT COUNT(*) FROM portal_sites WHERE org_id = o.id) as site_count
+        FROM orgs o
+        ORDER BY o.created_at DESC
+      `).all()
+    } else {
+      // Users see only their orgs
+      const orgIds = auth.memberships?.map(m => m.org_id) || []
+      if (orgIds.length === 0) {
+        return jsonResponse({ orgs: [] })
+      }
+      const placeholders = orgIds.map(() => '?').join(',')
+      orgs = await db.prepare(`
+        SELECT o.*, 
+          (SELECT COUNT(*) FROM user_memberships WHERE org_id = o.id) as member_count,
+          (SELECT COUNT(*) FROM portal_sites WHERE org_id = o.id) as site_count
+        FROM orgs o
+        WHERE o.id IN (${placeholders})
+        ORDER BY o.created_at DESC
+      `).bind(...orgIds).all()
+    }
+
+    return jsonResponse({
+      orgs: (orgs.results || []).map(o => ({
+        id: o.id,
+        name: o.name,
+        slug: o.slug,
+        status: o.status,
+        plan: o.plan,
+        memberCount: o.member_count,
+        siteCount: o.site_count,
+        createdAt: o.created_at,
+      })),
+    })
+  },
+
+  // POST /portal/orgs - Create new org (staff only)
+  async createOrg(request, env, auth) {
+    if (!auth.isKobyStaff) {
+      return jsonResponse({ error: 'Staff access required' }, 403)
+    }
+
+    const db = env.DB
+    const body = await request.json()
+    const { name, slug, plan = 'chatbot', status = 'active' } = body
+
+    if (!name) {
+      return jsonResponse({ error: 'name is required' }, 400)
+    }
+
+    const id = `org_${generateId().substring(0, 8)}`
+    const orgSlug = slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
+    await db.prepare(`
+      INSERT INTO orgs (id, name, slug, status, plan)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(id, name, orgSlug, status, plan).run()
+
+    return jsonResponse({
+      org: { id, name, slug: orgSlug, status, plan },
+    }, 201)
+  },
+
   // GET /portal/cloudflare-analytics - Cloudflare zone analytics for koby.ai (staff only)
   async getCloudflareAnalytics(request, env, auth) {
     const { isKobyStaff } = auth
@@ -3465,6 +3797,30 @@ export default {
       }
       if (path === '/portal/clients' && request.method === 'GET') {
         return routes.getClients(request, env, auth)
+      }
+      // User & Membership Management
+      if (path === '/portal/me' && request.method === 'GET') {
+        return routes.getMe(request, env, auth)
+      }
+      if (path === '/portal/users' && request.method === 'GET') {
+        return routes.getUsers(request, env, auth)
+      }
+      if (path.match(/^\/portal\/users\/[^/]+$/) && request.method === 'PATCH') {
+        const userId = path.split('/')[3]
+        return routes.updateUser(request, env, auth, userId)
+      }
+      if (path === '/portal/memberships' && request.method === 'POST') {
+        return routes.createMembership(request, env, auth)
+      }
+      if (path.match(/^\/portal\/memberships\/[^/]+$/) && request.method === 'DELETE') {
+        const membershipId = path.split('/')[3]
+        return routes.deleteMembership(request, env, auth, membershipId)
+      }
+      if (path === '/portal/orgs' && request.method === 'GET') {
+        return routes.getOrgs(request, env, auth)
+      }
+      if (path === '/portal/orgs' && request.method === 'POST') {
+        return routes.createOrg(request, env, auth)
       }
       // Cloudflare Analytics endpoint (staff only)
       if (path === '/portal/cloudflare-analytics' && request.method === 'GET') {

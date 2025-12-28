@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { useOrganization, useUser, useAuth } from '@clerk/nextjs'
+import { useUser, useAuth } from '@clerk/nextjs'
 import { AlertTriangle, Loader2, RefreshCw } from 'lucide-react'
 import KobyClientsList from '@/components/portal/KobyClientsList'
 import StatusPill from '@/components/portal/StatusPill'
@@ -46,6 +46,8 @@ import type {
 import type {
   CloudflareAnalyticsData,
   CloudflareAnalyticsResponse,
+  MeResponse,
+  UserMembership,
 } from '@/types/portal'
 
 const PORTAL_WORKER_URL = process.env.NEXT_PUBLIC_PORTAL_WORKER_URL || ''
@@ -1500,7 +1502,6 @@ function InternalPortalView({
 }
 
 function PortalPageContent() {
-  const { organization } = useOrganization()
   const { user } = useUser()
   const { getToken } = useAuth()
   const searchParams = useSearchParams()
@@ -1508,13 +1509,19 @@ function PortalPageContent() {
   const viewingOrgId = searchParams.get('orgId')
   const filterParam = searchParams.get('filter')
   
-  // Check if user is Koby staff
-  const isKobyStaff = user?.publicMetadata?.kobyRole === 'staff'
+  // D1-based user state (replaces Clerk orgs)
+  const [meData, setMeData] = useState<MeResponse | null>(null)
+  const [meLoading, setMeLoading] = useState(true)
   
-  // Determine which view to show
-  const activeOrgId = viewingOrgId || organization?.id || null
-  const isInternalOrgView = isKobyInternalOrg(activeOrgId)
-  const isKobyTeamMember = isKobyStaff || isKobyInternalOrg(organization?.id)
+  // Derived from D1 user data
+  const isKobyStaff = meData?.user?.isKobyStaff || false
+  const userMemberships = meData?.memberships || []
+  const defaultOrgId = userMemberships[0]?.orgId || null
+  const activeOrgId = viewingOrgId || meData?.currentOrgId || defaultOrgId
+  
+  // Koby internal org check (org_koby_internal is the internal org)
+  const isInternalOrgView = activeOrgId === 'org_koby_internal'
+  const isKobyTeamMember = isKobyStaff || userMemberships.some((m: UserMembership) => m.orgId === 'org_koby_internal')
   const showStaffClientsView = isKobyTeamMember && !activeOrgId
   const showInternalOpsView = isInternalOrgView
   
@@ -1532,6 +1539,36 @@ function PortalPageContent() {
   const [subscriptionStatus, setSubscriptionStatus] = useState<StripeSubscriptionStatus | null>(null)
   const [cloudflareAnalytics, setCloudflareAnalytics] = useState<CloudflareAnalyticsData | null>(null)
   const [cfAnalyticsPeriod, setCfAnalyticsPeriod] = useState<'24h' | '7d' | '30d'>('24h')
+  
+  // Fetch user info from D1 on mount
+  useEffect(() => {
+    const fetchMe = async () => {
+      if (!user) return
+      
+      try {
+        const token = await getToken()
+        if (!token || !PORTAL_WORKER_URL) {
+          setMeLoading(false)
+          return
+        }
+        
+        const response = await fetch(`${PORTAL_WORKER_URL}/portal/me`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        })
+        
+        if (response.ok) {
+          const data: MeResponse = await response.json()
+          setMeData(data)
+        }
+      } catch (err) {
+        console.error('Failed to fetch user info:', err)
+      } finally {
+        setMeLoading(false)
+      }
+    }
+    
+    fetchMe()
+  }, [user, getToken])
 
   // Fetch data
   const fetchData = async () => {
@@ -1779,14 +1816,14 @@ function PortalPageContent() {
   }
 
   useEffect(() => {
-    if (user) {
+    if (user && !meLoading) {
       fetchData()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, activeOrgId, showStaffClientsView, showInternalOpsView, filterParam, cfAnalyticsPeriod])
+  }, [user, meLoading, activeOrgId, showStaffClientsView, showInternalOpsView, filterParam, cfAnalyticsPeriod])
 
   // Loading state
-  if (loadingState === 'loading') {
+  if (meLoading || loadingState === 'loading') {
     return <LoadingSkeleton />
   }
 

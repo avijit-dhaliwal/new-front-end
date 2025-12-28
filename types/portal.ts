@@ -14,8 +14,51 @@ export interface Org {
   slug?: string
   status: 'active' | 'inactive' | 'at_risk' | 'churned'
   plan: 'chatbot' | 'phone' | 'bundle' | 'enterprise'
+  memberCount?: number
+  siteCount?: number
   created_at: string
   updated_at: string
+}
+
+export interface PortalUser {
+  id: string
+  clerkUserId: string
+  email?: string
+  name?: string
+  avatarUrl?: string
+  isKobyStaff: boolean
+  status: 'active' | 'inactive' | 'suspended'
+  orgCount?: number
+  lastLoginAt?: string
+  createdAt: string
+}
+
+export interface UserMembership {
+  id: string
+  clerkUserId?: string
+  orgId: string
+  orgName: string
+  orgSlug?: string
+  orgStatus?: 'active' | 'inactive' | 'at_risk' | 'churned'
+  orgPlan?: 'chatbot' | 'phone' | 'bundle' | 'enterprise'
+  role: 'owner' | 'admin' | 'member' | 'viewer'
+  createdAt: string
+}
+
+export interface MeResponse {
+  user: PortalUser
+  memberships: UserMembership[]
+  currentOrgId: string | null
+  currentOrgRole: string | null
+}
+
+export interface UsersResponse {
+  users: PortalUser[]
+  total: number
+}
+
+export interface OrgsResponse {
+  orgs: Org[]
 }
 
 export interface PortalSite {
