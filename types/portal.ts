@@ -740,6 +740,37 @@ export interface RetentionPoliciesResponse {
 }
 
 // =============================================================================
+// Cloudflare Analytics Types (for koby.ai internal dashboard)
+// =============================================================================
+
+export interface CloudflareAnalyticsData {
+  uniqueVisitors: number
+  totalRequests: number
+  percentCached: number
+  totalDataServedMB: number
+  dataCachedMB: number
+  period: {
+    start: string
+    end: string
+  }
+  timeseries?: CloudflareTimeseriesPoint[]
+}
+
+export interface CloudflareTimeseriesPoint {
+  timestamp: string
+  requests: number
+  visitors: number
+  cachedRequests: number
+  bytesServed: number
+}
+
+export interface CloudflareAnalyticsResponse {
+  analytics: CloudflareAnalyticsData
+  zone: string
+  lastUpdated: string
+}
+
+// =============================================================================
 // Loading States
 // =============================================================================
 

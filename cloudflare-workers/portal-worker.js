@@ -2804,6 +2804,192 @@ const routes = {
     })
   },
 
+  // GET /portal/cloudflare-analytics - Cloudflare zone analytics for koby.ai (staff only)
+  async getCloudflareAnalytics(request, env, auth) {
+    const { isKobyStaff } = auth
+
+    // Only Koby staff can access Cloudflare analytics
+    if (!isKobyStaff) {
+      return jsonResponse({ error: 'Staff access required' }, 403)
+    }
+
+    const url = new URL(request.url)
+    const period = url.searchParams.get('period') || '24h' // 24h, 7d, 30d
+    const zoneId = env.CLOUDFLARE_ZONE_ID
+    const apiToken = env.CLOUDFLARE_API_TOKEN
+
+    if (!zoneId || !apiToken) {
+      return jsonResponse({
+        error: 'Cloudflare credentials not configured',
+        analytics: null,
+      }, 200)
+    }
+
+    // Calculate date range based on period
+    const now = new Date()
+    let startDate = new Date()
+    
+    switch (period) {
+      case '7d':
+        startDate.setDate(now.getDate() - 7)
+        break
+      case '30d':
+        startDate.setDate(now.getDate() - 30)
+        break
+      case '24h':
+      default:
+        startDate.setDate(now.getDate() - 1)
+        break
+    }
+
+    const since = startDate.toISOString()
+    const until = now.toISOString()
+
+    try {
+      // Cloudflare GraphQL Analytics API
+      const graphqlQuery = `
+        query GetZoneAnalytics($zoneTag: String!, $since: Time!, $until: Time!) {
+          viewer {
+            zones(filter: { zoneTag: $zoneTag }) {
+              httpRequests1dGroups(
+                limit: 31
+                filter: { date_geq: $since, date_lt: $until }
+                orderBy: [date_ASC]
+              ) {
+                dimensions {
+                  date
+                }
+                sum {
+                  requests
+                  cachedRequests
+                  bytes
+                  cachedBytes
+                }
+                uniq {
+                  uniques
+                }
+              }
+              httpRequestsAdaptiveGroups(
+                limit: 1
+                filter: { datetime_geq: $since, datetime_lt: $until }
+              ) {
+                sum {
+                  visits
+                }
+              }
+            }
+          }
+        }
+      `
+
+      const response = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: graphqlQuery,
+          variables: {
+            zoneTag: zoneId,
+            since: since.split('T')[0],
+            until: until.split('T')[0],
+          },
+        }),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Cloudflare API error:', errorText)
+        return jsonResponse({
+          error: 'Failed to fetch Cloudflare analytics',
+          analytics: null,
+        }, 200)
+      }
+
+      const data = await response.json()
+      
+      if (data.errors && data.errors.length > 0) {
+        console.error('Cloudflare GraphQL errors:', data.errors)
+        return jsonResponse({
+          error: 'Cloudflare GraphQL error',
+          details: data.errors,
+          analytics: null,
+        }, 200)
+      }
+
+      const zones = data.data?.viewer?.zones || []
+      if (zones.length === 0) {
+        return jsonResponse({
+          error: 'No zone data found',
+          analytics: null,
+        }, 200)
+      }
+
+      const httpData = zones[0].httpRequests1dGroups || []
+      const adaptiveData = zones[0].httpRequestsAdaptiveGroups || []
+
+      // Aggregate totals
+      let totalRequests = 0
+      let cachedRequests = 0
+      let totalBytes = 0
+      let cachedBytes = 0
+      let uniqueVisitors = 0
+
+      const timeseries = httpData.map(group => {
+        totalRequests += group.sum?.requests || 0
+        cachedRequests += group.sum?.cachedRequests || 0
+        totalBytes += group.sum?.bytes || 0
+        cachedBytes += group.sum?.cachedBytes || 0
+        uniqueVisitors += group.uniq?.uniques || 0
+
+        return {
+          timestamp: group.dimensions?.date,
+          requests: group.sum?.requests || 0,
+          visitors: group.uniq?.uniques || 0,
+          cachedRequests: group.sum?.cachedRequests || 0,
+          bytesServed: group.sum?.bytes || 0,
+        }
+      })
+
+      // Get unique visitors from adaptive endpoint if available
+      if (adaptiveData.length > 0 && adaptiveData[0].sum?.visits) {
+        uniqueVisitors = adaptiveData[0].sum.visits
+      }
+
+      const percentCached = totalRequests > 0 
+        ? ((cachedRequests / totalRequests) * 100).toFixed(2)
+        : 0
+
+      const totalDataServedMB = (totalBytes / (1024 * 1024)).toFixed(2)
+      const dataCachedMB = (cachedBytes / (1024 * 1024)).toFixed(2)
+
+      return jsonResponse({
+        analytics: {
+          uniqueVisitors,
+          totalRequests,
+          percentCached: parseFloat(percentCached),
+          totalDataServedMB: parseFloat(totalDataServedMB),
+          dataCachedMB: parseFloat(dataCachedMB),
+          period: {
+            start: since,
+            end: until,
+          },
+          timeseries,
+        },
+        zone: 'kobyai.com',
+        lastUpdated: now.toISOString(),
+      })
+    } catch (error) {
+      console.error('Error fetching Cloudflare analytics:', error)
+      return jsonResponse({
+        error: 'Failed to fetch analytics',
+        details: error.message,
+        analytics: null,
+      }, 200)
+    }
+  },
+
   // POST /webhooks/stripe - Stripe webhook receiver with signature verification
   async handleStripeWebhook(request, env) {
     const signature = request.headers.get('stripe-signature')
@@ -3279,6 +3465,10 @@ export default {
       }
       if (path === '/portal/clients' && request.method === 'GET') {
         return routes.getClients(request, env, auth)
+      }
+      // Cloudflare Analytics endpoint (staff only)
+      if (path === '/portal/cloudflare-analytics' && request.method === 'GET') {
+        return routes.getCloudflareAnalytics(request, env, auth)
       }
       // Membership cap endpoints (Agent 1: Auth + Invite + Membership Caps)
       if (path === '/portal/membership-caps' && request.method === 'GET') {

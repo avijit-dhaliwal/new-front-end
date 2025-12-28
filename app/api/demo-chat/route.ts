@@ -1,66 +1,8 @@
 import { NextResponse } from 'next/server'
 
-// Simple in-memory rate limiting (per IP)
-// In production, use Redis or a dedicated rate limiting service
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
-const RATE_LIMIT_WINDOW_MS = 60 * 1000 // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 20 // 20 requests per minute for demos
-
-function getRateLimitKey(request: Request): string {
-  // Get IP from various headers (Vercel, Cloudflare, etc.)
-  const forwarded = request.headers.get('x-forwarded-for')
-  const realIp = request.headers.get('x-real-ip')
-  const cfIp = request.headers.get('cf-connecting-ip')
-  return cfIp || realIp || forwarded?.split(',')[0] || 'unknown'
-}
-
-function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
-  const now = Date.now()
-  const entry = rateLimitMap.get(ip)
-
-  if (!entry || now > entry.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS })
-    return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - 1 }
-  }
-
-  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
-    return { allowed: false, remaining: 0 }
-  }
-
-  entry.count++
-  return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - entry.count }
-}
-
-// Clean up old rate limit entries periodically
-setInterval(() => {
-  const now = Date.now()
-  const entries = Array.from(rateLimitMap.entries())
-  for (let i = 0; i < entries.length; i++) {
-    const [key, value] = entries[i]
-    if (now > value.resetTime) {
-      rateLimitMap.delete(key)
-    }
-  }
-}, 60 * 1000)
+export const runtime = 'edge'
 
 export async function POST(request: Request) {
-  // Rate limiting check
-  const ip = getRateLimitKey(request)
-  const { allowed, remaining } = checkRateLimit(ip)
-
-  if (!allowed) {
-    return NextResponse.json(
-      { error: 'Rate limit exceeded. Please try again later.' },
-      {
-        status: 429,
-        headers: {
-          'X-RateLimit-Remaining': '0',
-          'Retry-After': '60',
-        },
-      }
-    )
-  }
-
   // Validate API key is configured
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
@@ -144,14 +86,7 @@ export async function POST(request: Request) {
       )
     }
 
-    return NextResponse.json(
-      { response: generatedText },
-      {
-        headers: {
-          'X-RateLimit-Remaining': remaining.toString(),
-        },
-      }
-    )
+    return NextResponse.json({ response: generatedText })
   } catch (error) {
     console.error('Demo chat API error:', error)
     return NextResponse.json(

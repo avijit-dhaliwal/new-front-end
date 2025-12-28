@@ -1,6 +1,8 @@
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'edge'
+
 const PORTAL_WORKER_URL = process.env.PORTAL_WORKER_URL || 'https://portal-worker.koby.workers.dev'
 
 export async function POST(request: NextRequest) {

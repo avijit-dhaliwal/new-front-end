@@ -2,6 +2,8 @@ import { SignIn } from '@clerk/nextjs'
 import Link from 'next/link'
 import { Shield } from 'lucide-react'
 
+export const runtime = 'edge'
+
 /**
  * Sign-in page for the portal
  * 

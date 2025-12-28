@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { Shield, ArrowRight, Mail } from 'lucide-react'
 import KobyLogo from '@/components/KobyLogo'
 
+export const runtime = 'edge'
+
 /**
  * Sign-up is disabled for public access.
  * 

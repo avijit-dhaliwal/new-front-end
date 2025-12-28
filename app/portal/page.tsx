@@ -43,6 +43,10 @@ import type {
   FlowTestCase,
   FlowRunInsight,
 } from '@/types/knowledge'
+import type {
+  CloudflareAnalyticsData,
+  CloudflareAnalyticsResponse,
+} from '@/types/portal'
 
 const PORTAL_WORKER_URL = process.env.NEXT_PUBLIC_PORTAL_WORKER_URL || ''
 
@@ -1089,10 +1093,16 @@ function InternalPortalView({
   data,
   clients,
   clientsError,
+  cloudflareAnalytics,
+  cfAnalyticsPeriod,
+  onCfPeriodChange,
 }: {
   data: PortalData
   clients: PortalClient[]
   clientsError: string | null
+  cloudflareAnalytics: CloudflareAnalyticsData | null
+  cfAnalyticsPeriod: '24h' | '7d' | '30d'
+  onCfPeriodChange: (period: '24h' | '7d' | '30d') => void
 }) {
   const totalClients = clients.length
   const activeClients = clients.filter((client) => client.status === 'active').length
@@ -1142,6 +1152,130 @@ function InternalPortalView({
 
       <section id="portfolio">
         <KobyClientsList clients={clients} error={clientsError} />
+      </section>
+
+      {/* Cloudflare Analytics Section */}
+      <section id="cloudflare-analytics">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Infrastructure</p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
+              kobyai.com Cloudflare Analytics
+            </h2>
+            <p className="mt-3 text-sm text-[var(--ink-muted)]">
+              Real-time traffic and performance metrics from Cloudflare.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            {(['24h', '7d', '30d'] as const).map((period) => (
+              <button
+                key={period}
+                onClick={() => onCfPeriodChange(period)}
+                className={`rounded-full px-4 py-2 text-xs font-medium transition-colors ${
+                  cfAnalyticsPeriod === period
+                    ? 'bg-[var(--accent-strong)] text-white'
+                    : 'border border-[var(--line)] bg-[var(--panel)] text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]'
+                }`}
+              >
+                {period === '24h' ? '24 Hours' : period === '7d' ? '7 Days' : '30 Days'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {cloudflareAnalytics ? (
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)]">Unique Visitors</p>
+              <p className="mt-3 text-2xl font-semibold text-[var(--ink)]">
+                {cloudflareAnalytics.uniqueVisitors.toLocaleString()}
+              </p>
+              <p className="mt-2 text-xs text-[var(--ink-muted)]">
+                {cfAnalyticsPeriod === '24h' ? 'Last 24 hours' : cfAnalyticsPeriod === '7d' ? 'Last 7 days' : 'Last 30 days'}
+              </p>
+            </div>
+            <div className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)]">Total Requests</p>
+              <p className="mt-3 text-2xl font-semibold text-[var(--ink)]">
+                {cloudflareAnalytics.totalRequests >= 1000
+                  ? `${(cloudflareAnalytics.totalRequests / 1000).toFixed(1)}K`
+                  : cloudflareAnalytics.totalRequests.toLocaleString()}
+              </p>
+              <p className="mt-2 text-xs text-[var(--ink-muted)]">HTTP requests served</p>
+            </div>
+            <div className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)]">Percent Cached</p>
+              <p className="mt-3 text-2xl font-semibold text-[var(--ink)]">
+                {cloudflareAnalytics.percentCached.toFixed(2)}%
+              </p>
+              <p className="mt-2 text-xs text-[var(--ink-muted)]">Cache hit ratio</p>
+            </div>
+            <div className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)]">Total Data Served</p>
+              <p className="mt-3 text-2xl font-semibold text-[var(--ink)]">
+                {cloudflareAnalytics.totalDataServedMB >= 1000
+                  ? `${(cloudflareAnalytics.totalDataServedMB / 1000).toFixed(1)} GB`
+                  : `${cloudflareAnalytics.totalDataServedMB.toFixed(0)} MB`}
+              </p>
+              <p className="mt-2 text-xs text-[var(--ink-muted)]">Bandwidth delivered</p>
+            </div>
+            <div className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-5 shadow-[var(--shadow-soft)]">
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)]">Data Cached</p>
+              <p className="mt-3 text-2xl font-semibold text-[var(--ink)]">
+                {cloudflareAnalytics.dataCachedMB >= 1000
+                  ? `${(cloudflareAnalytics.dataCachedMB / 1000).toFixed(1)} GB`
+                  : `${cloudflareAnalytics.dataCachedMB.toFixed(0)} MB`}
+              </p>
+              <p className="mt-2 text-xs text-[var(--ink-muted)]">Saved from origin</p>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-6 rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[var(--shadow-soft)]">
+            <p className="text-sm font-semibold text-[var(--ink)]">Cloudflare analytics not available</p>
+            <p className="mt-2 text-sm text-[var(--ink-muted)]">
+              Configure CLOUDFLARE_ZONE_ID and CLOUDFLARE_API_TOKEN in the portal worker to enable real-time analytics.
+            </p>
+          </div>
+        )}
+
+        {/* Timeseries chart if we have data */}
+        {cloudflareAnalytics?.timeseries && cloudflareAnalytics.timeseries.length > 0 && (
+          <div className="mt-6 rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[var(--shadow-soft)]">
+            <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)] mb-4">Daily Traffic Trend</p>
+            <div className="flex items-end gap-2 h-32">
+              {cloudflareAnalytics.timeseries.slice(-14).map((point, idx) => {
+                const maxRequests = Math.max(...cloudflareAnalytics.timeseries!.slice(-14).map(p => p.requests))
+                const height = maxRequests > 0 ? (point.requests / maxRequests) * 100 : 0
+                return (
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-1">
+                    <div
+                      className="w-full rounded-t bg-[var(--accent-soft)] transition-all"
+                      style={{ height: `${Math.max(height, 4)}%` }}
+                    >
+                      <div
+                        className="w-full rounded-t bg-[var(--accent-strong)]"
+                        style={{ height: `${point.requests > 0 ? Math.max((point.cachedRequests / point.requests) * 100, 10) : 0}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] text-[var(--ink-muted)]">
+                      {point.timestamp?.slice(5, 10) || ''}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="mt-4 flex items-center gap-4 text-xs text-[var(--ink-muted)]">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-[var(--accent-soft)]" />
+                <span>Total requests</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-[var(--accent-strong)]" />
+                <span>Cached requests</span>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       <section id="operations">
@@ -1396,6 +1530,8 @@ function PortalPageContent() {
   const [retentionPolicies, setRetentionPolicies] = useState<RetentionPolicy[]>([])
   const [actionRuns, setActionRuns] = useState<ActionRun[]>([])
   const [subscriptionStatus, setSubscriptionStatus] = useState<StripeSubscriptionStatus | null>(null)
+  const [cloudflareAnalytics, setCloudflareAnalytics] = useState<CloudflareAnalyticsData | null>(null)
+  const [cfAnalyticsPeriod, setCfAnalyticsPeriod] = useState<'24h' | '7d' | '30d'>('24h')
 
   // Fetch data
   const fetchData = async () => {
@@ -1451,6 +1587,25 @@ function PortalPageContent() {
             setClients([])
             setClientsError(clientError instanceof Error ? clientError.message : 'Failed to load clients')
           }
+        }
+      }
+
+      // Fetch Cloudflare analytics for Koby staff
+      if (isKobyTeamMember && PORTAL_WORKER_URL) {
+        try {
+          const cfResponse = await fetch(`${PORTAL_WORKER_URL}/portal/cloudflare-analytics?period=${cfAnalyticsPeriod}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          })
+          if (cfResponse.ok) {
+            const cfData: CloudflareAnalyticsResponse = await cfResponse.json()
+            if (cfData.analytics) {
+              setCloudflareAnalytics(cfData.analytics)
+            }
+          }
+        } catch (cfError) {
+          console.error('Failed to fetch Cloudflare analytics:', cfError)
         }
       }
 
@@ -1628,7 +1783,7 @@ function PortalPageContent() {
       fetchData()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, activeOrgId, showStaffClientsView, showInternalOpsView, filterParam])
+  }, [user, activeOrgId, showStaffClientsView, showInternalOpsView, filterParam, cfAnalyticsPeriod])
 
   // Loading state
   if (loadingState === 'loading') {
@@ -1656,6 +1811,9 @@ function PortalPageContent() {
         data={portalData}
         clients={clients}
         clientsError={clientsError}
+        cloudflareAnalytics={cloudflareAnalytics}
+        cfAnalyticsPeriod={cfAnalyticsPeriod}
+        onCfPeriodChange={setCfAnalyticsPeriod}
       />
     )
   }
