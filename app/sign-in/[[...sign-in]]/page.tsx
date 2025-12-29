@@ -2,25 +2,20 @@ import { SignIn } from '@clerk/nextjs'
 import Link from 'next/link'
 import { Shield } from 'lucide-react'
 
-export const runtime = 'edge'
-
 /**
  * Sign-in page for the portal
  * 
- * Note: Sign-up is invite-only, so we don't show a sign-up link here.
- * Users can only create accounts through organization invitations.
+ * Clerk handles authentication only.
+ * Organization/role management is done via D1.
  */
 export default function SignInPage() {
   return (
     <div className="min-h-screen bg-[var(--paper)] paper-texture flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-md">
         <SignIn
-          path="/sign-in"
-          routing="path"
-          forceRedirectUrl="/portal"
+          fallbackRedirectUrl="/portal"
           appearance={{
             elements: {
-              // Hide the sign-up link since we're invite-only
               footerActionLink: 'hidden',
               footerActionText: 'hidden',
             },
