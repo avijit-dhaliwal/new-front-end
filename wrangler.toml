@@ -1,43 +1,35 @@
 # Cloudflare Pages configuration
 name = "website"
+pages_build_output_dir = ".vercel/output/static"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Output directory for @cloudflare/next-on-pages
-pages_build_output_dir = ".vercel/output/static"
-
 # =============================================================================
-# Environment Variables for Next.js
+# Production Environment Variables
 # =============================================================================
 # NEXT_PUBLIC_* variables are bundled into client-side JavaScript at build time
-# These MUST be plain variables (not secrets) to be available in the browser
 #
-# Secrets (CLERK_SECRET_KEY, GEMINI_API_KEY, etc.) must be set in the
-# Cloudflare Pages dashboard under Settings → Environment Variables → Secrets
+# IMPORTANT: CLERK_SECRET_KEY must be set as a Secret in Cloudflare Dashboard
+# Go to: Pages → website → Settings → Environment Variables → Add Secret
 # =============================================================================
 
-[vars]
-# Clerk Authentication (public keys - safe to expose)
+[env.production.vars]
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_YWRhcHRlZC1lbXUtMzcuY2xlcmsuYWNjb3VudHMuZGV2JA"
 NEXT_PUBLIC_CLERK_SIGN_IN_URL = "/sign-in"
 NEXT_PUBLIC_CLERK_SIGN_UP_URL = "/sign-up"
 NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL = "/portal"
 NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL = "/portal"
-
-# Portal Configuration
 NEXT_PUBLIC_PORTAL_WORKER_URL = "https://koby-portal.voidinfrastructuretechnologies.workers.dev"
 NEXT_PUBLIC_KOBY_INTERNAL_ORG_ID = "org_koby_internal"
 
 # =============================================================================
-# SECRETS - Set these in Cloudflare Pages Dashboard (not here!)
+# Preview uses same as Production (single environment)
 # =============================================================================
-# Go to: Cloudflare Dashboard → Pages → koby-website → Settings → Environment Variables
-#
-# Required Secrets:
-#   CLERK_SECRET_KEY = sk_live_xxxxx
-#   GEMINI_API_KEY = your-gemini-key
-#   ELEVENLABS_API_KEY = your-elevenlabs-key
-#
-# Optional Secrets:
-#   GOOGLE_SHEETS_URL = your-google-sheets-webhook-url
-# =============================================================================
+[env.preview.vars]
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_YWRhcHRlZC1lbXUtMzcuY2xlcmsuYWNjb3VudHMuZGV2JA"
+NEXT_PUBLIC_CLERK_SIGN_IN_URL = "/sign-in"
+NEXT_PUBLIC_CLERK_SIGN_UP_URL = "/sign-up"
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL = "/portal"
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL = "/portal"
+NEXT_PUBLIC_PORTAL_WORKER_URL = "https://koby-portal.voidinfrastructuretechnologies.workers.dev"
+NEXT_PUBLIC_KOBY_INTERNAL_ORG_ID = "org_koby_internal"
