@@ -1,8 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-import { NextResponse } from 'next/server'
 
 const isProtectedRoute = createRouteMatcher(['/portal(.*)'])
-const isPublicPortalRoute = createRouteMatcher(['/portal/select-org'])
 
 /**
  * Middleware for portal access
@@ -14,18 +12,15 @@ const isPublicPortalRoute = createRouteMatcher(['/portal/select-org'])
  */
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
-    // Just require sign-in for portal routes
-    // All org/role logic is handled client-side via D1 API
     await auth.protect()
   }
-  
-  return NextResponse.next()
 })
 
 export const config = {
   matcher: [
-    // Skip static files and Next.js internals
-    '/((?!_next|.*\\..*).*)',
-    '/(api|trpc)(.*)'
+    // Skip Next.js internals and static files
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
   ],
 }
