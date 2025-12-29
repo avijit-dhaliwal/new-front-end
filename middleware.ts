@@ -1,41 +1,16 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/about',
-  '/contact',
-  '/articles(.*)',
-  '/chatbot',
-  '/phone-service',
-  '/ai-suites',
-  '/get-started',
-  '/schedule-meeting',
-  '/checkout',
-  '/demo(.*)',
-  '/chadis',
-  '/pannudental',
-  '/legalservices',
-  '/emailagent',
-])
-
 const isProtectedRoute = createRouteMatcher(['/portal(.*)'])
 
 /**
  * Middleware for portal access
  * 
- * - Public routes: accessible without sign-in
+ * - All routes are public by default
  * - /portal/*: requires Clerk authentication
  * - Authorization (org, roles) is handled by D1
  */
 export default clerkMiddleware(async (auth, req) => {
-  // Allow public routes without any auth check
-  if (isPublicRoute(req)) {
-    return
-  }
-  
-  // Protect portal routes
+  // Only protect portal routes - everything else is public
   if (isProtectedRoute(req)) {
     await auth.protect()
   }
@@ -43,7 +18,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
+    // Skip Next.js internals and static files
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/(api|trpc)(.*)',
   ],
 }
