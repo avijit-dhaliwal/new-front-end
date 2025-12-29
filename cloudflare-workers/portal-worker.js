@@ -12,12 +12,11 @@
 const MAX_REQUEST_SIZE = 1024 * 1024 // 1MB default
 const MAX_WEBHOOK_SIZE = 5 * 1024 * 1024 // 5MB for webhooks
 
-// Default allowed origins (can be overridden via env)
+// Default allowed origins for kobyai.com
 const DEFAULT_ALLOWED_ORIGINS = [
-  'https://koby.ai',
-  'https://www.koby.ai',
-  'https://portal.koby.ai',
-  'https://app.koby.ai',
+  'https://kobyai.com',
+  'https://www.kobyai.com',
+  'http://localhost:3000',
 ]
 
 // =============================================================================
