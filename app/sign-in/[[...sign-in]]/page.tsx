@@ -14,8 +14,9 @@ export default function SignInPage() {
   return (
     <div className="min-h-screen bg-[var(--paper)] paper-texture flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-md">
-        <SignIn
-          fallbackRedirectUrl="/portal"
+        <SignIn 
+          forceRedirectUrl="/portal"
+          signUpUrl="/sign-up"
           appearance={{
             elements: {
               footerActionLink: 'hidden',
