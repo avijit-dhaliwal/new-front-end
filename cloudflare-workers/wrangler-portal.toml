@@ -57,7 +57,7 @@ database_id = "587b97f4-105a-45d6-b8b3-75e0c89c6979"
 
 # Environment variables (non-secret only)
 [vars]
-CLERK_DOMAIN = "your-clerk-domain.clerk.accounts.dev"
+CLERK_DOMAIN = "adapted-emu-37.clerk.accounts.dev"
 ENVIRONMENT = "production"  # or "development" for local testing
 LOG_LEVEL = "info"  # debug, info, warn, error
 
