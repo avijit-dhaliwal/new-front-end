@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense, type ComponentType } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useAuth, useOrganization, useUser } from '@clerk/nextjs'
+import { useAuth, useUser } from '@clerk/nextjs'
 import { 
   ArrowLeft,
   Save,
@@ -34,6 +34,9 @@ import {
   updatePortalConfig,
   getDefaultConfig,
 } from '@/lib/portal-config'
+import type { MeResponse } from '@/types/portal'
+
+const PORTAL_WORKER_URL = process.env.NEXT_PUBLIC_PORTAL_WORKER_URL || ''
 
 // Icon mapping for modules
 const moduleIcons: Record<string, ComponentType<{ className?: string }>> = {
@@ -68,10 +71,41 @@ function SettingsSkeleton() {
 function SettingsContent() {
   const searchParams = useSearchParams()
   const { getToken } = useAuth()
-  const { organization } = useOrganization()
   const { user } = useUser()
   const viewingOrgId = searchParams.get('orgId')
-  const activeOrgId = viewingOrgId || organization?.id || null
+  
+  // D1-based user data
+  const [meData, setMeData] = useState<MeResponse | null>(null)
+  const [meLoading, setMeLoading] = useState(true)
+  
+  // Fetch user info from D1
+  useEffect(() => {
+    const fetchMe = async () => {
+      if (!user) return
+      try {
+        const token = await getToken()
+        if (!token || !PORTAL_WORKER_URL) {
+          setMeLoading(false)
+          return
+        }
+        const response = await fetch(`${PORTAL_WORKER_URL}/portal/me`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        })
+        if (response.ok) {
+          setMeData(await response.json())
+        }
+      } catch (err) {
+        console.error('Failed to fetch user:', err)
+      } finally {
+        setMeLoading(false)
+      }
+    }
+    fetchMe()
+  }, [user, getToken])
+  
+  const memberships = meData?.memberships || []
+  const defaultOrgId = memberships[0]?.orgId || null
+  const activeOrgId = viewingOrgId || meData?.currentOrgId || defaultOrgId
 
   // State management
   const [config, setConfig] = useState<PortalConfig | null>(null)
@@ -83,7 +117,7 @@ function SettingsContent() {
   // Load portal config
   useEffect(() => {
     const loadConfig = async () => {
-      if (!activeOrgId || !user) {
+      if (!activeOrgId || !user || meLoading) {
         setIsLoading(false)
         return
       }
@@ -119,7 +153,7 @@ function SettingsContent() {
     }
 
     void loadConfig()
-  }, [activeOrgId, getToken, user])
+  }, [activeOrgId, getToken, user, meLoading])
 
   // Branding handlers
   const handleBrandingChange = (field: keyof PortalConfig['branding'], value: string | null) => {
@@ -218,7 +252,7 @@ function SettingsContent() {
   // Save handler
   const handleSave = async () => {
     if (!config || !activeOrgId) {
-      setErrors(['Select an organization before saving configuration.'])
+      setErrors(['No organization selected.'])
       setSaveStatus('error')
       return
     }
@@ -263,6 +297,10 @@ function SettingsContent() {
     }
   }
 
+  if (meLoading) {
+    return <SettingsSkeleton />
+  }
+
   if (!activeOrgId) {
     return (
       <div className="max-w-4xl mx-auto py-10 space-y-4">
@@ -274,9 +312,9 @@ function SettingsContent() {
           Back to Portal
         </Link>
         <div className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6">
-          <p className="text-sm font-semibold text-[var(--ink)]">Select an organization</p>
+          <p className="text-sm font-semibold text-[var(--ink)]">No organization selected</p>
           <p className="mt-2 text-sm text-[var(--ink-muted)]">
-            Choose a client from the portal before configuring settings.
+            Go to the portal and select an organization to configure settings.
           </p>
         </div>
       </div>

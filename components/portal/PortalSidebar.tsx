@@ -1,10 +1,11 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useOrganization, useUser } from '@clerk/nextjs'
+import { useUser, useAuth } from '@clerk/nextjs'
 import KobyLogo from '@/components/KobyLogo'
-import { isKobyInternalOrg } from '@/lib/koby-org'
+import type { MeResponse, UserMembership } from '@/types/portal'
 import { 
   LayoutDashboard, 
   Activity, 
@@ -18,8 +19,11 @@ import {
   Building2,
   AlertTriangle,
   Home,
-  HelpCircle
+  HelpCircle,
+  Cloud
 } from 'lucide-react'
+
+const PORTAL_WORKER_URL = process.env.NEXT_PUBLIC_PORTAL_WORKER_URL || ''
 
 const clientNavItems = [
   { label: 'Overview', href: '/portal#overview', icon: LayoutDashboard },
@@ -34,6 +38,7 @@ const clientNavItems = [
 const internalNavItems = [
   { label: 'Overview', href: '/portal#overview', icon: LayoutDashboard },
   { label: 'Portfolio', href: '/portal#portfolio', icon: Building2 },
+  { label: 'Cloudflare', href: '/portal#cloudflare-analytics', icon: Cloud },
   { label: 'Live Ops', href: '/portal#operations', icon: Activity },
   { label: 'Automations', href: '/portal#automations', icon: Workflow },
   { label: 'Outcomes', href: '/portal#outcomes', icon: Flag },
@@ -47,25 +52,50 @@ const managementItems = [
 ]
 
 export default function PortalSidebar() {
-  const { organization } = useOrganization()
   const { user } = useUser()
+  const { getToken } = useAuth()
   const searchParams = useSearchParams()
   const viewingOrgId = searchParams.get('orgId')
   
-  // Check if user is Koby staff
-  const isKobyStaff = user?.publicMetadata?.kobyRole === 'staff'
-  const activeOrgId = viewingOrgId || organization?.id || null
-  const isInternalOrgView = isKobyInternalOrg(activeOrgId)
-  const isKobyTeamMember = isKobyStaff || isKobyInternalOrg(organization?.id)
-  const viewingClientOrg = Boolean(viewingOrgId && !isKobyInternalOrg(viewingOrgId))
+  const [meData, setMeData] = useState<MeResponse | null>(null)
+  
+  // Fetch user data from D1
+  useEffect(() => {
+    const fetchMe = async () => {
+      if (!user) return
+      try {
+        const token = await getToken()
+        if (!token || !PORTAL_WORKER_URL) return
+        
+        const response = await fetch(`${PORTAL_WORKER_URL}/portal/me`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        })
+        if (response.ok) {
+          setMeData(await response.json())
+        }
+      } catch (err) {
+        console.error('Failed to fetch user:', err)
+      }
+    }
+    fetchMe()
+  }, [user, getToken])
+  
+  const isKobyStaff = meData?.user?.isKobyStaff || false
+  const memberships = meData?.memberships || []
+  const defaultOrgId = memberships[0]?.orgId || null
+  const activeOrgId = viewingOrgId || meData?.currentOrgId || defaultOrgId
+  const isInternalOrgView = activeOrgId === 'org_koby_internal'
+  const isKobyTeamMember = isKobyStaff || memberships.some((m: UserMembership) => m.orgId === 'org_koby_internal')
+  const viewingClientOrg = Boolean(viewingOrgId && viewingOrgId !== 'org_koby_internal')
+  
+  // Find current org
+  const currentOrg = memberships.find((m: UserMembership) => m.orgId === activeOrgId)
+  const orgName = currentOrg?.orgName || (activeOrgId ? `Org ${activeOrgId.slice(0, 8)}` : 'Loading...')
   
   // Koby staff viewing all clients (no specific org)
-  const isStaffAllClientsView = isKobyTeamMember && !organization && !viewingOrgId
+  const isStaffAllClientsView = isKobyTeamMember && !activeOrgId
   const navItems = isInternalOrgView ? internalNavItems : clientNavItems
   const orgLabel = viewingClientOrg ? 'Client org' : 'Organization'
-  const orgName = viewingClientOrg && viewingOrgId
-    ? `Client ${viewingOrgId.slice(0, 8)}`
-    : organization?.name || 'Loading...'
 
   // Build href with orgId if viewing a specific client
   const buildHref = (baseHref: string) => {
@@ -94,7 +124,7 @@ export default function PortalSidebar() {
           <nav className="mt-8 space-y-1">
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)] mb-3 px-3">Koby Ops</p>
             <Link
-              href="/portal"
+              href="/portal?orgId=org_koby_internal"
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
                 isInternalOrgView
                   ? 'bg-[var(--accent-soft)] text-[var(--accent-strong)] font-medium'
@@ -102,7 +132,7 @@ export default function PortalSidebar() {
               }`}
             >
               <Building2 className="w-4 h-4" />
-              Portfolio
+              Internal Dashboard
             </Link>
             <Link
               href="/portal?filter=at-risk"
@@ -119,15 +149,15 @@ export default function PortalSidebar() {
         )}
         
         {/* Current Organization Display */}
-        {(organization || viewingOrgId) && (
+        {activeOrgId && (
           <div className="mt-6">
             {isKobyTeamMember && viewingClientOrg && (
               <Link
-                href="/portal"
+                href="/portal?orgId=org_koby_internal"
                 className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors mb-2"
               >
                 <span>&larr;</span>
-                <span>Back to portfolio</span>
+                <span>Back to internal dashboard</span>
               </Link>
             )}
             <div className="rounded-xl border border-[var(--line)] bg-[var(--panel)] p-3">
@@ -153,7 +183,7 @@ export default function PortalSidebar() {
         )}
 
         {/* Main Navigation - only show when viewing a specific org */}
-        {!isStaffAllClientsView && (
+        {!isStaffAllClientsView && activeOrgId && (
           <>
             <nav className="mt-8 space-y-1">
               <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)] mb-3 px-3">Dashboard</p>

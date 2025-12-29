@@ -1,63 +1,165 @@
 'use client'
 
-import { OrganizationProfile, useOrganization, useUser } from '@clerk/nextjs'
-import { Shield, Users, ArrowLeft, AlertTriangle, UserPlus } from 'lucide-react'
+import { useEffect, useState, Suspense } from 'react'
+import { useUser, useAuth } from '@clerk/nextjs'
+import { useSearchParams } from 'next/navigation'
+import { Shield, Users, ArrowLeft, UserPlus, Trash2, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import type { MeResponse, UserMembership } from '@/types/portal'
 
-// Membership cap info from API
-interface MembershipCapInfo {
-  allowed: boolean
-  reason: string
-  currentMemberCount: number
-  maxMembers: number
-  remainingSlots: number
-  message?: string
+const PORTAL_WORKER_URL = process.env.NEXT_PUBLIC_PORTAL_WORKER_URL || ''
+
+interface OrgMember {
+  id: string
+  clerkUserId: string
+  email?: string
+  name?: string
+  role: string
+  createdAt: string
 }
 
-export default function TeamPage() {
-  const { organization, membership } = useOrganization()
+function TeamSkeleton() {
+  return (
+    <div className="max-w-6xl mx-auto py-10 flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-[var(--accent-strong)]" />
+    </div>
+  )
+}
+
+function TeamPageContent() {
   const { user } = useUser()
+  const { getToken } = useAuth()
+  const searchParams = useSearchParams()
+  const viewingOrgId = searchParams.get('orgId')
   
-  // Membership cap state
-  const [capInfo, setCapInfo] = useState<MembershipCapInfo | null>(null)
-  const [capLoading, setCapLoading] = useState(false)
+  const [meData, setMeData] = useState<MeResponse | null>(null)
+  const [meLoading, setMeLoading] = useState(true)
+  const [members, setMembers] = useState<OrgMember[]>([])
+  const [membersLoading, setMembersLoading] = useState(false)
   
-  // Check if user is Koby staff
-  const isKobyStaff = user?.publicMetadata?.kobyRole === 'staff'
+  // Invite form state
+  const [showInviteForm, setShowInviteForm] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteRole, setInviteRole] = useState<'member' | 'admin'>('member')
+  const [inviting, setInviting] = useState(false)
+  const [inviteError, setInviteError] = useState<string | null>(null)
   
-  // Check if user is client admin (can manage team)
-  const isClientAdmin = membership?.role === 'org:admin' || 
-                        membership?.role === 'org:client_admin' ||
-                        isKobyStaff
-  
-  // Fetch membership cap info when org changes
+  // Fetch user info from D1
   useEffect(() => {
-    const checkMembershipCap = async () => {
-      if (!organization?.id) return
-      
-      setCapLoading(true)
+    const fetchMe = async () => {
+      if (!user) return
       try {
-        // Member count will be fetched server-side
-        const response = await fetch('/api/portal/check-invite-allowed', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ currentMemberCount: 0 }) // Server will get actual count
-        })
-        
-        if (response.ok) {
-          const data = await response.json()
-          setCapInfo(data)
+        const token = await getToken()
+        if (!token || !PORTAL_WORKER_URL) {
+          setMeLoading(false)
+          return
         }
-      } catch (error) {
-        console.error('Failed to check membership cap:', error)
+        const response = await fetch(`${PORTAL_WORKER_URL}/portal/me`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        })
+        if (response.ok) {
+          setMeData(await response.json())
+        }
+      } catch (err) {
+        console.error('Failed to fetch user:', err)
       } finally {
-        setCapLoading(false)
+        setMeLoading(false)
       }
     }
+    fetchMe()
+  }, [user, getToken])
+  
+  const isKobyStaff = meData?.user?.isKobyStaff || false
+  const memberships = meData?.memberships || []
+  const defaultOrgId = memberships[0]?.orgId || null
+  const activeOrgId = viewingOrgId || meData?.currentOrgId || defaultOrgId
+  
+  // Find current org and user's role
+  const currentMembership = memberships.find((m: UserMembership) => m.orgId === activeOrgId)
+  const currentOrgName = currentMembership?.orgName || 'Organization'
+  const isOrgAdmin = isKobyStaff || currentMembership?.role === 'owner' || currentMembership?.role === 'admin'
+  
+  // Fetch org members (placeholder - would need API endpoint)
+  useEffect(() => {
+    const fetchMembers = async () => {
+      if (!activeOrgId || !user) return
+      setMembersLoading(true)
+      
+      // For now, show current user as a member
+      // In production, you'd fetch from /portal/orgs/:id/members
+      const mockMembers: OrgMember[] = []
+      
+      if (meData?.user) {
+        mockMembers.push({
+          id: meData.user.id,
+          clerkUserId: meData.user.clerkUserId,
+          email: meData.user.email,
+          name: meData.user.name,
+          role: currentMembership?.role || 'member',
+          createdAt: meData.user.createdAt,
+        })
+      }
+      
+      setMembers(mockMembers)
+      setMembersLoading(false)
+    }
     
-    checkMembershipCap()
-  }, [organization?.id])
+    if (!meLoading) {
+      fetchMembers()
+    }
+  }, [activeOrgId, user, meData, meLoading, currentMembership?.role])
+  
+  const handleInvite = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!inviteEmail || !activeOrgId) return
+    
+    setInviting(true)
+    setInviteError(null)
+    
+    try {
+      const token = await getToken()
+      if (!token) throw new Error('Not authenticated')
+      
+      // This would call the membership creation API
+      // For now, show a placeholder message
+      alert(`Invite functionality coming soon. Would invite ${inviteEmail} as ${inviteRole} to org ${activeOrgId}`)
+      
+      setInviteEmail('')
+      setShowInviteForm(false)
+    } catch (err) {
+      setInviteError(err instanceof Error ? err.message : 'Failed to send invite')
+    } finally {
+      setInviting(false)
+    }
+  }
+  
+  if (meLoading) {
+    return (
+      <div className="max-w-6xl mx-auto py-10 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[var(--accent-strong)]" />
+      </div>
+    )
+  }
+  
+  if (!activeOrgId) {
+    return (
+      <div className="max-w-6xl mx-auto py-10">
+        <Link 
+          href="/portal" 
+          className="inline-flex items-center gap-2 text-sm font-medium text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors mb-8"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to portal
+        </Link>
+        <div className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6">
+          <p className="text-sm font-semibold text-[var(--ink)]">No organization selected</p>
+          <p className="mt-2 text-sm text-[var(--ink-muted)]">
+            Go to the portal and select an organization to manage team members.
+          </p>
+        </div>
+      </div>
+    )
+  }
   
   return (
     <div className="max-w-6xl mx-auto py-10">
@@ -75,63 +177,17 @@ export default function TeamPage() {
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--ink-muted)]">Team & Access</p>
           <h1 className="mt-3 text-2xl sm:text-3xl font-display font-semibold text-[var(--ink)]">
-            Manage your organization
+            Manage your team
           </h1>
           <p className="mt-3 text-sm text-[var(--ink-muted)]">
             Invite team members and manage roles for your organization.
           </p>
         </div>
         
-        {organization && (
-          <div className="rounded-full border border-[var(--line)] bg-[var(--panel)] px-4 py-2 text-xs text-[var(--ink-muted)]">
-            {organization.name}
-          </div>
-        )}
-      </div>
-      
-      {/* Membership Cap Status */}
-      {capInfo && isClientAdmin && (
-        <div className={`mb-8 rounded-2xl border p-4 ${
-          !capInfo.allowed 
-            ? 'border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950' 
-            : capInfo.remainingSlots <= 2 
-              ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950'
-              : 'border-[var(--line)] bg-[var(--panel)]'
-        }`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {!capInfo.allowed ? (
-                <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
-              ) : (
-                <UserPlus className="w-5 h-5 text-[var(--ink-muted)]" />
-              )}
-              <div>
-                <p className="text-sm font-semibold text-[var(--ink)]">
-                  {capInfo.currentMemberCount} / {capInfo.maxMembers} members
-                </p>
-                <p className="text-xs text-[var(--ink-muted)]">
-                  {capInfo.message}
-                </p>
-              </div>
-            </div>
-            {/* Progress bar */}
-            <div className="hidden sm:block w-32">
-              <div className="h-2 bg-[var(--paper-muted)] rounded-full overflow-hidden">
-                <div 
-                  className={`h-full transition-all ${
-                    !capInfo.allowed 
-                      ? 'bg-red-500' 
-                      : capInfo.remainingSlots <= 2 
-                        ? 'bg-yellow-500'
-                        : 'bg-green-500'
-                  }`}
-                  style={{ width: `${Math.min(100, (capInfo.currentMemberCount / capInfo.maxMembers) * 100)}%` }}
-                />
-              </div>
-            </div>
-          </div>
+        <div className="rounded-full border border-[var(--line)] bg-[var(--panel)] px-4 py-2 text-xs text-[var(--ink-muted)]">
+          {currentOrgName}
         </div>
-      )}
+      </div>
       
       {/* Koby Staff Notice */}
       {isKobyStaff && (
@@ -142,15 +198,14 @@ export default function TeamPage() {
               <p className="text-sm font-semibold text-[var(--ink)]">Koby Staff Access</p>
               <p className="text-xs text-[var(--ink-muted)]">
                 You have full access to manage this organization as a Koby team member.
-                {capInfo && ` (Staff override: can invite beyond ${capInfo.maxMembers} member cap)`}
               </p>
             </div>
           </div>
         </div>
       )}
       
-      {/* Permissions Notice */}
-      {!isClientAdmin && !isKobyStaff && (
+      {/* Permissions Notice for non-admins */}
+      {!isOrgAdmin && (
         <div className="mb-8 rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-6">
           <div className="flex items-center gap-3">
             <Users className="w-5 h-5 text-[var(--ink-muted)]" />
@@ -168,15 +223,21 @@ export default function TeamPage() {
       {/* Role Legend */}
       <div className="mb-8 rounded-2xl border border-[var(--line)] bg-[var(--panel)] p-6">
         <p className="text-xs uppercase tracking-[0.2em] text-[var(--ink-muted)] mb-4">Role Definitions</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="rounded-xl border border-[var(--line)] bg-[var(--paper-muted)] p-4">
-            <p className="text-sm font-semibold text-[var(--ink)]">Client Admin</p>
+            <p className="text-sm font-semibold text-[var(--ink)]">Owner</p>
             <p className="mt-1 text-xs text-[var(--ink-muted)]">
-              Full access to portal data. Can invite members, manage roles, and configure settings.
+              Full access. Can manage billing, delete org, and manage all members.
             </p>
           </div>
           <div className="rounded-xl border border-[var(--line)] bg-[var(--paper-muted)] p-4">
-            <p className="text-sm font-semibold text-[var(--ink)]">Client Viewer</p>
+            <p className="text-sm font-semibold text-[var(--ink)]">Admin</p>
+            <p className="mt-1 text-xs text-[var(--ink-muted)]">
+              Full access to portal data. Can invite members and manage roles.
+            </p>
+          </div>
+          <div className="rounded-xl border border-[var(--line)] bg-[var(--paper-muted)] p-4">
+            <p className="text-sm font-semibold text-[var(--ink)]">Member</p>
             <p className="mt-1 text-xs text-[var(--ink-muted)]">
               Read-only access to portal data. Cannot invite members or change settings.
             </p>
@@ -184,31 +245,135 @@ export default function TeamPage() {
         </div>
       </div>
       
-      {/* Clerk Organization Profile */}
+      {/* Team Members */}
       <div className="rounded-3xl border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[var(--shadow-soft)]">
-        <OrganizationProfile
-          appearance={{
-            elements: {
-              rootBox: 'w-full',
-              card: 'shadow-none border-0 bg-transparent',
-              navbar: 'hidden',
-              pageScrollBox: 'p-0',
-              profileSection: 'border-[var(--line)]',
-              profileSectionTitle: 'text-[var(--ink)]',
-              profileSectionTitleText: 'text-sm font-semibold',
-              profileSectionContent: 'text-[var(--ink-muted)]',
-              accordionTriggerButton: 'text-[var(--ink)]',
-              formButtonPrimary: 'bg-[var(--accent-strong)] hover:bg-[var(--accent)]',
-              formFieldLabel: 'text-[var(--ink)]',
-              formFieldInput: 'border-[var(--line)] bg-[var(--paper-muted)]',
-              membershipWidget: 'border-[var(--line)]',
-              membersPageInviteButton: isClientAdmin ? '' : 'hidden',
-              tableHead: 'text-[var(--ink-muted)]',
-            },
-          }}
-          routing="hash"
-        />
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-lg font-semibold text-[var(--ink)]">Team Members</h2>
+            <p className="text-sm text-[var(--ink-muted)]">{members.length} member{members.length !== 1 ? 's' : ''}</p>
+          </div>
+          {isOrgAdmin && (
+            <button
+              onClick={() => setShowInviteForm(!showInviteForm)}
+              className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--accent-strong)] transition-colors"
+            >
+              <UserPlus className="w-4 h-4" />
+              Invite Member
+            </button>
+          )}
+        </div>
+        
+        {/* Invite Form */}
+        {showInviteForm && isOrgAdmin && (
+          <form onSubmit={handleInvite} className="mb-6 p-4 rounded-2xl border border-[var(--line)] bg-[var(--paper-muted)]">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-[var(--ink)] mb-2">Email address</label>
+                <input
+                  type="email"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  placeholder="colleague@company.com"
+                  className="w-full rounded-xl border border-[var(--line)] bg-[var(--paper)] px-4 py-2.5 text-sm text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--ink)] mb-2">Role</label>
+                <select
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value as 'member' | 'admin')}
+                  className="w-full rounded-xl border border-[var(--line)] bg-[var(--paper)] px-4 py-2.5 text-sm text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                >
+                  <option value="member">Member</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+            {inviteError && (
+              <p className="mt-3 text-sm text-red-600">{inviteError}</p>
+            )}
+            <div className="mt-4 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowInviteForm(false)}
+                className="rounded-full border border-[var(--line)] bg-[var(--panel)] px-4 py-2 text-sm font-medium text-[var(--ink)] hover:bg-[var(--paper-muted)]"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={inviting || !inviteEmail}
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--accent-strong)] disabled:opacity-50"
+              >
+                {inviting ? 'Sending...' : 'Send Invite'}
+              </button>
+            </div>
+          </form>
+        )}
+        
+        {/* Members List */}
+        {membersLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-6 h-6 animate-spin text-[var(--ink-muted)]" />
+          </div>
+        ) : members.length > 0 ? (
+          <div className="space-y-3">
+            {members.map((member) => (
+              <div
+                key={member.id}
+                className="flex items-center justify-between rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-4"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-[var(--accent-soft)] flex items-center justify-center">
+                    <span className="text-sm font-semibold text-[var(--accent-strong)]">
+                      {(member.name || member.email || 'U')[0].toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--ink)]">
+                      {member.name || 'Unnamed User'}
+                    </p>
+                    <p className="text-xs text-[var(--ink-muted)]">{member.email || 'No email'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    member.role === 'owner' 
+                      ? 'bg-purple-100 text-purple-700'
+                      : member.role === 'admin'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {member.role}
+                  </span>
+                  {isOrgAdmin && member.clerkUserId !== meData?.user?.clerkUserId && (
+                    <button className="p-2 text-[var(--ink-muted)] hover:text-red-600 transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-[var(--ink-muted)]">
+            <Users className="w-8 h-8 mx-auto mb-3 opacity-50" />
+            <p className="text-sm">No team members found.</p>
+            {isOrgAdmin && (
+              <p className="text-xs mt-1">Click &quot;Invite Member&quot; to add someone.</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
+  )
+}
+
+export default function TeamPage() {
+  return (
+    <Suspense fallback={<TeamSkeleton />}>
+      <TeamPageContent />
+    </Suspense>
   )
 }
