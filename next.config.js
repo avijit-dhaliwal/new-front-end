@@ -6,7 +6,7 @@ const nextConfig = {
   },
   env: {
     // Clerk Authentication (public - bundled into client JS)
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: 'pk_test_YWRhcHRlZC1lbXUtMzcuY2xlcmsuYWNjb3VudHMuZGV2JA',
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: 'pk_test_Y29tbXVuYWwtZGFzc2llLTQwLmNsZXJrLmFjY291bnRzLmRldiQ',
     NEXT_PUBLIC_CLERK_SIGN_IN_URL: '/sign-in',
     NEXT_PUBLIC_CLERK_SIGN_UP_URL: '/sign-up',
     NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: '/portal',
