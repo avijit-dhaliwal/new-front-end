@@ -1,0 +1,22 @@
+name = "koby-midvalley-demo"
+main = "midvalley-demo-worker.js"
+compatibility_date = "2024-12-01"
+account_id = "4fcec980c07ca7ef02087d9e61f20e42"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "koby_midvalley_demo"
+database_id = "caae1d5b-d9b4-4a52-aac5-af34573898f6"
+
+[vars]
+MIDVALLEY_AGENT_ID = "agent_0501kdrbgz2yecq81zx93sv6tkaw"
+
+# ============================================================
+# SECRETS CONFIGURATION - NEVER PUT REAL KEYS IN THIS FILE!
+# ============================================================
+# Required secrets (set after deployment):
+#   wrangler secret put TOOL_AUTH_BEARER --config wrangler-midvalley.toml
+#   wrangler secret put ELEVENLABS_WEBHOOK_SECRET --config wrangler-midvalley.toml
+#
+# TOOL_AUTH_BEARER: Full bearer token including "Bearer " prefix
+# ELEVENLABS_WEBHOOK_SECRET: HMAC secret from ElevenLabs webhook config
