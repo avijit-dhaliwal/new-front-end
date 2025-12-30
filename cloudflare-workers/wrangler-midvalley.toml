@@ -20,3 +20,15 @@ MIDVALLEY_AGENT_ID = "agent_0501kdrbgz2yecq81zx93sv6tkaw"
 #
 # TOOL_AUTH_BEARER: Full bearer token including "Bearer " prefix
 # ELEVENLABS_WEBHOOK_SECRET: HMAC secret from ElevenLabs webhook config
+
+[observability]
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+invocation_logs = true
+persist = true
+
+[observability.traces]
+enabled = false
+persist = true
+head_sampling_rate = 1
