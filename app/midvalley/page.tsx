@@ -165,7 +165,7 @@ export default function MidValleyDemo() {
   const [requests, setRequests] = useState<MissedCollectionRequest[]>([])
   const [calls, setCalls] = useState<ElevenLabsCall[]>([])
   const [selectedCall, setSelectedCall] = useState<ElevenLabsCall | null>(null)
-  const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
 
   useEffect(() => {
     let sessionId = sessionStorage.getItem('midvalley_demo_session_id')
@@ -285,7 +285,7 @@ export default function MidValleyDemo() {
                   </div>
                   <div className="flex items-center gap-2 text-xs text-[var(--ink-muted)]">
                     <Clock className="w-4 h-4" />
-                    Updated {formatTime(lastRefresh.toISOString())}
+                    Updated {lastRefresh ? formatTime(lastRefresh.toISOString()) : '--:--'}
                   </div>
                 </div>
 
